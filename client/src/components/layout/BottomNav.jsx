@@ -12,19 +12,18 @@ export const BottomNav = () => {
   }
 
   const tabs = [
-    { id: 'learn', label: 'Lộ Trình', icon: Compass, color: 'text-[#58CC02]' },
-    { id: 'dict', label: 'Từ Điển', icon: BookOpen, color: 'text-[#1CB0F6]' },
-    { id: 'practice', label: 'Luyện Tập', icon: Sparkles, color: 'text-[#FFC800]' },
-    { id: 'speak', label: 'Hội Thoại', icon: MessageSquare, color: 'text-[#CE82FF]' },
-    { id: 'profile', label: 'Hồ Sơ', icon: User, color: 'text-[#FF4B4B]' },
+    { id: 'learn', label: 'Lộ Trình', icon: Compass },
+    { id: 'dict', label: 'Từ Điển', icon: BookOpen },
+    { id: 'practice', label: 'Luyện Tập', icon: Sparkles },
+    { id: 'speak', label: 'Hội Thoại', icon: MessageSquare },
+    { id: 'profile', label: 'Hồ Sơ', icon: User },
   ];
 
   return (
     <nav 
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t-2 border-slate-200 dark:border-slate-800 px-2 pt-1.5"
-      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 8px)' }}
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t-2 border-slate-200 dark:border-slate-800 pb-[env(safe-area-inset-bottom)] select-none"
     >
-      <div className="flex items-center justify-around max-w-lg mx-auto">
+      <div className="grid grid-cols-5 h-16 items-center px-1 max-w-lg mx-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -33,30 +32,23 @@ export const BottomNav = () => {
             <button
               key={tab.id}
               onClick={() => {
-                sounds.playTap();
+                sounds.playTap?.();
                 setActiveTab(tab.id);
               }}
-              className={`flex-1 flex flex-col items-center justify-center py-1.5 px-2 rounded-2xl transition-all relative ${
-                isActive
-                  ? 'text-slate-900 dark:text-white font-black'
-                  : 'text-slate-400 dark:text-slate-500 font-bold hover:text-slate-600'
-              }`}
+              className="flex flex-col items-center justify-center py-1 px-1 transition-all cursor-pointer active:scale-95"
             >
               <div
-                className={`p-1.5 rounded-xl transition-all ${
+                className={`flex flex-col items-center justify-center w-full transition-all ${
                   isActive
-                    ? 'bg-[#E5F6DF] dark:bg-emerald-950/60 border border-[#58CC02]/40 shadow-xs scale-105'
-                    : 'active:scale-95'
+                    ? 'bg-[#DDF4FF] dark:bg-sky-950 text-[#1CB0F6] border-2 border-[#84D8FF] rounded-xl p-1.5 shadow-xs'
+                    : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 p-1.5 border-2 border-transparent'
                 }`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? tab.color : 'text-slate-400 dark:text-slate-500'}`} />
+                <Icon className={`w-5 h-5 ${isActive ? 'text-[#1CB0F6]' : 'text-slate-400 dark:text-slate-500'}`} />
+                <span className={`text-[11px] font-extrabold mt-0.5 tracking-tight ${isActive ? 'text-[#1CB0F6]' : 'text-slate-500 dark:text-slate-400'}`}>
+                  {tab.label}
+                </span>
               </div>
-              <span className={`text-[11px] mt-1 tracking-tight uppercase ${isActive ? 'text-slate-900 dark:text-white font-black' : ''}`}>
-                {tab.label}
-              </span>
-              {isActive && (
-                <span className="absolute -bottom-1 w-2.5 h-1 bg-[#58CC02] rounded-full" />
-              )}
             </button>
           );
         })}

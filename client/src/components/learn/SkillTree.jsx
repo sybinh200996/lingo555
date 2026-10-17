@@ -245,10 +245,10 @@ export const SkillTree = () => {
 
           return (
             <div key={unit.id} className="space-y-6">
-              {/* Unit Header Banner (Section Banner with Guidebook button) */}
+              {/* Sticky Unit Header Banner (Section Banner with Guidebook button) */}
               <div
-                className="rounded-3xl p-5 text-white shadow-lg flex items-center justify-between relative overflow-hidden border-b-4 border-black/15"
-                style={{ backgroundColor: unit.banner_color || '#58CC02' }}
+                className="sticky top-16 lg:top-4 z-10 rounded-3xl p-5 text-white shadow-lg flex items-center justify-between relative overflow-hidden border-b-4 border-black/15 transition-all"
+                style={{ backgroundColor: unit.banner_color || currentLevel?.color || '#58CC02' }}
               >
                 <div className="relative z-10 max-w-[70%]">
                   <span className="text-xs font-black uppercase tracking-wider text-white/85">

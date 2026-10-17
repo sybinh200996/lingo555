@@ -6,20 +6,23 @@ import { MobileHeader } from './MobileHeader';
 
 export const AppLayout = ({ children }) => {
   return (
-    <div className="min-h-[100dvh] bg-slate-50 dark:bg-slate-950 flex flex-col lg:flex-row text-slate-800 dark:text-slate-100 overflow-x-hidden max-w-full">
-      {/* Mobile Top Header */}
+    <div className="min-h-[100dvh] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 overflow-x-hidden">
+      {/* Mobile Top Header (<1024px) */}
       <MobileHeader />
 
-      {/* Desktop Left Sidebar */}
-      <DesktopSidebar />
+      {/* Desktop 3-column Layout: Max width 1280px centered */}
+      <div className="max-w-[1280px] mx-auto flex justify-center">
+        {/* Cột Trái - Left Sidebar (w-[256px]) */}
+        <DesktopSidebar />
 
-      {/* Center Main Stage */}
-      <main className="flex-1 max-w-4xl mx-auto w-full min-h-[calc(100dvh-60px)] lg:min-h-[100dvh] pb-24 md:pb-8 px-4 sm:px-6 lg:px-8 py-6">
-        {children}
-      </main>
+        {/* Cột Giữa - Khu vực Bản đồ Học tập (flex-1 max-w-[620px]) */}
+        <main className="flex-1 max-w-[620px] w-full min-h-[calc(100dvh-56px)] lg:min-h-[100dvh] px-4 pt-6 pb-28 lg:pb-12">
+          {children}
+        </main>
 
-      {/* Desktop Right Gamification Panel */}
-      <DesktopRightPanel />
+        {/* Cột Phải - Right Widgets Panel (w-[360px]) */}
+        <DesktopRightPanel />
+      </div>
 
       {/* Mobile Bottom Navigation */}
       <BottomNav />
