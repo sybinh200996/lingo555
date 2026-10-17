@@ -42,9 +42,9 @@ export const DesktopRightPanel = () => {
   const xpPercent = Math.min(100, Math.round((currentDailyXp / dailyXpTarget) * 100));
 
   return (
-    <aside className="hidden lg:flex w-[360px] sticky top-0 h-[100dvh] overflow-y-auto px-6 py-6 flex-col gap-5 border-l-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 z-20 shrink-0 select-none">
+    <aside className="hidden lg:flex w-[360px] sticky top-0 h-[100dvh] overflow-y-auto px-6 py-6 flex-col gap-5 border-l-2 border-[#E5E5E5] dark:border-[#37464F] bg-white dark:bg-[#131F24] z-20 shrink-0 select-none">
       {/* Top Stats Bar */}
-      <div className="flex items-center justify-between gap-1.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+      <div className="flex items-center justify-between gap-1.5 pb-2 border-b border-[#E5E5E5] dark:border-[#37464F]">
         {/* Language Switcher Pill */}
         <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700">
           <button
@@ -162,7 +162,7 @@ export const DesktopRightPanel = () => {
       </div>
 
       {/* Widget 2: Daily Quests Card (Nhiệm vụ Hàng ngày) */}
-      <div className="border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-5 bg-white dark:bg-slate-900 shadow-sm space-y-3">
+      <div className="border-2 border-[#E5E5E5] dark:border-[#37464F] rounded-2xl p-5 bg-white dark:bg-[#1B2B32] shadow-sm space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-500">
@@ -212,7 +212,7 @@ export const DesktopRightPanel = () => {
       </div>
 
       {/* Widget 3: Daily XP Progress & Quick AI Tutor */}
-      <div className="border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-5 bg-white dark:bg-slate-900 shadow-sm space-y-3.5">
+      <div className="border-2 border-[#E5E5E5] dark:border-[#37464F] rounded-2xl p-5 bg-white dark:bg-[#1B2B32] shadow-sm space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-sky-100 dark:bg-sky-950/60 flex items-center justify-center text-[#1CB0F6]">

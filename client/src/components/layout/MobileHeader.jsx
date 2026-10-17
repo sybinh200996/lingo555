@@ -22,7 +22,7 @@ export const MobileHeader = () => {
   }
 
   return (
-    <header className="lg:hidden sticky top-0 z-30 h-14 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b-2 border-slate-200 dark:border-slate-800 px-4 flex items-center justify-between select-none">
+    <header className="lg:hidden sticky top-0 z-30 h-14 bg-white/95 dark:bg-[#131F24]/95 backdrop-blur-md border-b-2 border-[#E5E5E5] dark:border-[#37464F] px-4 flex items-center justify-between select-none">
       {/* 1. Nút chọn Ngôn ngữ (🇨🇳 Tiếng Trung / 🇬🇧 Tiếng Anh dạng pill bo tròn) */}
       <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-full border border-slate-200 dark:border-slate-700">
         <button

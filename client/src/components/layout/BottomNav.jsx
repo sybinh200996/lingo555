@@ -21,7 +21,7 @@ export const BottomNav = () => {
 
   return (
     <nav 
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t-2 border-slate-200 dark:border-slate-800 pb-[env(safe-area-inset-bottom)] select-none"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-[#131F24]/95 backdrop-blur-md border-t-2 border-[#E5E5E5] dark:border-[#37464F] pb-[env(safe-area-inset-bottom)] select-none"
     >
       <div className="grid grid-cols-5 h-16 items-center px-1 max-w-lg mx-auto">
         {tabs.map((tab) => {

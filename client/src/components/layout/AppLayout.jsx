@@ -6,7 +6,7 @@ import { MobileHeader } from './MobileHeader';
 
 export const AppLayout = ({ children }) => {
   return (
-    <div className="min-h-[100dvh] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 overflow-x-hidden">
+    <div className="min-h-[100dvh] bg-[#F7F7F7] dark:bg-[#131F24] text-[#3C3C3C] dark:text-slate-100 overflow-x-hidden">
       {/* Mobile Top Header (<1024px) */}
       <MobileHeader />
 

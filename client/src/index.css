@@ -17,14 +17,14 @@
   }
 
   body {
-    @apply bg-slate-50 text-slate-800 antialiased selection:bg-emerald-200;
+    @apply bg-[#F7F7F7] text-[#3C3C3C] antialiased selection:bg-emerald-200;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     overscroll-behavior-y: none;
     -webkit-tap-highlight-color: transparent;
   }
 
   .dark body {
-    @apply bg-slate-950 text-slate-100 selection:bg-emerald-800;
+    @apply bg-[#131F24] text-slate-100 selection:bg-emerald-800;
   }
 
   /* Prevent iOS Safari auto-zoom on input and textarea focus */
@@ -77,11 +77,11 @@
 
 /* Duolingo Card 3D border */
 .duo-card {
-  @apply bg-white dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 transition-all;
+  @apply bg-white dark:bg-[#1B2B32] rounded-2xl border-2 border-b-4 border-[#E5E5E5] dark:border-[#37464F] transition-all;
 }
 
 .duo-card-interactive {
-  @apply bg-white dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 transition-all hover:border-slate-300 dark:hover:border-slate-700 cursor-pointer;
+  @apply bg-white dark:bg-[#1B2B32] rounded-2xl border-2 border-b-4 border-[#E5E5E5] dark:border-[#37464F] transition-all hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer;
 }
 
 .duo-card-interactive:active {

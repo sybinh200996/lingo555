@@ -13,6 +13,60 @@ import {
   Headphones
 } from 'lucide-react';
 
+// Multi-color Unit Themes (Chương 1-5 & lặp lại)
+const UNIT_THEMES = [
+  {
+    // Chương 1: Xanh lá Duolingo (#58CC02 / viền #46A302)
+    gradient: 'from-[#58CC02] to-[#46A302]',
+    bannerBorder: 'border-[#388202]',
+    buttonBg: 'bg-[#46A302]/60 hover:bg-[#46A302]',
+    buttonBorder: 'border-[#316800]',
+    currentBtnBg: 'bg-[#58CC02] border-b-[8px] border-[#46A302] hover:bg-[#61E002] active:border-b-0 active:translate-y-[8px] shadow-xl',
+    currentRing: 'ring-8 ring-[#58CC02]/20 dark:ring-[#58CC02]/30',
+    badgeText: 'text-[#58CC02]'
+  },
+  {
+    // Chương 2: Xanh dương (#1CB0F6 / viền #1899D6)
+    gradient: 'from-[#1CB0F6] to-[#1899D6]',
+    bannerBorder: 'border-[#1277A8]',
+    buttonBg: 'bg-[#1899D6]/60 hover:bg-[#1899D6]',
+    buttonBorder: 'border-[#1277A8]',
+    currentBtnBg: 'bg-[#1CB0F6] border-b-[8px] border-[#1899D6] hover:bg-[#2BDEFF] active:border-b-0 active:translate-y-[8px] shadow-xl',
+    currentRing: 'ring-8 ring-[#1CB0F6]/20 dark:ring-[#1CB0F6]/30',
+    badgeText: 'text-[#1CB0F6]'
+  },
+  {
+    // Chương 3: Tím (#CE82FF / viền #A568CC)
+    gradient: 'from-[#CE82FF] to-[#A568CC]',
+    bannerBorder: 'border-[#864FA8]',
+    buttonBg: 'bg-[#A568CC]/60 hover:bg-[#A568CC]',
+    buttonBorder: 'border-[#864FA8]',
+    currentBtnBg: 'bg-[#CE82FF] border-b-[8px] border-[#A568CC] hover:bg-[#D99BFF] active:border-b-0 active:translate-y-[8px] shadow-xl',
+    currentRing: 'ring-8 ring-[#CE82FF]/20 dark:ring-[#CE82FF]/30',
+    badgeText: 'text-[#CE82FF]'
+  },
+  {
+    // Chương 4: Cam hổ phách (#FF9600 / viền #CC7800)
+    gradient: 'from-[#FF9600] to-[#CC7800]',
+    bannerBorder: 'border-[#A86300]',
+    buttonBg: 'bg-[#CC7800]/60 hover:bg-[#CC7800]',
+    buttonBorder: 'border-[#A86300]',
+    currentBtnBg: 'bg-[#FF9600] border-b-[8px] border-[#CC7800] hover:bg-[#FFAA2B] active:border-b-0 active:translate-y-[8px] shadow-xl',
+    currentRing: 'ring-8 ring-[#FF9600]/20 dark:ring-[#FF9600]/30',
+    badgeText: 'text-[#FF9600]'
+  },
+  {
+    // Chương 5: Hồng ngọc (#FF4B4B / viền #EA2B2B)
+    gradient: 'from-[#FF4B4B] to-[#EA2B2B]',
+    bannerBorder: 'border-[#C71B1B]',
+    buttonBg: 'bg-[#EA2B2B]/60 hover:bg-[#EA2B2B]',
+    buttonBorder: 'border-[#C71B1B]',
+    currentBtnBg: 'bg-[#FF4B4B] border-b-[8px] border-[#EA2B2B] hover:bg-[#FF6666] active:border-b-0 active:translate-y-[8px] shadow-xl',
+    currentRing: 'ring-8 ring-[#FF4B4B]/20 dark:ring-[#FF4B4B]/30',
+    badgeText: 'text-[#FF4B4B]'
+  }
+];
+
 export const SkillTree = () => {
   const { 
     currentLang, 
@@ -29,6 +83,9 @@ export const SkillTree = () => {
   const [loading, setLoading] = useState(true);
   const [activeTooltip, setActiveTooltip] = useState(null);
   const [activeGuidebook, setActiveGuidebook] = useState(null);
+  const [showPlacementBanner, setShowPlacementBanner] = useState(() => {
+    return !localStorage.getItem('lingo_placement_dismissed');
+  });
 
   const currentLanguage = currentLang;
 
@@ -78,8 +135,8 @@ export const SkillTree = () => {
       {/* Guidebook Modal */}
       {activeGuidebook && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md w-full border-2 border-b-6 border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+          <div className="bg-white dark:bg-[#1B2B32] rounded-3xl p-6 max-w-md w-full border-2 border-b-6 border-[#E5E5E5] dark:border-[#37464F] shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E5E5] dark:border-[#37464F] pb-3">
               <div className="flex items-center gap-3">
                 <div 
                   className="w-11 h-11 rounded-2xl bg-[#58CC02] text-white flex items-center justify-center shadow-md shrink-0 border-b-2 border-[#46A302]"
@@ -88,7 +145,7 @@ export const SkillTree = () => {
                 </div>
                 <div>
                   <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
-                    Sổ Tay Hướng Dẫn • Cửa {activeGuidebook.unit_number}
+                    Sổ Tay Hướng Dẫn • Chương {activeGuidebook.unit_number}
                   </span>
                   <h3 className="font-black text-slate-800 dark:text-white text-base">
                     {activeGuidebook.title}
@@ -114,7 +171,7 @@ export const SkillTree = () => {
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border-2 border-slate-200 dark:border-slate-700">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#131F24] border-2 border-[#E5E5E5] dark:border-[#37464F]">
                 <p className="font-black text-slate-700 dark:text-slate-200 text-xs uppercase mb-1">
                   💡 Bí quyết học hiệu quả
                 </p>
@@ -136,30 +193,6 @@ export const SkillTree = () => {
           </div>
         </div>
       )}
-
-      {/* Adaptive Placement Test Banner (AI Placement Test) */}
-      <div className="p-4 rounded-3xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border-2 border-b-4 border-amber-400/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm animate-in fade-in">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-500 text-white flex items-center justify-center font-black shrink-0 shadow-md text-xl border-b-2 border-amber-600">
-            ⚡
-          </div>
-          <div>
-            <h4 className="text-sm font-black text-slate-900 dark:text-white">
-              Bạn đã có nền tảng ngoại ngữ từ trước?
-            </h4>
-            <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5 font-medium">
-              Làm test 8 câu thích ứng để mở khóa nhảy cóc ngay tới cấp độ phù hợp!
-            </p>
-          </div>
-        </div>
-        <button
-          onClick={onOpenPlacementTest}
-          className="btn-3d-green text-xs py-2.5 px-4 rounded-2xl shrink-0 font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
-        >
-          <Sparkles className="w-4 h-4 fill-current" />
-          <span>Test Xếp Lớp</span>
-        </button>
-      </div>
 
       {/* Level Selector Dropdown Bar & Podcast Trigger */}
       <div className="duo-card p-4 rounded-3xl flex items-center justify-between shadow-sm">
@@ -205,7 +238,7 @@ export const SkillTree = () => {
                 const selected = levels.find((l) => l.id === e.target.value);
                 if (selected) setCurrentLevel(selected);
               }}
-              className="appearance-none bg-slate-100 dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-black text-xs py-2.5 pl-3.5 pr-8 rounded-2xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none"
+              className="appearance-none bg-slate-100 dark:bg-[#131F24] border-2 border-b-4 border-[#E5E5E5] dark:border-[#37464F] text-slate-800 dark:text-slate-200 font-black text-xs py-2.5 pl-3.5 pr-8 rounded-2xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none"
             >
               {levels.map((lvl) => (
                 <option key={lvl.id} value={lvl.id}>
@@ -218,6 +251,52 @@ export const SkillTree = () => {
         </div>
       </div>
 
+      {/* Thẻ Kiểm tra trình độ (Placement Test Banner) nằm ngay phía trên Chương 1 */}
+      {showPlacementBanner && (
+        <div className="relative p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-purple-600/95 via-indigo-600/95 to-sky-600/95 border-b-[5px] border-indigo-900 text-white shadow-lg flex items-center justify-between gap-4 transition-all animate-in fade-in">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center font-black text-2xl shrink-0 border border-white/30 shadow-inner">
+              ⚡
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-full">
+                  Học Vượt Cấp
+                </span>
+                <span className="text-xs text-white/80 font-bold hidden sm:inline">• Test 8 câu thích ứng</span>
+              </div>
+              <h3 className="text-sm sm:text-base font-black tracking-tight mt-0.5 truncate">
+                Bạn đã có nền tảng ngoại ngữ từ trước?
+              </h3>
+              <p className="text-xs text-white/90 font-medium line-clamp-1 mt-0.5">
+                Làm bài test nhanh để mở khóa ngay trình độ phù hợp!
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={onOpenPlacementTest}
+              className="btn-3d-green text-xs sm:text-sm py-2 px-3.5 sm:px-4 rounded-xl font-black uppercase tracking-wider flex items-center gap-1.5 shadow-md cursor-pointer whitespace-nowrap"
+            >
+              <Sparkles className="w-4 h-4 fill-current" />
+              <span>Test Ngay</span>
+            </button>
+            <button
+              onClick={() => {
+                sounds.playTap?.();
+                localStorage.setItem('lingo_placement_dismissed', 'true');
+                setShowPlacementBanner(false);
+              }}
+              className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/80 hover:text-white font-bold transition-all cursor-pointer"
+              title="Đóng thông báo"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div className="py-20 flex flex-col items-center justify-center text-slate-400 space-y-3">
           <div className="w-10 h-10 border-4 border-[#58CC02] border-t-transparent rounded-full animate-spin" />
@@ -229,22 +308,24 @@ export const SkillTree = () => {
           <p className="font-bold">Chưa có bài học nào trong cấp độ này.</p>
         </div>
       ) : (
-        /* Units & Lesson Tree */
-        units.map((unit) => {
+        /* Units & Lesson Tree with Multi-color Unit Themes */
+        units.map((unit, unitIdx) => {
+          const theme = UNIT_THEMES[unitIdx % UNIT_THEMES.length];
+
           return (
             <div key={unit.id} className="space-y-4 mb-10">
-              {/* 1. THANH TIÊU ĐỀ CHƯƠNG HỌC 3D (UNIT HEADER BANNER) */}
-              <div className="sticky top-16 lg:top-4 z-20 mb-8 rounded-2xl bg-gradient-to-r from-[#58CC02] to-[#46A302] border-b-[5px] border-[#388202] p-4 sm:p-5 text-white shadow-md flex items-center justify-between gap-3 transition-all">
+              {/* 1. THANH TIÊU ĐỀ CHƯƠNG HỌC 3D (Đổi màu động theo Chương) */}
+              <div className={`sticky top-16 lg:top-4 z-20 mb-8 rounded-2xl bg-gradient-to-r ${theme.gradient} border-b-[5px] ${theme.bannerBorder} p-4 sm:p-5 text-white shadow-md flex items-center justify-between gap-3 transition-all`}>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-lime-100">
+                  <div className="flex items-center gap-2 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white/90">
                     <span>{currentLanguage === 'zh' ? 'Lộ trình HSK Chuẩn Quốc Tế' : 'Lộ trình CEFR Quốc Tế'}</span>
                     <span>•</span>
-                    <span>{unit.levelBadge || (currentLevel?.code ? `Cấp độ ${currentLevel.code}` : `Phần ${unit.unit_number}`)}</span>
+                    <span>{unit.levelBadge || (currentLevel?.code ? `Cấp độ ${currentLevel.code}` : `Chương ${unit.unit_number}`)}</span>
                   </div>
                   <h2 className="text-lg sm:text-xl font-black tracking-tight truncate mt-0.5">
                     {unit.title}
                   </h2>
-                  <p className="text-xs sm:text-sm text-lime-50 font-medium line-clamp-1 mt-0.5">
+                  <p className="text-xs sm:text-sm text-white/90 font-medium line-clamp-1 mt-0.5">
                     {unit.description}
                   </p>
                 </div>
@@ -252,7 +333,7 @@ export const SkillTree = () => {
                 {/* Nút Sổ tay ngữ pháp / Từ vựng của Chương */}
                 <button
                   onClick={() => onOpenGuidebook && onOpenGuidebook(unit)}
-                  className="shrink-0 flex items-center gap-2 bg-[#46A302]/60 hover:bg-[#46A302] border-2 border-b-[4px] border-[#316800] active:border-b-2 active:translate-y-[2px] px-3.5 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm uppercase tracking-wide transition-all cursor-pointer"
+                  className={`shrink-0 flex items-center gap-2 ${theme.buttonBg} border-2 border-b-[4px] ${theme.buttonBorder} active:border-b-2 active:translate-y-[2px] px-3.5 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm uppercase tracking-wide transition-all cursor-pointer`}
                 >
                   <BookOpen className="w-5 h-5"/>
                   <span className="hidden sm:inline">Sổ tay</span>
@@ -277,22 +358,22 @@ export const SkillTree = () => {
                       style={{ transform: `translateX(${xOffset}px)` }}
                       className="relative flex flex-col items-center group"
                     >
-                      {/* Nhãn "BẮT ĐẦU" nhảy nhót phía trên bài đang học */}
+                      {/* Nhãn "BẮT ĐẦU" nhảy nhót phía trên bài đang học (theo màu theme của Chương) */}
                       {isCurrent && (
                         <div 
                           onClick={(e) => {
                             e.stopPropagation();
                             onSelectLesson(lesson);
                           }}
-                          className="animate-float-badge absolute -top-12 left-1/2 z-20 whitespace-nowrap bg-white dark:bg-slate-800 text-[#58CC02] font-black text-xs sm:text-sm uppercase tracking-wider px-3.5 py-1.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 shadow-md cursor-pointer"
+                          className={`animate-float-badge absolute -top-12 left-1/2 z-20 whitespace-nowrap bg-white dark:bg-[#1B2B32] ${theme.badgeText} font-black text-xs sm:text-sm uppercase tracking-wider px-3.5 py-1.5 rounded-xl border-2 border-[#E5E5E5] dark:border-[#37464F] shadow-md cursor-pointer`}
                         >
                           Bắt đầu
-                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-white dark:bg-slate-800 border-r-2 border-b-2 border-slate-200 dark:border-slate-700 rotate-45" />
+                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-white dark:bg-[#1B2B32] border-r-2 border-b-2 border-[#E5E5E5] dark:border-[#37464F] rotate-45" />
                         </div>
                       )}
 
                       {/* Vòng tròn Crown / Progress bao ngoài bài học hiện tại */}
-                      <div className={`relative p-2 rounded-full ${isCurrent ? 'ring-8 ring-[#58CC02]/20 dark:ring-[#58CC02]/30' : ''}`}>
+                      <div className={`relative p-2 rounded-full ${isCurrent ? theme.currentRing : ''}`}>
                         <button
                           onClick={() => !isLocked && onSelectLesson(lesson)}
                           disabled={isLocked}
@@ -300,7 +381,7 @@ export const SkillTree = () => {
                             isCompleted
                               ? 'bg-[#FFC800] border-b-[8px] border-[#E5A400] text-white hover:brightness-105 active:border-b-0 active:translate-y-[8px] shadow-lg'
                               : isCurrent
-                              ? 'bg-[#58CC02] border-b-[8px] border-[#46A302] text-white hover:bg-[#61E002] active:border-b-0 active:translate-y-[8px] shadow-xl'
+                              ? theme.currentBtnBg
                               : 'bg-[#E5E5E5] dark:bg-slate-800 border-b-[8px] border-[#B7B7B7] dark:border-slate-700 text-[#AFAFAF] dark:text-slate-500 cursor-not-allowed'
                           }`}
                         >
@@ -329,9 +410,9 @@ export const SkillTree = () => {
 
                       {/* Lesson Details Popup Speech Bubble */}
                       {activeTooltip === lesson.id && (
-                        <div className="absolute top-26 z-50 w-72 sm:w-80 bg-white dark:bg-slate-900 rounded-3xl p-5 shadow-2xl border-2 border-slate-200 dark:border-slate-700 animate-in fade-in zoom-in-95">
+                        <div className="absolute top-26 z-50 w-72 sm:w-80 bg-white dark:bg-[#1B2B32] rounded-3xl p-5 shadow-2xl border-2 border-[#E5E5E5] dark:border-[#37464F] animate-in fade-in zoom-in-95">
                           {/* Top pointing speech bubble arrow */}
-                          <div className="w-3.5 h-3.5 bg-white dark:bg-slate-900 border-t-2 border-l-2 border-slate-200 dark:border-slate-700 rotate-45 mx-auto -mt-6.5 mb-2 shadow-2xs" />
+                          <div className="w-3.5 h-3.5 bg-white dark:bg-[#1B2B32] border-t-2 border-l-2 border-[#E5E5E5] dark:border-[#37464F] rotate-45 mx-auto -mt-6.5 mb-2 shadow-2xs" />
 
                           <div className="flex items-start justify-between mb-2">
                             <h4 className="font-black text-base text-slate-900 dark:text-white leading-tight">
