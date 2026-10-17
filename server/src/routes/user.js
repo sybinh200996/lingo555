@@ -75,8 +75,8 @@ router.post('/heart-loss', (req, res) => {
   }
 });
 
-// POST /api/user/heart-refill
-router.post('/heart-refill', (req, res) => {
+// POST /api/user/heart-refill & alias /refill-hearts
+router.post(['/heart-refill', '/refill-hearts'], (req, res) => {
   try {
     const userId = req.body.userId || 'default_user';
     const user = db.prepare('SELECT gems, hearts, max_hearts FROM user_profiles WHERE id = ?').get(userId);
