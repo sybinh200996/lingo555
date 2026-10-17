@@ -88,7 +88,7 @@ export const AppProvider = ({ children }) => {
     loadInitialData();
 
     const handleOpenAiModal = () => {
-      setIsAiSettingsOpen(true);
+      setActiveModal('settings');
     };
     window.addEventListener('lingo555:open-ai-settings', handleOpenAiModal);
 
@@ -129,9 +129,10 @@ export const AppProvider = ({ children }) => {
       }
       if (profile && !profile.error) {
         setUserProfile(profile);
-        if (profile.current_language) {
-          setCurrentLang(profile.current_language);
-        }
+        // Default to 'zh' if not explicitly saved by the user
+        const savedLang = localStorage.getItem('lingo555_current_lang');
+        const targetLang = savedLang || profile.current_language || 'zh';
+        setCurrentLang(targetLang);
       }
     } catch (err) {
       console.warn('Error loading initial data:', err);
@@ -155,12 +156,12 @@ export const AppProvider = ({ children }) => {
   };
 
   const switchLanguage = async (newLang) => {
-    sounds.playTap();
+    sounds.playTap?.();
 
     // 1. Immediately reset active modal/lesson states so lessons do not carry over
     setActiveLessonId(null);
     setActiveWordModal(null);
-    setIsAiTutorOpen(false);
+    setActiveModal(null);
     setAiTutorPayload(null);
 
     // 2. Stop any active speech synthesis and recognition immediately
@@ -187,8 +188,16 @@ export const AppProvider = ({ children }) => {
       return updated;
     });
 
-    // 5. Instantly trigger levels loading for SkillTree
-    loadLevels(newLang);
+    // 5. Instantly load levels for the new language and set the first level
+    try {
+      const lvls = await api.getLevels(newLang);
+      setLevels(lvls);
+      if (lvls && lvls.length > 0) {
+        setCurrentLevel(lvls[0]);
+      }
+    } catch (err) {
+      console.warn('Error switching language levels:', err);
+    }
 
     // 6. Sync language preference to Backend Database
     try {

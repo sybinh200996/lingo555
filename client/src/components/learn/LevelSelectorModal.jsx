@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { sounds } from '../../services/soundEffects';
+import { getCurriculumLevels } from '../../data/curriculumData';
 import { Check, Compass, Sparkles, X, ChevronRight, Unlock, Lock } from 'lucide-react';
 
 export const LevelSelectorModal = ({ isOpen, onClose }) => {
@@ -17,7 +18,8 @@ export const LevelSelectorModal = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const currentLangLevels = levels.filter(l => l.language_id === currentLang);
+  const availableLevels = levels.filter(l => l.language_id === currentLang);
+  const currentLangLevels = availableLevels.length > 0 ? availableLevels : getCurriculumLevels(currentLang);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
