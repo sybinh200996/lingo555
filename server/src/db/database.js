@@ -24,6 +24,7 @@ const db = new Database(dbPath, {
 db.pragma('journal_mode = WAL');
 db.pragma('synchronous = NORMAL');
 db.pragma('cache_size = -64000'); // 64MB cache
+db.pragma('busy_timeout = 5000'); // Wait up to 5s instead of throwing SQLITE_BUSY error
 
 // Initialize schema
 const schemaSql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');

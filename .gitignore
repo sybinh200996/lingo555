@@ -29,6 +29,7 @@ deploy-vps.cjs
 # System files
 .DS_Store
 Thumbs.db
+*.zip
 .idea/
 .vscode/
 scratch/
