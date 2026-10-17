@@ -129,7 +129,12 @@ export const FloatingAITutor = () => {
   if (!isAiTutorOpen) return null;
 
   return (
-    <div className="fixed inset-0 sm:inset-auto sm:right-6 sm:bottom-6 z-50 sm:w-[440px] sm:max-h-[650px] sm:h-[85vh] h-full w-full bg-white dark:bg-slate-900 sm:rounded-3xl rounded-none shadow-2xl border-2 border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+    <>
+      <div
+        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[1px] transition-opacity"
+        onClick={closeAiTutor}
+      />
+      <div className="fixed inset-0 sm:inset-auto sm:right-6 sm:bottom-6 z-50 sm:w-[440px] sm:max-h-[650px] sm:h-[85vh] h-full w-full bg-white dark:bg-slate-900 sm:rounded-3xl rounded-none shadow-2xl border-2 border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
       {/* Top Header */}
       <div className="p-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 text-white flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2.5">
@@ -389,5 +394,6 @@ export const FloatingAITutor = () => {
         </form>
       )}
     </div>
+    </>
   );
 };

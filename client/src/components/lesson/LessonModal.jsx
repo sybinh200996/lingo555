@@ -110,14 +110,15 @@ export const LessonModal = () => {
 
     speech.startListening({
       lang: currentLang,
-      onResult: (transcript, confidence) => {
+      onResult: (transcript, confidence, alternatives) => {
         setIsSpeakingListening(false);
         const evalScore = speech.evaluatePronunciation(
           transcript,
           currentExercise.target_text,
           currentLang,
           confidence,
-          currentExercise.phonetic
+          currentExercise.phonetic,
+          alternatives
         );
         setSpeechResult(evalScore);
       },
@@ -426,52 +427,115 @@ export const LessonModal = () => {
                     </p>
                   </div>
 
-                  {/* Speech Evaluation Feedback (Green / Red per word) */}
+                  {/* Speech Evaluation Feedback with Deep Phonetic Diagnostics */}
                   {speechResult && (
-                    <div className="duo-card p-4 text-left space-y-3 animate-in fade-in">
+                    <div className="duo-card p-4 sm:p-5 text-left space-y-4 animate-in fade-in">
+                      {/* Score Header */}
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase text-slate-400">
-                          Kết quả nhận diện:
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-emerald-500" />
+                          <span className="text-xs font-black uppercase text-slate-500 dark:text-slate-400 tracking-wider">
+                            Đánh giá phát âm
+                          </span>
+                        </div>
                         <span
-                          className={`text-sm font-black px-2.5 py-0.5 rounded-full ${
+                          className={`text-xs font-black px-3 py-1 rounded-full border shadow-xs ${
                             speechResult.isPass
-                              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
-                              : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'
+                              ? 'bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-800'
+                              : 'bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-950/80 dark:text-rose-300 dark:border-rose-800'
                           }`}
                         >
                           {speechResult.score}% Chuẩn xác {speechResult.isPass ? '✓ Đạt' : '✗ Chưa đạt'}
                         </span>
                       </div>
 
-                      {/* What microphone heard */}
-                      <div className="text-xs bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <span className="text-slate-400 font-semibold">Micro thu được: </span>
-                        <strong className="text-slate-800 dark:text-slate-200 font-black">
-                          "{speechResult.spoken}"
-                        </strong>
-                      </div>
-
-                      {/* Word by word breakdown with Green/Red highlights */}
-                      <div className="space-y-1">
-                        <span className="text-[11px] font-bold text-slate-400 uppercase">Đối chiếu từng âm:</span>
-                        <div className="flex flex-wrap gap-2 text-xl font-black pt-1">
-                          {speechResult.words.map((item, i) => (
-                            <span
-                              key={i}
-                              className={`px-2.5 py-1 rounded-lg border-2 ${
-                                item.correct
-                                  ? 'bg-emerald-100 text-emerald-700 border-emerald-400 dark:bg-emerald-950/60 dark:text-emerald-300'
-                                  : 'bg-rose-100 text-rose-700 border-rose-400 dark:bg-rose-950/60 dark:text-rose-300'
-                              }`}
-                            >
-                              {item.word}
-                            </span>
-                          ))}
+                      {/* Microphone Comparison Card */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div className="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-2xl border border-slate-200 dark:border-slate-700/80">
+                          <span className="text-slate-400 font-bold block mb-0.5">Micro thu được:</span>
+                          <strong className="text-slate-800 dark:text-slate-100 font-black text-sm">
+                            "{speechResult.spoken}"
+                          </strong>
+                        </div>
+                        <div className="bg-emerald-50/60 dark:bg-emerald-950/30 p-3 rounded-2xl border border-emerald-200 dark:border-emerald-800/60">
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold block mb-0.5">Mục tiêu chuẩn:</span>
+                          <strong className="text-emerald-800 dark:text-emerald-200 font-black text-sm">
+                            "{currentExercise.target_text}"
+                          </strong>
                         </div>
                       </div>
 
-                      <p className={`text-xs font-bold ${speechResult.isPass ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'}`}>
+                      {/* Word by word breakdown with Interactive Chips */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">
+                            Chi tiết từng âm vị (Bấm để nghe):
+                          </span>
+                          <div className="flex items-center gap-2 text-[10px] font-bold">
+                            <span className="flex items-center gap-1 text-emerald-600"><span className="w-2 h-2 rounded-full bg-emerald-500" />Chuẩn</span>
+                            <span className="flex items-center gap-1 text-amber-600"><span className="w-2 h-2 rounded-full bg-amber-500" />Gần đúng</span>
+                            <span className="flex items-center gap-1 text-rose-600"><span className="w-2 h-2 rounded-full bg-rose-500" />Cần sửa</span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {speechResult.words.map((item, i) => {
+                            const isCorrect = item.status === 'correct';
+                            const isNear = item.status === 'near';
+                            return (
+                              <button
+                                key={i}
+                                type="button"
+                                onClick={() => speech.speak(item.word, currentLang, 0.8)}
+                                title={item.note || 'Bấm để nghe phát âm'}
+                                className={`px-3 py-1.5 rounded-xl border-2 font-black text-base flex flex-col items-center gap-0.5 transition-all hover:scale-105 active:scale-95 cursor-pointer ${
+                                  isCorrect
+                                    ? 'bg-emerald-100 text-emerald-800 border-emerald-400 dark:bg-emerald-950/80 dark:text-emerald-300'
+                                    : isNear
+                                    ? 'bg-amber-100 text-amber-800 border-amber-400 dark:bg-amber-950/80 dark:text-amber-300'
+                                    : 'bg-rose-100 text-rose-800 border-rose-400 dark:bg-rose-950/80 dark:text-rose-300'
+                                }`}
+                              >
+                                <span>{item.word}</span>
+                                <span className="text-[9px] font-semibold opacity-80 leading-none">
+                                  {item.note}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Deep Phonetic Diagnostics & Coach Advice Panel */}
+                      {speechResult.critique && (
+                        <div className="p-3.5 rounded-2xl bg-gradient-to-r from-sky-50 to-indigo-50 dark:from-sky-950/40 dark:to-indigo-950/40 border border-sky-200 dark:border-sky-800/60 text-xs space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Bot className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                            <span className="font-black text-sky-900 dark:text-sky-200 uppercase tracking-wider">
+                              Phân Tích Chuyên Sâu ({speechResult.critique.category})
+                            </span>
+                          </div>
+
+                          <p className="text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
+                            {speechResult.critique.observation}
+                          </p>
+
+                          <div className="pt-1 border-t border-sky-200/60 dark:border-sky-800/60 text-emerald-800 dark:text-emerald-300 font-bold flex items-start gap-1.5">
+                            <span className="shrink-0">💡</span>
+                            <span>Lời khuyên khẩu hình: {speechResult.critique.advice}</span>
+                          </div>
+
+                          {speechResult.diagnostics && speechResult.diagnostics.length > 0 && (
+                            <ul className="list-disc pl-4 space-y-0.5 text-[11px] text-slate-600 dark:text-slate-400 pt-1">
+                              {speechResult.diagnostics.map((d, dIdx) => (
+                                <li key={dIdx}>{d}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      )}
+
+                      <p className={`text-xs font-black ${speechResult.isPass ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                         {speechResult.feedback}
                       </p>
                     </div>

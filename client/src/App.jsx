@@ -12,7 +12,10 @@ import { AISettingsModal } from './components/ai/AISettingsModal';
 import { Bot } from 'lucide-react';
 
 function MainContent() {
-  const { activeTab, isAiTutorOpen, openAiTutor } = useApp();
+  const { activeTab, isAiTutorOpen, openAiTutor, activeLessonId } = useApp();
+
+  // Hide global floating button when in a lesson or in the AI Speak tab
+  const showFab = !isAiTutorOpen && !activeLessonId && activeTab !== 'speak';
 
   return (
     <>
@@ -27,19 +30,22 @@ function MainContent() {
       <AISettingsModal />
       <FloatingAITutor />
 
-      {/* Global Floating AI Tutor Trigger FAB (when tutor is closed) */}
-      {!isAiTutorOpen && (
+      {/* Global Sleek Floating AI Tutor Trigger (Neatly pinned at bottom-right) */}
+      {showFab && (
         <button
           onClick={() => openAiTutor(null)}
-          className="fixed bottom-20 lg:bottom-6 right-4 sm:right-6 z-40 duo-btn duo-btn-green px-4 py-3 rounded-full flex items-center gap-2.5 shadow-xl hover:scale-105 active:scale-95 transition-all text-xs font-black uppercase tracking-wider"
+          className="fixed bottom-20 lg:bottom-6 right-3.5 sm:right-6 z-30 duo-btn duo-btn-green w-12 h-12 lg:w-auto lg:h-auto lg:px-4 lg:py-3 rounded-full flex items-center justify-center gap-2 shadow-2xl hover:scale-105 active:scale-95 transition-all group"
           title="Hỏi Gia Sư AI 24/7"
+          aria-label="Hỏi Gia Sư AI"
         >
-          <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-            <Bot className="w-4 h-4 text-white" />
+          <div className="relative flex items-center justify-center">
+            <Bot className="w-6 h-6 text-white group-hover:rotate-12 transition-transform" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-300 animate-ping" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-white" />
           </div>
-          <span className="hidden sm:inline">Gia Sư AI 24/7</span>
-          <span className="sm:hidden">Hỏi AI</span>
-          <span className="w-2 h-2 rounded-full bg-emerald-300 animate-ping" />
+          <span className="hidden lg:inline text-xs font-black uppercase tracking-wider text-white">
+            Gia Sư AI 24/7
+          </span>
         </button>
       )}
     </>
