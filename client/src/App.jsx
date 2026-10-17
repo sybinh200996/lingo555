@@ -15,6 +15,7 @@ import { PodcastPlayerModal } from './components/podcast/PodcastPlayerModal';
 import { PlacementTestModal } from './components/placement/PlacementTestModal';
 import { LevelSelectorModal } from './components/learn/LevelSelectorModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { WritingModal } from './components/writing/WritingModal';
 
 function MainContent() {
   const { 
@@ -32,7 +33,11 @@ function MainContent() {
     closePlacement,
     isLevelModalOpen,
     closeLevelModal,
-    setCurrentLevel
+    setCurrentLevel,
+    isWritingModalOpen,
+    writingWord,
+    closeWritingModal,
+    currentLang,
   } = useApp();
 
   return (
@@ -77,6 +82,14 @@ function MainContent() {
       </ErrorBoundary>
       <ErrorBoundary title="Lỗi Chọn Lộ Trình">
         <LevelSelectorModal isOpen={isLevelModalOpen} onClose={closeLevelModal} />
+      </ErrorBoundary>
+      <ErrorBoundary title="Lỗi Tập Viết">
+        <WritingModal
+          isOpen={isWritingModalOpen}
+          word={writingWord}
+          lang={currentLang}
+          onClose={closeWritingModal}
+        />
       </ErrorBoundary>
     </>
   );

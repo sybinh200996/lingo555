@@ -31,6 +31,7 @@ export const AppProvider = ({ children }) => {
   // activeModal: 'lesson' | 'aiTutor' | 'shop' | 'quests' | 'settings' | 'placementTest' | 'levelSelector' | 'podcast' | 'word' | null
   const [activeModal, setActiveModal] = useState(null);
   const [aiTutorPayload, setAiTutorPayload] = useState(null);
+  const [writingWord, setWritingWord] = useState(null); // { word, phonetic, meaning } or string
   const [hasAiKey, setHasAiKey] = useState(false);
 
   // Derived modal booleans ensuring only 1 modal is ever open simultaneously
@@ -41,6 +42,7 @@ export const AppProvider = ({ children }) => {
   const isPodcastOpen = activeModal === 'podcast';
   const isPlacementOpen = activeModal === 'placementTest';
   const isLevelModalOpen = activeModal === 'levelSelector';
+  const isWritingModalOpen = activeModal === 'writing';
 
   // Free learning mode: Allows instant access to all lessons across all levels
   const [isFreeMode, setIsFreeMode] = useState(() => {
@@ -338,6 +340,18 @@ export const AppProvider = ({ children }) => {
     setActiveModal(prev => prev === 'levelSelector' ? null : prev);
   };
 
+  const openWritingModal = (wordOrObj) => {
+    sounds.playTap?.();
+    setWritingWord(wordOrObj);
+    setActiveModal('writing');
+  };
+
+  const closeWritingModal = () => {
+    sounds.playTap?.();
+    setWritingWord(null);
+    setActiveModal(prev => prev === 'writing' ? null : prev);
+  };
+
   const closeAllModals = () => {
     sounds.playTap?.();
     setActiveModal(null);
@@ -404,6 +418,10 @@ export const AppProvider = ({ children }) => {
         isLevelModalOpen,
         openLevelModal,
         closeLevelModal,
+        writingWord,
+        isWritingModalOpen,
+        openWritingModal,
+        closeWritingModal,
         activeModal,
         setActiveModal,
         closeAllModals

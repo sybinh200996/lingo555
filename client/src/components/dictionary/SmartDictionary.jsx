@@ -15,11 +15,12 @@ import {
   ChevronRight,
   Database,
   Layers,
-  Sparkles
+  Sparkles,
+  PenLine
 } from 'lucide-react';
 
 export const SmartDictionary = () => {
-  const { currentLang, userProfile } = useApp();
+  const { currentLang, userProfile, openWritingModal } = useApp();
 
   const [query, setQuery] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
@@ -301,6 +302,17 @@ export const SmartDictionary = () => {
                     title="Nghe phát âm"
                   >
                     <Volume2 className="w-5 h-5" />
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      sounds.playTap();
+                      openWritingModal(word);
+                    }}
+                    className="p-2 text-slate-400 hover:text-emerald-600 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors"
+                    title={currentLang === 'zh' ? 'Tập viết thứ tự nét bút' : 'Luyện spelling chính tả'}
+                  >
+                    <PenLine className="w-5 h-5" />
                   </button>
 
                   <button

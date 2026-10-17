@@ -12,11 +12,12 @@ import {
   Sparkles, 
   Share2, 
   Tag, 
-  Info 
+  Info,
+  PenLine
 } from 'lucide-react';
 
 export const WordModal = ({ word, onClose, onToggleNotebook, isDifficult }) => {
-  const { currentLang } = useApp();
+  const { currentLang, openWritingModal } = useApp();
 
   if (!word) return null;
 
@@ -69,6 +70,17 @@ export const WordModal = ({ word, onClose, onToggleNotebook, isDifficult }) => {
               title="Phát âm"
             >
               <Volume2 className="w-6 h-6 text-white" />
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playTap();
+                openWritingModal(word);
+              }}
+              className="p-3.5 rounded-2xl border-2 bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-200 dark:hover:bg-emerald-900/60 transition-all"
+              title={currentLang === 'zh' ? 'Tập viết thứ tự nét bút' : 'Luyện spelling chính tả'}
+            >
+              <PenLine className="w-6 h-6" />
             </button>
 
             <button
