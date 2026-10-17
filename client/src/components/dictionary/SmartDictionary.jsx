@@ -25,7 +25,7 @@ export const SmartDictionary = () => {
   const [selectedLevel, setSelectedLevel] = useState('');
   const [page, setPage] = useState(1);
   const [results, setResults] = useState([]);
-  const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, totalPages: 1 });
+  const [pagination, setPagination] = useState({ page: 1, limit: 30, total: 0, totalPages: 1 });
   const [loading, setLoading] = useState(false);
   const [dbStats, setDbStats] = useState({ total: 0 });
   const [activeWord, setActiveWord] = useState(null);
@@ -33,8 +33,8 @@ export const SmartDictionary = () => {
 
   const debounceTimerRef = useRef(null);
 
-  const zhLevels = ['Tất cả', 'PINYIN', 'HSK1', 'HSK2', 'HSK3', 'HSK4', 'HSK5', 'HSK6'];
-  const enLevels = ['Tất cả', 'IPA', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+  const zhLevels = ['Tất cả', 'Đã lưu SRS', 'PINYIN', 'HSK1', 'HSK2', 'HSK3', 'HSK4', 'HSK5', 'HSK6'];
+  const enLevels = ['Tất cả', 'Đã lưu SRS', 'IPA', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
   const activeLevelsList = currentLang === 'zh' ? zhLevels : enLevels;
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export const SmartDictionary = () => {
   }, [currentLang]);
 
   useEffect(() => {
-    // Debounce search
+    // Debounce search 250ms
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
@@ -79,16 +79,37 @@ export const SmartDictionary = () => {
   const fetchWords = async (q, lvl, p) => {
     setLoading(true);
     try {
-      const cleanLvl = lvl === 'Tất cả' ? '' : lvl;
-      const res = await api.searchDictionary({
-        q,
-        lang: currentLang,
-        level: cleanLvl,
-        page: p,
-        limit: 20
-      });
-      setResults(res.items || []);
-      setPagination(res.pagination || { page: 1, limit: 20, total: 0, totalPages: 1 });
+      if (lvl === 'Đã lưu SRS') {
+        const notebook = await api.getSRSNotebook(currentLang, userProfile.id);
+        const filtered = notebook.filter(item => {
+          if (!q) return true;
+          const search = q.toLowerCase();
+          return (
+            item.word?.toLowerCase().includes(search) ||
+            item.meaning?.toLowerCase().includes(search) ||
+            item.phonetic?.toLowerCase().includes(search) ||
+            item.han_viet?.toLowerCase().includes(search)
+          );
+        });
+        const limit = 30;
+        const total = filtered.length;
+        const totalPages = Math.ceil(total / limit) || 1;
+        const start = (p - 1) * limit;
+        const items = filtered.slice(start, start + limit);
+        setResults(items);
+        setPagination({ page: p, limit, total, totalPages });
+      } else {
+        const cleanLvl = lvl === 'Tất cả' ? '' : lvl;
+        const res = await api.searchDictionary({
+          q,
+          lang: currentLang,
+          level: cleanLvl,
+          page: p,
+          limit: 30
+        });
+        setResults(res.items || []);
+        setPagination(res.pagination || { page: p, limit: 30, total: 0, totalPages: 1 });
+      }
     } catch (e) {
       console.warn('Search error:', e);
     } finally {
@@ -125,12 +146,45 @@ export const SmartDictionary = () => {
             </p>
           </div>
 
-          <div className="text-right">
-            <span className="text-xs font-bold text-slate-400">Tổng dữ liệu:</span>
-            <div className="text-base font-black text-emerald-600 dark:text-emerald-400">
-              {dbStats.total > 0 ? `${dbStats.total.toLocaleString()} từ vựng` : 'Đang tải...'}
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <span className="text-xs font-bold text-slate-400">Tổng dữ liệu:</span>
+              <div className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                {dbStats.total > 0 ? `${dbStats.total.toLocaleString()} từ vựng` : 'Đang tải...'}
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Specialized Domain Vocabulary Quick Seeder Bar */}
+        <div className="flex items-center gap-2 overflow-x-auto text-xs font-bold text-slate-500 py-1 border-t border-slate-100 dark:border-slate-800 scrollbar-none">
+          <span className="shrink-0 flex items-center gap-1 text-slate-400">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <span>Nạp chuyên ngành:</span>
+          </span>
+          {[
+            { id: 'business', label: '💼 Thương mại' },
+            { id: 'travel', label: '✈️ Du lịch' },
+            { id: 'tech', label: '💻 Công nghệ & AI' }
+          ].map(pack => (
+            <button
+              key={pack.id}
+              onClick={async () => {
+                sounds.playTap();
+                try {
+                  const res = await api.seedDomainVocab(currentLang, pack.id);
+                  if (res.success) {
+                    sounds.playCorrect();
+                    loadStats();
+                    fetchWords(query, selectedLevel, page);
+                  }
+                } catch (e) {}
+              }}
+              className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-600 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-all"
+            >
+              {pack.label}
+            </button>
+          ))}
         </div>
 
         {/* Search Input Box */}

@@ -177,5 +177,14 @@ export const api = {
       body: formData
     });
     return res.json();
+  },
+
+  seedDomainVocab: async (language_id, domain) => {
+    const res = await fetch(`${API_BASE}/importer/seed-domain-vocab`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ language_id, domain })
+    });
+    return res.json();
   }
 };

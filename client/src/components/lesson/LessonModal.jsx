@@ -747,6 +747,18 @@ export const LessonModal = () => {
                         )}
                       </div>
 
+                      {/* Dynamic Audio Waveform Animation while listening */}
+                      {isSpeakingListening && (
+                        <div className="flex items-center justify-center gap-1.5 py-1">
+                          <span className="w-1.5 h-4 bg-rose-500 rounded-full animate-bounce" style={{ animationDelay: '0ms', animationDuration: '600ms' }} />
+                          <span className="w-1.5 h-8 bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '150ms', animationDuration: '600ms' }} />
+                          <span className="w-1.5 h-10 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '300ms', animationDuration: '600ms' }} />
+                          <span className="w-1.5 h-6 bg-sky-500 rounded-full animate-bounce" style={{ animationDelay: '200ms', animationDuration: '600ms' }} />
+                          <span className="w-1.5 h-9 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '400ms', animationDuration: '600ms' }} />
+                          <span className="w-1.5 h-5 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '100ms', animationDuration: '600ms' }} />
+                        </div>
+                      )}
+
                       <p className="text-xs font-bold text-slate-400 mt-1">
                         {isSpeakingListening
                           ? 'Đang lắng nghe... Đọc thoải mái cả câu, không bị giới hạn thời gian gấp.'

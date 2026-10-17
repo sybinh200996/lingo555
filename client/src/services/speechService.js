@@ -737,7 +737,7 @@ class SpeechService {
     const tokenAvg = targetWords.length > 0 ? Math.round(totalScore / targetWords.length) : 0;
     const sentenceSim = Math.round(this.similarity(normTarget, normSpoken) * 100);
     const finalScore = Math.max(0, Math.min(100, Math.max(tokenAvg, sentenceSim)));
-    const isPass = finalScore >= 60;
+    const isPass = finalScore >= 80;
 
     // Linguistic diagnostic advice
     let advice = 'Hãy chú ý bật rõ các phụ âm đuôi (ending sounds: /s/, /t/, /d/) và giữ độ dài nguyên âm.';

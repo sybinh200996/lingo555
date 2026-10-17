@@ -328,4 +328,93 @@ router.post('/generate-sample-5000', (req, res) => {
   }
 });
 
+// POST /api/importer/seed-domain-vocab (Specialized Domain Vocabulary Packages)
+router.post('/seed-domain-vocab', (req, res) => {
+  try {
+    const { language_id = 'zh', domain = 'business' } = req.body;
+
+    const DOMAIN_DATA = {
+      zh: {
+        business: [
+          { word: '合同', traditional: '合同', phonetic: 'hétong', han_viet: 'hợp đồng', meaning: 'Hợp đồng kinh tế', level: 'HSK4', category: 'Thương mại', example_target: '双方已经正式签署了商业合同。', example_phonetic: 'Shuāngfāng yǐjīng zhèngshì qiānshǔle shāngyè hétong.', example_meaning: 'Hai bên đã chính thức ký kết hợp đồng thương mại.' },
+          { word: '投资', traditional: '投資', phonetic: 'tóuzī', han_viet: 'đầu tư', meaning: 'Đầu tư vốn', level: 'HSK4', category: 'Thương mại', example_target: '这项投资带来了丰厚的回报。', example_phonetic: 'Zhè xiàng tóuzī dài láile fēnghòu de huíbào.', example_meaning: 'Dự án đầu tư này mang lại lợi nhuận dồi dào.' },
+          { word: '市场', traditional: '市場', phonetic: 'shìchǎng', han_viet: 'thị trường', meaning: 'Thị trường buôn bán', level: 'HSK3', category: 'Thương mại', example_target: '开拓海外市场至关重要。', example_phonetic: 'Kāituò hǎiwài shìchǎng zhì guān zhòngyào.', example_meaning: 'Mở rộng thị trường nước ngoài là vô cùng quan trọng.' },
+          { word: '谈判', traditional: '談判', phonetic: 'tánpàn', han_viet: 'đàm phán', meaning: 'Đàm phán thương lượng', level: 'HSK5', category: 'Thương mại', example_target: '谈判进行得非常顺利。', example_phonetic: 'Tánpàn jìnxíng de fēicháng shùnlì.', example_meaning: 'Cuộc đàm phán diễn ra vô cùng thuận lợi.' },
+          { word: '利润', traditional: '利潤', phonetic: 'lìrùn', han_viet: 'lợi nhuận', meaning: 'Lợi nhuận ròng', level: 'HSK5', category: 'Thương mại', example_target: '公司的净利润同比增长了百分之二十。', example_phonetic: 'Gōngsī de jìnglìrùn tóngbǐ zēngzhǎngle bǎifēnzhī èrshí.', example_meaning: 'Lợi nhuận ròng của công ty tăng 20% so với cùng kỳ.' }
+        ],
+        travel: [
+          { word: '护照', traditional: '護照', phonetic: 'hùzhào', han_viet: 'hộ chiếu', meaning: 'Hộ chiếu xuất nhập cảnh', level: 'HSK3', category: 'Du lịch', example_target: '请出示您的护照和登机牌。', example_phonetic: 'Qǐng chūshì nín de hùzhào hé dēng jī pái.', example_meaning: 'Xin vui lòng xuất trình hộ chiếu và thẻ lên máy bay của bạn.' },
+          { word: '预订', traditional: '預訂', phonetic: 'yùdìng', han_viet: 'dự đính', meaning: 'Đặt trước (phòng, vé)', level: 'HSK4', category: 'Du lịch', example_target: '我已经预订了一间双人房。', example_phonetic: 'Wǒ yǐjīng yùdìngle yī jiān shuāngrén fáng.', example_meaning: 'Tôi đã đặt trước một phòng đôi.' },
+          { word: '行李', traditional: '行李', phonetic: 'xíngli', han_viet: 'hành lý', meaning: 'Hành lý mang theo', level: 'HSK3', category: 'Du lịch', example_target: '托运行李不能超过二十公斤。', example_phonetic: 'Tuōyùn xíngli bùnéng chāoguò èrshí gōngjīn.', example_meaning: 'Hành lý ký gửi không được vượt quá 20kg.' },
+          { word: '风景', traditional: '風景', phonetic: 'fēngjǐng', han_viet: 'phong cảnh', meaning: 'Phong cảnh danh lam', level: 'HSK3', category: 'Du lịch', example_target: '这里的自然风景美不胜收。', example_phonetic: 'Zhèlǐ de zìrán fēngjǐng měibùshèngshōu.', example_meaning: 'Phong cảnh thiên nhiên ở đây đẹp không sao tả xiết.' }
+        ],
+        tech: [
+          { word: '人工智能', traditional: '人工智能', phonetic: 'réngōng zhìnéng', han_viet: 'nhân công trí năng', meaning: 'Trí tuệ nhân tạo (AI)', level: 'HSK5', category: 'Công nghệ', example_target: '人工智能正在改变各行各业。', example_phonetic: 'Réngōng zhìnéng zhèngzài gǎibiàn gè háng gè yè.', example_meaning: 'Trí tuệ nhân tạo đang làm thay đổi mọi ngành nghề.' },
+          { word: '算法', traditional: '算法', phonetic: 'suànfǎ', han_viet: 'toán pháp', meaning: 'Thuật toán lập trình', level: 'HSK5', category: 'Công nghệ', example_target: '该算法大幅提升了搜索速度。', example_phonetic: 'Gāi suànfǎ dàfú tíshēngle sōusuǒ sùdù.', example_meaning: 'Thuật toán này đã nâng cao đáng kể tốc độ tìm kiếm.' },
+          { word: '数据', traditional: '數據', phonetic: 'shùjù', han_viet: 'số cớ', meaning: 'Dữ liệu số', level: 'HSK4', category: 'Công nghệ', example_target: '我们需要对这些数据进行深入分析。', example_phonetic: 'Wǒmen xūyào duì zhèxiē shùjù jìnxíng shēnrù fēnxī.', example_meaning: 'Chúng ta cần phân tích sâu những dữ liệu này.' }
+        ]
+      },
+      en: {
+        business: [
+          { word: 'revenue', phonetic: '/ˈrev.ən.juː/', meaning: 'Doanh thu, tổng thu nhập', level: 'B2', category: 'Business', example_target: 'The company generated substantial revenue this quarter.', example_meaning: 'Công ty đã tạo ra doanh thu đáng kể trong quý này.' },
+          { word: 'negotiate', phonetic: '/nəˈɡoʊ.ʃi.eɪt/', meaning: 'Đàm phán, thương lượng', level: 'B2', category: 'Business', example_target: 'We managed to negotiate a favorable deal.', example_meaning: 'Chúng tôi đã đàm phán thành công một thỏa thuận có lợi.' },
+          { word: 'stakeholder', phonetic: '/ˈsteɪkˌhoʊl.dər/', meaning: 'Các bên liên quan, cổ đông', level: 'C1', category: 'Business', example_target: 'All stakeholders approved the merger proposal.', example_meaning: 'Tất cả các bên liên quan đã phê duyệt đề xuất sáp nhập.' }
+        ],
+        travel: [
+          { word: 'itinerary', phonetic: '/aɪˈtɪn.ə.rer.i/', meaning: 'Lịch trình chuyến đi chi tiết', level: 'B2', category: 'Travel', example_target: 'We followed a tight itinerary across Europe.', example_meaning: 'Chúng tôi tuân theo một lịch trình dày đặc khắp châu Âu.' },
+          { word: 'boarding pass', phonetic: '/ˈbɔːr.dɪŋ ˌpæs/', meaning: 'Thẻ lên máy bay', level: 'A2', category: 'Travel', example_target: 'Have your passport and boarding pass ready at the gate.', example_meaning: 'Hãy chuẩn bị sẵn hộ chiếu và thẻ lên máy bay tại cửa khởi hành.' }
+        ],
+        tech: [
+          { word: 'algorithm', phonetic: '/ˈæl.ɡə.rɪ.ðəm/', meaning: 'Thuật toán máy tính', level: 'B2', category: 'Technology', example_target: 'The machine learning algorithm learns patterns from data.', example_meaning: 'Thuật toán máy học tiếp thu các mẫu hình từ dữ liệu.' },
+          { word: 'cloud computing', phonetic: '/ˌklaʊd kəmˈpjuː.tɪŋ/', meaning: 'Điện toán đám mây', level: 'B1', category: 'Technology', example_target: 'Cloud computing reduces infrastructure maintenance costs.', example_meaning: 'Điện toán đám mây giúp giảm chi phí bảo trì cơ sở hạ tầng.' }
+        ]
+      }
+    };
+
+    const targetList = DOMAIN_DATA[language_id]?.[domain] || DOMAIN_DATA[language_id]?.['business'] || [];
+
+    const insertStmt = db.prepare(`
+      INSERT INTO vocabularies (
+        language_id, word, traditional, phonetic, han_viet, meaning, 
+        part_of_speech, level, category, radical, stroke_count, 
+        example_target, example_phonetic, example_meaning, tags
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    const insertTx = db.transaction(() => {
+      let count = 0;
+      for (const item of targetList) {
+        insertStmt.run(
+          language_id,
+          item.word,
+          item.traditional || item.word,
+          item.phonetic || '',
+          item.han_viet || '',
+          item.meaning,
+          'từ vựng chuyên ngành',
+          item.level,
+          item.category,
+          '',
+          0,
+          item.example_target || '',
+          item.example_phonetic || '',
+          item.example_meaning || '',
+          `specialized_${domain}`
+        );
+        count++;
+      }
+      return count;
+    });
+
+    const inserted = insertTx();
+    res.json({
+      success: true,
+      message: `Đã nạp thành công bộ từ vựng chuyên ngành "${domain}" (${inserted} từ)!`,
+      count: inserted
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
