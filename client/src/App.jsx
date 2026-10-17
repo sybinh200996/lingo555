@@ -83,11 +83,11 @@ function MainContent() {
         <LevelSelectorModal isOpen={isLevelModalOpen} onClose={closeLevelModal} />
       </ErrorBoundary>
 
-      {/* Global Sleek Floating AI Tutor Trigger (Neatly pinned at bottom-right) */}
+      {/* Global Sleek Floating AI Tutor Trigger (Desktop only, never overlaps on mobile) */}
       {showFab && (
         <button
           onClick={() => openAiTutor(null)}
-          className="fixed bottom-20 lg:bottom-6 right-3.5 sm:right-6 z-30 duo-btn duo-btn-green w-12 h-12 lg:w-auto lg:h-auto lg:px-4 lg:py-3 rounded-full flex items-center justify-center gap-2 shadow-2xl hover:scale-105 active:scale-95 transition-all group"
+          className="hidden lg:flex fixed bottom-6 right-6 z-30 duo-btn duo-btn-green px-4 py-3 rounded-full items-center justify-center gap-2 shadow-2xl hover:scale-105 active:scale-95 transition-all group cursor-pointer"
           title="Hỏi Gia Sư AI 24/7"
           aria-label="Hỏi Gia Sư AI"
         >

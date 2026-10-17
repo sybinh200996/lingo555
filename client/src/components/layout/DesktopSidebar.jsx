@@ -31,7 +31,7 @@ export const DesktopSidebar = () => {
   ];
 
   return (
-    <aside className="hidden lg:flex flex-col w-[256px] sticky top-0 h-[100dvh] border-r-2 border-[#E5E5E5] dark:border-[#37464F] px-4 py-6 justify-between bg-white dark:bg-[#131F24] z-20 shrink-0 select-none">
+    <aside className="hidden lg:flex lg:w-[240px] xl:w-[260px] shrink-0 h-full flex-col justify-between bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 z-20 overflow-y-auto select-none">
       <div>
         {/* Duolingo Brand Logo */}
         <div className="flex items-center gap-3 px-2 mb-8">

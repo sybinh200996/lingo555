@@ -21,9 +21,9 @@ export const BottomNav = () => {
 
   return (
     <nav 
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-[#131F24]/95 backdrop-blur-md border-t-2 border-[#E5E5E5] dark:border-[#37464F] pb-[env(safe-area-inset-bottom)] select-none"
+      className="lg:hidden shrink-0 w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-1 py-1 pb-[max(0.375rem,env(safe-area-inset-bottom))] z-20 select-none shadow-sm"
     >
-      <div className="grid grid-cols-5 h-16 items-center px-1 max-w-lg mx-auto">
+      <div className="grid grid-cols-5 h-14 items-center px-1 max-w-md mx-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
