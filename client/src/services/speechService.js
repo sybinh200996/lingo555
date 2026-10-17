@@ -190,6 +190,22 @@ class SpeechService {
     return dp[m][n];
   }
 
+  /**
+   * Calculate normalized string similarity percentage (0.0 to 1.0)
+   * based on Levenshtein distance
+   */
+  similarity(a, b) {
+    if (!a && !b) return 1.0;
+    if (!a || !b) return 0.0;
+    const s1 = (a || '').toLowerCase().trim();
+    const s2 = (b || '').toLowerCase().trim();
+    if (s1 === s2) return 1.0;
+    const dist = this.levenshteinDistance(s1, s2);
+    const maxLen = Math.max(s1.length, s2.length);
+    if (maxLen === 0) return 1.0;
+    return Math.max(0, 1 - (dist / maxLen));
+  }
+
   cleanText(str) {
     if (!str) return '';
     return str
@@ -325,24 +341,24 @@ class SpeechService {
 
       for (let i = 0; i < targetChars.length; i++) {
         const tc = targetChars[i];
-        let status = 'missed';
+        let status = 'wrong';
         let score = 0;
-        let note = 'Chưa phát âm chữ này';
+        let note = 'Đọc sai / thiếu';
 
         // Direct character match
         if (spokenChars.includes(tc)) {
           status = 'correct';
           score = 100;
-          note = 'Phát âm chuẩn xác';
+          note = 'Đúng 100%';
         } else if (allSpokenCandidates.some(c => c.includes(tc))) {
           status = 'correct';
           score = 95;
-          note = 'Nhận diện tốt qua âm học';
+          note = 'Đúng 95%';
         } else {
           // Check phonetic homophone in alternatives
-          status = 'missed';
+          status = 'wrong';
           score = 0;
-          note = `Cần lưu ý chữ "${tc}"`;
+          note = 'Đọc sai / thiếu';
           diagnostics.push(`Chữ "${tc}" chưa rõ âm hoặc sai thanh điệu.`);
         }
 
@@ -356,14 +372,15 @@ class SpeechService {
         totalScore += score;
       }
 
-      const rawScore = targetChars.length > 0 ? Math.round(totalScore / targetChars.length) : 0;
-      const finalScore = Math.max(0, Math.min(100, rawScore));
-      const isPass = finalScore >= 65;
+      const tokenAvg = targetChars.length > 0 ? Math.round(totalScore / targetChars.length) : 0;
+      const sentenceSim = Math.round(this.similarity(normTarget, normSpoken) * 100);
+      const finalScore = Math.max(0, Math.min(100, Math.max(tokenAvg, sentenceSim)));
+      const isPass = finalScore >= 60;
 
       let advice = 'Chú ý phân biệt 4 thanh điệu (thanh 1 bằng phẳng, thanh 4 dứt khoát).';
       if (finalScore >= 90) {
         advice = 'Ngữ điệu rất tự nhiên, chuẩn giọng Bắc Kinh!';
-      } else if (finalScore >= 65) {
+      } else if (finalScore >= 60) {
         advice = 'Đọc khá tốt! Hãy chú ý các âm màu đỏ để hoàn thiện hơn.';
       }
 
@@ -399,9 +416,9 @@ class SpeechService {
     for (let i = 0; i < targetWords.length; i++) {
       const tw = targetWords[i];
       let matchedIdx = -1;
-      let status = 'missed';
+      let status = 'wrong';
       let score = 0;
-      let note = 'Chưa nghe rõ từ này';
+      let note = 'Đọc sai / thiếu';
 
       // 1. Exact match across spoken candidate tokens
       for (let j = 0; j < spokenWords.length; j++) {
@@ -410,7 +427,7 @@ class SpeechService {
           matchedIdx = j;
           status = 'correct';
           score = 100;
-          note = 'Chuẩn xác';
+          note = 'Đúng 100%';
           break;
         }
       }
@@ -423,26 +440,34 @@ class SpeechService {
             matchedIdx = j;
             status = 'correct';
             score = 95;
-            note = `Đúng ngữ âm (đồng âm "${spokenWords[j]}")`;
+            note = `Đồng âm 95% ("${spokenWords[j]}")`;
             break;
           }
         }
       }
 
-      // 3. Fuzzy phonetic alignment (Levenshtein distance <= 1 or 2)
+      // 3. Levenshtein Distance & Similarity metric alignment
       if (matchedIdx === -1) {
+        let bestSim = 0;
+        let bestIdx = -1;
         for (let j = 0; j < spokenWords.length; j++) {
           if (usedSpoken.has(j)) continue;
           const sw = spokenWords[j];
-          const dist = this.levenshteinDistance(tw, sw);
-          const maxLen = Math.max(tw.length, sw.length);
-          if (dist === 1 || (maxLen >= 5 && dist <= 2)) {
-            matchedIdx = j;
-            status = 'near';
-            score = 80;
-            note = `Gần chuẩn (nghe thành "${sw}")`;
-            diagnostics.push(`Từ "${tw}": Cần bật rõ âm kết thúc hoặc nguyên âm.`);
-            break;
+          const sim = this.similarity(tw, sw);
+          if (sim > bestSim) {
+            bestSim = sim;
+            bestIdx = j;
+          }
+        }
+
+        if (bestIdx !== -1 && bestSim >= 0.6) {
+          matchedIdx = bestIdx;
+          const simPercent = Math.round(bestSim * 100);
+          status = simPercent >= 80 ? 'correct' : 'near';
+          score = simPercent;
+          note = simPercent >= 80 ? `Đúng ${simPercent}%` : `Gần đúng ${simPercent}% ("${spokenWords[bestIdx]}")`;
+          if (simPercent < 85) {
+            diagnostics.push(`Từ "${tw}": Nghe thành "${spokenWords[bestIdx]}". Cần bật rõ âm đuôi.`);
           }
         }
       }
@@ -451,12 +476,12 @@ class SpeechService {
       if (matchedIdx === -1 && allSpokenCandidates.some(c => c.split(/\s+/).includes(tw))) {
         status = 'correct';
         score = 90;
-        note = 'Phát âm tốt';
+        note = 'Đúng 90%';
       }
 
       if (matchedIdx !== -1) {
         usedSpoken.add(matchedIdx);
-      } else if (status === 'missed') {
+      } else if (status === 'wrong') {
         diagnostics.push(`Bỏ sót hoặc chưa phát âm rõ từ "${tw}".`);
       }
 
@@ -470,9 +495,10 @@ class SpeechService {
       totalScore += score;
     }
 
-    const rawScore = targetWords.length > 0 ? Math.round(totalScore / targetWords.length) : 0;
-    const finalScore = Math.max(0, Math.min(100, rawScore));
-    const isPass = finalScore >= 65;
+    const tokenAvg = targetWords.length > 0 ? Math.round(totalScore / targetWords.length) : 0;
+    const sentenceSim = Math.round(this.similarity(normTarget, normSpoken) * 100);
+    const finalScore = Math.max(0, Math.min(100, Math.max(tokenAvg, sentenceSim)));
+    const isPass = finalScore >= 60;
 
     // Linguistic diagnostic advice
     let advice = 'Hãy chú ý bật rõ các phụ âm đuôi (ending sounds: /s/, /t/, /d/) và giữ độ dài nguyên âm.';

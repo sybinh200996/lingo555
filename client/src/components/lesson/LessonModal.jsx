@@ -18,7 +18,10 @@ import {
   Trophy, 
   ArrowRight,
   RotateCcw,
-  Bot
+  Bot,
+  AlertTriangle,
+  Keyboard,
+  SkipForward
 } from 'lucide-react';
 
 export const LessonModal = () => {
@@ -38,6 +41,11 @@ export const LessonModal = () => {
   const [isSpeakingListening, setIsSpeakingListening] = useState(false);
   const [speechResult, setSpeechResult] = useState(null);
   const [hanziDone, setHanziDone] = useState(false);
+
+  // Microphone compatibility & text fallback states
+  const [micError, setMicError] = useState(null);
+  const [useTextFallback, setUseTextFallback] = useState(false);
+  const [fallbackText, setFallbackText] = useState('');
 
   // Evaluation states: null | 'correct' | 'wrong' | 'completed'
   const [evalState, setEvalState] = useState(null);
@@ -77,6 +85,19 @@ export const LessonModal = () => {
     setHanziDone(false);
     setSelectedPairLeft(null);
     setMatchedPairs({});
+    setMicError(null);
+    setFallbackText('');
+
+    if (ex.type === 'speaking') {
+      if (!speech.isRecognitionSupported()) {
+        setMicError('Trình duyệt hiện tại chưa hỗ trợ Web Speech API nhận diện giọng nói. Bạn có thể nhập văn bản thay thế hoặc bấm bỏ qua để tiếp tục.');
+        setUseTextFallback(true);
+      } else {
+        setUseTextFallback(false);
+      }
+    } else {
+      setUseTextFallback(false);
+    }
 
     if (ex.type === 'dictation' || ex.type === 'translation') {
       const words = Array.isArray(ex.options) ? [...ex.options] : [];
@@ -105,13 +126,21 @@ export const LessonModal = () => {
       return;
     }
 
+    if (!speech.isRecognitionSupported()) {
+      setMicError('Trình duyệt hiện tại chưa hỗ trợ Web Speech API nhận diện giọng nói. Vui lòng nhập văn bản thay thế hoặc bỏ qua câu nói.');
+      setUseTextFallback(true);
+      return;
+    }
+
     setIsSpeakingListening(true);
     setSpeechResult(null);
+    setMicError(null);
 
     speech.startListening({
       lang: currentLang,
       onResult: (transcript, confidence, alternatives) => {
         setIsSpeakingListening(false);
+        setMicError(null);
         const evalScore = speech.evaluatePronunciation(
           transcript,
           currentExercise.target_text,
@@ -125,10 +154,66 @@ export const LessonModal = () => {
       onError: (err) => {
         setIsSpeakingListening(false);
         console.warn('Speech error:', err);
+        if (err === 'not-allowed' || err === 'permission-denied') {
+          setMicError('Quyền truy cập Microphone bị từ chối hoặc bị chặn trên trình duyệt. Vui lòng cấp quyền Micro hoặc nhập văn bản thay thế.');
+          setUseTextFallback(true);
+        } else if (err === 'no-speech') {
+          setMicError('Không nhận được âm thanh. Hãy bấm lại mic và nói to, rõ ràng hơn.');
+        } else if (err === 'audio-capture') {
+          setMicError('Không tìm thấy thiết bị Microphone trên máy tính/điện thoại.');
+          setUseTextFallback(true);
+        } else {
+          setMicError(`Không thể thu âm Micro (${err}). Bạn có thể nhập văn bản thay thế hoặc bỏ qua.`);
+        }
       },
       onEnd: () => {
         setIsSpeakingListening(false);
       }
+    });
+  };
+
+  // Submit typed text fallback when mic is unavailable or denied
+  const handleSubmitFallbackText = (e) => {
+    if (e) e.preventDefault();
+    if (!fallbackText.trim()) return;
+    sounds.playTap();
+    const evalScore = speech.evaluatePronunciation(
+      fallbackText.trim(),
+      currentExercise.target_text,
+      currentLang,
+      1.0,
+      currentExercise.phonetic,
+      []
+    );
+    setSpeechResult(evalScore);
+  };
+
+  // Safe skip button for speaking exercise so user is never stuck
+  const handleSkipSpeaking = () => {
+    sounds.playTap();
+    const isZh = currentLang === 'zh';
+    const words = isZh
+      ? currentExercise.target_text.split('')
+      : currentExercise.target_text.split(/\s+/).filter(Boolean);
+
+    setSpeechResult({
+      score: 100,
+      isPass: true,
+      spoken: '(Đã bỏ qua câu luyện nói)',
+      target: currentExercise.target_text,
+      words: words.map(w => ({
+        word: w,
+        status: 'correct',
+        score: 100,
+        note: 'Đã bỏ qua'
+      })),
+      diagnostics: ['Bạn đã chọn bỏ qua câu luyện nói này.'],
+      critique: {
+        category: 'Miễn trừ microphone',
+        observation: 'Đã hoàn thành câu luyện nói này mà không cần dùng micro.',
+        advice: 'Bạn có thể mở quyền micro hoặc dùng trình duyệt Chrome/Safari để thử lại sau.'
+      },
+      feedback: 'Đã bỏ qua câu luyện nói!'
     });
   };
 
@@ -448,30 +533,139 @@ export const LessonModal = () => {
                     </p>
                   </div>
 
-                  {/* Mic Button */}
-                  <div className="py-4">
-                    <button
-                      onClick={handleToggleMic}
-                      className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto shadow-xl transition-all ${
-                        isSpeakingListening
-                          ? 'bg-rose-500 text-white animate-pulse border-4 border-rose-300 scale-110'
-                          : 'duo-btn duo-btn-blue text-white'
-                      }`}
-                    >
-                      {isSpeakingListening ? (
-                        <MicOff className="w-10 h-10 animate-bounce" />
-                      ) : (
-                        <Mic className="w-10 h-10" />
-                      )}
-                    </button>
-                    <p className="text-xs font-bold text-slate-400 mt-3">
-                      {isSpeakingListening
-                        ? 'Đang lắng nghe bạn nói... (Hãy nói to rõ ràng)'
-                        : 'Bấm mic để bắt đầu phát âm'}
-                    </p>
-                  </div>
+                  {/* Browser Compatibility & Microphone Access Notification */}
+                  {micError && (
+                    <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 text-left space-y-3 animate-in fade-in">
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                          <AlertTriangle className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="font-black text-amber-900 dark:text-amber-200 text-sm">
+                            Kiểm tra Micro &amp; Tương thích Trình Duyệt
+                          </h4>
+                          <p className="text-xs text-amber-800/90 dark:text-amber-300/90 mt-0.5 leading-relaxed">
+                            {micError}
+                          </p>
+                        </div>
+                      </div>
 
-                  {/* Speech Evaluation Feedback with Deep Phonetic Diagnostics */}
+                      {/* Action buttons so learner is never stuck */}
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => setUseTextFallback(true)}
+                          className="duo-btn duo-btn-blue text-xs py-2 px-3.5 rounded-xl flex items-center gap-1.5"
+                        >
+                          <Keyboard className="w-4 h-4" />
+                          <span>Nhập văn bản thay thế</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleSkipSpeaking}
+                          className="duo-btn duo-btn-outline text-xs py-2 px-3.5 rounded-xl flex items-center gap-1.5 text-slate-700 dark:text-slate-200"
+                        >
+                          <SkipForward className="w-4 h-4 text-emerald-500" />
+                          <span>Bỏ qua câu nói này</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Text Input Fallback Mode */}
+                  {useTextFallback ? (
+                    <form onSubmit={handleSubmitFallbackText} className="duo-card p-4 space-y-3 text-left animate-in fade-in">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black uppercase text-slate-500 dark:text-slate-400">
+                          Nhập văn bản để chấm điểm tương đồng:
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setUseTextFallback(false)}
+                          className="text-xs text-sky-600 dark:text-sky-400 font-bold hover:underline"
+                        >
+                          Quay lại thu âm Micro
+                        </button>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={fallbackText}
+                          onChange={(e) => setFallbackText(e.target.value)}
+                          placeholder={`Gõ lại: "${currentExercise.target_text}"...`}
+                          className="flex-1 p-3.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white font-bold text-base focus:border-sky-500 focus:outline-hidden"
+                          autoFocus
+                        />
+                        <button
+                          type="submit"
+                          disabled={!fallbackText.trim()}
+                          className="duo-btn duo-btn-green px-5 py-3 rounded-xl text-sm font-black disabled:opacity-50"
+                        >
+                          Chấm Điểm
+                        </button>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-1">
+                        <p className="text-[11px] text-slate-400">
+                          Áp dụng thuật toán Levenshtein Distance tính % chính xác và tô màu Xanh/Đỏ.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={handleSkipSpeaking}
+                          className="text-xs text-slate-400 hover:text-emerald-500 font-bold underline"
+                        >
+                          Bỏ qua câu này
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    /* Standard Mic Button Mode */
+                    <div className="py-2">
+                      <button
+                        onClick={handleToggleMic}
+                        className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto shadow-xl transition-all ${
+                          isSpeakingListening
+                            ? 'bg-rose-500 text-white animate-pulse border-4 border-rose-300 scale-110'
+                            : 'duo-btn duo-btn-blue text-white'
+                        }`}
+                        title="Bấm mic để phát âm"
+                      >
+                        {isSpeakingListening ? (
+                          <MicOff className="w-10 h-10 animate-bounce" />
+                        ) : (
+                          <Mic className="w-10 h-10" />
+                        )}
+                      </button>
+                      <p className="text-xs font-bold text-slate-400 mt-3">
+                        {isSpeakingListening
+                          ? 'Đang lắng nghe bạn nói... (Hãy nói to rõ ràng)'
+                          : 'Bấm mic để bắt đầu phát âm'}
+                      </p>
+
+                      <div className="flex items-center justify-center gap-3 mt-3">
+                        <button
+                          type="button"
+                          onClick={() => setUseTextFallback(true)}
+                          className="text-xs text-sky-600 dark:text-sky-400 hover:underline font-bold flex items-center gap-1"
+                        >
+                          <Keyboard className="w-3.5 h-3.5" />
+                          <span>Gõ phím thay thế</span>
+                        </button>
+                        <span className="text-slate-300 dark:text-slate-700">•</span>
+                        <button
+                          type="button"
+                          onClick={handleSkipSpeaking}
+                          className="text-xs text-slate-400 hover:text-emerald-500 hover:underline font-bold flex items-center gap-1"
+                        >
+                          <SkipForward className="w-3.5 h-3.5" />
+                          <span>Bỏ qua câu nói</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Speech Evaluation Feedback with Levenshtein Similarity & Color Chips */}
                   {speechResult && (
                     <div className="duo-card p-4 sm:p-5 text-left space-y-4 animate-in fade-in">
                       {/* Score Header */}
@@ -479,7 +673,7 @@ export const LessonModal = () => {
                         <div className="flex items-center gap-2">
                           <Sparkles className="w-4 h-4 text-emerald-500" />
                           <span className="text-xs font-black uppercase text-slate-500 dark:text-slate-400 tracking-wider">
-                            Đánh giá phát âm
+                            Độ Tương Đồng Phát Âm (Levenshtein)
                           </span>
                         </div>
                         <span
@@ -496,7 +690,7 @@ export const LessonModal = () => {
                       {/* Microphone Comparison Card */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                         <div className="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-2xl border border-slate-200 dark:border-slate-700/80">
-                          <span className="text-slate-400 font-bold block mb-0.5">Micro thu được:</span>
+                          <span className="text-slate-400 font-bold block mb-0.5">Nội dung đã nhận/nhập:</span>
                           <strong className="text-slate-800 dark:text-slate-100 font-black text-sm">
                             "{speechResult.spoken}"
                           </strong>
@@ -509,16 +703,22 @@ export const LessonModal = () => {
                         </div>
                       </div>
 
-                      {/* Word by word breakdown with Interactive Chips */}
+                      {/* Word by word breakdown with Vivid Green/Red/Yellow Chips */}
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">
-                            Chi tiết từng âm vị (Bấm để nghe):
+                            Chi tiết từng từ (Bấm để nghe phát âm):
                           </span>
-                          <div className="flex items-center gap-2 text-[10px] font-bold">
-                            <span className="flex items-center gap-1 text-emerald-600"><span className="w-2 h-2 rounded-full bg-emerald-500" />Chuẩn</span>
-                            <span className="flex items-center gap-1 text-amber-600"><span className="w-2 h-2 rounded-full bg-amber-500" />Gần đúng</span>
-                            <span className="flex items-center gap-1 text-rose-600"><span className="w-2 h-2 rounded-full bg-rose-500" />Cần sửa</span>
+                          <div className="flex items-center gap-3 text-[10px] font-bold">
+                            <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />Đúng (Xanh)
+                            </span>
+                            <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                              <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />Gần đúng (Vàng)
+                            </span>
+                            <span className="flex items-center gap-1 text-rose-600 dark:text-rose-400">
+                              <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />Sai (Đỏ)
+                            </span>
                           </div>
                         </div>
 
@@ -532,17 +732,21 @@ export const LessonModal = () => {
                                 type="button"
                                 onClick={() => speech.speak(item.word, currentLang, 0.8)}
                                 title={item.note || 'Bấm để nghe phát âm'}
-                                className={`px-3 py-1.5 rounded-xl border-2 font-black text-base flex flex-col items-center gap-0.5 transition-all hover:scale-105 active:scale-95 cursor-pointer ${
+                                className={`px-3 py-2 rounded-xl font-black text-base flex flex-col items-center gap-0.5 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-xs ${
                                   isCorrect
-                                    ? 'bg-emerald-100 text-emerald-800 border-emerald-400 dark:bg-emerald-950/80 dark:text-emerald-300'
+                                    ? 'bg-emerald-500 hover:bg-emerald-600 text-white border-b-4 border-emerald-700'
                                     : isNear
-                                    ? 'bg-amber-100 text-amber-800 border-amber-400 dark:bg-amber-950/80 dark:text-amber-300'
-                                    : 'bg-rose-100 text-rose-800 border-rose-400 dark:bg-rose-950/80 dark:text-rose-300'
+                                    ? 'bg-amber-400 hover:bg-amber-500 text-amber-950 border-b-4 border-amber-600'
+                                    : 'bg-rose-500 hover:bg-rose-600 text-white border-b-4 border-rose-700'
                                 }`}
                               >
                                 <span>{item.word}</span>
-                                <span className="text-[9px] font-semibold opacity-80 leading-none">
-                                  {item.note}
+                                <span className="text-[10px] font-bold opacity-90 leading-tight">
+                                  {isCorrect 
+                                    ? `✓ Đúng (${item.score || 100}%)` 
+                                    : isNear 
+                                    ? `~ Gần đúng (${item.score}%)` 
+                                    : `✗ Sai (${item.score || 0}%)`}
                                 </span>
                               </button>
                             );
