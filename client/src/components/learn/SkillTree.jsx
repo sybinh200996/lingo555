@@ -85,7 +85,7 @@ export const SkillTree = () => {
   } = useApp();
 
   const [units, setUnits] = useState([]);
-  const [selectedUnitId, setSelectedUnitId] = useState('all');
+  const [selectedUnitId, setSelectedUnitId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeGuidebook, setActiveGuidebook] = useState(null);
   const unitScrollRef = useRef(null);
@@ -103,6 +103,11 @@ export const SkillTree = () => {
     openPlacement();
   };
 
+  const onSelectLesson = (lesson) => {
+    sounds.playTap?.();
+    startLesson(lesson.id);
+  };
+
   useEffect(() => {
     if (currentLevel) {
       loadUnits(currentLevel.id);
@@ -113,11 +118,11 @@ export const SkillTree = () => {
     setLoading(true);
     try {
       const data = await api.getUnits(levelId, userProfile.id);
-      setUnits(data);
+      setUnits(data || []);
       if (data && data.length > 0) {
         setSelectedUnitId(data[0].id);
       } else {
-        setSelectedUnitId('all');
+        setSelectedUnitId(null);
       }
     } catch (e) {
       console.warn('Failed to load units:', e);
@@ -126,18 +131,7 @@ export const SkillTree = () => {
     }
   };
 
-  const scrollUnits = (direction) => {
-    sounds.playTap?.();
-    if (unitScrollRef.current) {
-      const offset = direction === 'left' ? -280 : 280;
-      unitScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
-    }
-  };
-
-  // Units to display based on selected filter
-  const displayedUnits = selectedUnitId === 'all' 
-    ? units 
-    : units.filter(u => u.id === selectedUnitId);
+  const currentUnit = units.find(u => u.id === selectedUnitId) || units[0] || null;
 
   return (
     <div className="space-y-6 w-full select-none">
@@ -299,280 +293,167 @@ export const SkillTree = () => {
         </div>
       </div>
 
-      {/* ======================================================== */}
-      {/* TẦNG 1: THANH TRƯỢT NGANG CHỌN CHƯƠNG HỌC (UNIT SELECTOR) */}
-      {/* ======================================================== */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between px-1">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-black uppercase tracking-wider text-slate-400">
-              Tầng 1 • Chọn Chương Học
-            </span>
-            <span className="text-xs text-slate-400 font-bold">({units.length} chương)</span>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setSelectedUnitId('all')}
-              className={`text-[11px] font-black px-2.5 py-1 rounded-xl transition-all cursor-pointer ${
-                selectedUnitId === 'all'
-                  ? 'bg-slate-800 dark:bg-white text-white dark:text-slate-900 shadow-xs'
-                  : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
-              }`}
-            >
-              Hiện tất cả
-            </button>
-            <button
-              onClick={() => scrollUnits('left')}
-              className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer hidden sm:flex items-center justify-center"
-              title="Cuộn sang trái"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => scrollUnits('right')}
-              className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer hidden sm:flex items-center justify-center"
-              title="Cuộn sang phải"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+      {/* 1. THANH CHỌN CHƯƠNG/CẤP ĐỘ XẾP NGANG (CUỘN NGANG MƯỢT MÀ) */}
+      <div className="w-full">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-sm sm:text-base font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            Chọn Cấp Độ & Chương Học (Vuốt ngang)
+          </h2>
+          <span className="text-xs font-bold text-[#1CB0F6]">
+            {units.length} Chương
+          </span>
         </div>
 
-        {/* Horizontal Carousel Track */}
-        <div 
-          ref={unitScrollRef}
-          className="flex overflow-x-auto gap-3 pb-2 pt-1 snap-x no-scrollbar -mx-1 px-1"
-        >
-          {units.map((unit, uIdx) => {
-            const theme = UNIT_THEMES[uIdx % UNIT_THEMES.length];
+        {/* Dải thẻ Chương xếp ngang */}
+        <div className="flex overflow-x-auto gap-3 pb-3 pt-1 snap-x snap-mandatory scrollbar-thin">
+          {units.map((unit, index) => {
             const isSelected = selectedUnitId === unit.id;
-            const completedCount = unit.lessons?.filter(l => l.completed || l.is_completed === 1)?.length || 0;
-            const totalCount = unit.lessons?.length || 0;
-            const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-
             return (
-              <div
-                key={unit.id}
+              <button
+                key={unit.id || index}
                 onClick={() => {
                   sounds.playTap?.();
                   setSelectedUnitId(unit.id);
                 }}
-                className={`w-[260px] sm:w-[290px] shrink-0 snap-start p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                className={`snap-start shrink-0 w-[240px] sm:w-[270px] text-left p-3.5 rounded-2xl border-2 transition-all flex flex-col justify-between cursor-pointer ${
                   isSelected
-                    ? `border-b-4 ${theme.borderLight} ${theme.bgLight} shadow-sm ring-2 ring-emerald-500/20`
-                    : 'border-b-4 border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1B2B32] hover:border-slate-300 dark:hover:border-slate-700'
+                    ? 'bg-[#58CC02] text-white border-[#46A302] shadow-md'
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-[#58CC02]'
                 }`}
               >
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span 
-                      className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md text-white shadow-xs"
-                      style={{ backgroundColor: theme.accentColor }}
-                    >
-                      Chương {unit.unit_number}
-                    </span>
-                    <button
-                      onClick={(e) => onOpenGuidebook(unit, e)}
-                      className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center gap-1 font-bold p-1 rounded-md hover:bg-white/60 dark:hover:bg-slate-800 cursor-pointer"
-                      title="Xem sổ tay chương"
-                    >
-                      <BookOpen className="w-3.5 h-3.5" />
-                      <span>Sổ tay</span>
-                    </button>
-                  </div>
-
-                  <h3 className="font-black text-sm sm:text-base text-slate-800 dark:text-white line-clamp-1">
-                    {unit.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium line-clamp-1 mt-0.5">
-                    {unit.description}
-                  </p>
+                <div className="flex items-center justify-between gap-2 w-full mb-1.5">
+                  <span className={`text-[11px] font-black uppercase px-2 py-0.5 rounded-md ${
+                    isSelected ? 'bg-black/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                  }`}>
+                    Chương {unit.unit_number || index + 1} • {unit.levelBadge || currentLevel?.code || 'Cơ bản'}
+                  </span>
+                  <span className="text-xs font-extrabold">
+                    {unit.lessons?.filter(l => l.completed || l.is_completed === 1).length || 0}/{unit.lessons?.length || 0} bài
+                  </span>
                 </div>
-
-                {/* Progress bar */}
-                <div className="mt-3 pt-2.5 border-t border-slate-200/60 dark:border-slate-700/60">
-                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1">
-                    <span>{completedCount}/{totalCount} bài học</span>
-                    <span>{percent}%</span>
-                  </div>
-                  <div className="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden p-0.5">
-                    <div
-                      className="h-full rounded-full transition-all duration-300"
-                      style={{ 
-                        width: `${percent}%`, 
-                        backgroundColor: theme.accentColor 
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+                <h3 className="font-extrabold text-sm sm:text-base line-clamp-1">
+                  {unit.title}
+                </h3>
+                <p className={`text-xs line-clamp-1 mt-0.5 ${isSelected ? 'text-lime-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                  {unit.description}
+                </p>
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* ======================================================== */}
-      {/* TẦNG 2: DANH SÁCH BÀI HỌC XẾP NGANG / RESPONSIVE GRID    */}
-      {/* ======================================================== */}
+      {/* 2. DANH SÁCH BÀI HỌC XẾP NGANG THEO LƯỚI (KHÔNG BAO GIỜ CHỒNG CHÉO) */}
       {loading ? (
         <div className="py-20 flex flex-col items-center justify-center text-slate-400 space-y-3">
           <div className="w-10 h-10 border-4 border-[#58CC02] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm font-bold">Đang tải bài học...</p>
         </div>
       ) : units.length === 0 ? (
-        <div className="text-center py-16 text-slate-400 duo-card p-8 rounded-3xl">
+        <div className="text-center py-16 text-slate-400 duo-card p-8 rounded-2xl">
           <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
           <p className="font-bold">Chưa có bài học nào trong cấp độ này.</p>
         </div>
-      ) : (
-        displayedUnits.map((unit, uIdx) => {
-          const theme = UNIT_THEMES[uIdx % UNIT_THEMES.length];
-
-          return (
-            <div key={unit.id} className="space-y-4 pt-2">
-              {/* Unit Header Bar (Tầng 2 Header) */}
-              <div className={`rounded-2xl bg-gradient-to-r ${theme.gradient} border-b-4 ${theme.bannerBorder} p-4 text-white shadow-sm flex items-center justify-between gap-3`}>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white/90">
-                    <span>Chương {unit.unit_number}</span>
-                    <span>•</span>
-                    <span>{currentLevel?.code}</span>
-                  </div>
-                  <h3 className="text-base sm:text-lg font-black tracking-tight truncate mt-0.5">
-                    {unit.title}
-                  </h3>
-                  <p className="text-xs text-white/90 font-medium line-clamp-1 mt-0.5">
-                    {unit.description}
-                  </p>
-                </div>
-
-                <button
-                  onClick={(e) => onOpenGuidebook(unit, e)}
-                  className="shrink-0 flex items-center gap-1.5 bg-black/20 hover:bg-black/30 border border-white/20 active:translate-y-[1px] px-3 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-xs"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  <span className="hidden sm:inline">Sổ tay</span>
-                </button>
-              </div>
-
-              {/* Responsive Grid of Lesson Cards: 1 col on mobile, 2 cols on tablet, 3 cols on desktop */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
-                {unit.lessons?.map((lesson, idx) => {
-                  const isCompleted = lesson.completed || lesson.status === 'completed' || lesson.is_completed === 1;
-                  const isUnlocked = isFreeMode || isCompleted || idx === 0 || unit.lessons[idx - 1]?.is_completed === 1 || unit.lessons[idx - 1]?.completed;
-                  const isLocked = !isUnlocked;
-                  const isCurrent = (!isCompleted && isUnlocked);
-
-                  return (
-                    <div
-                      key={lesson.id || idx}
-                      className={`duo-card p-4 sm:p-5 rounded-2xl flex flex-col justify-between transition-all duration-150 border-2 border-b-4 ${
-                        isCompleted
-                          ? 'border-amber-300 dark:border-amber-800 bg-white dark:bg-[#1B2B32]'
-                          : isCurrent
-                          ? `${theme.borderLight} bg-white dark:bg-[#1B2B32] ring-2 ring-emerald-500/10 shadow-xs`
-                          : isLocked
-                          ? 'border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 opacity-80'
-                          : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1B2B32]'
-                      }`}
-                    >
-                      {/* Top Row: Lesson Number + Status Badge + XP */}
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-black text-slate-400 uppercase tracking-wider">
-                              Bài {lesson.lesson_number || idx + 1}
-                            </span>
-                            {isCompleted ? (
-                              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-                                ✓ Hoàn Thành
-                              </span>
-                            ) : isCurrent ? (
-                              <span 
-                                className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full text-white shadow-xs"
-                                style={{ backgroundColor: theme.accentColor }}
-                              >
-                                Đang Học
-                              </span>
-                            ) : isLocked ? (
-                              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
-                                Khóa
-                              </span>
-                            ) : (
-                              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
-                                Tự Do
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="flex items-center gap-1 font-black text-xs text-amber-500">
-                            <span>+{lesson.xp_reward || 15} XP</span>
-                            {isCompleted ? (
-                              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                            ) : isLocked ? (
-                              <Lock className="w-3.5 h-3.5 text-slate-400" />
-                            ) : (
-                              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Lesson Title & Description */}
-                        <h4 className="font-black text-sm sm:text-base text-slate-800 dark:text-white line-clamp-2 leading-snug">
-                          {lesson.title}
-                        </h4>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium line-clamp-2 mt-1 leading-relaxed">
-                          {lesson.description || 'Bài tập tương tác chuẩn Duolingo'}
-                        </p>
-                      </div>
-
-                      {/* Bottom Action Button */}
-                      <div className="pt-4 mt-2">
-                        {isLocked ? (
-                          <button
-                            onClick={() => {
-                              sounds.playTap?.();
-                              toggleFreeMode();
-                              startLesson(lesson.id);
-                            }}
-                            className="btn-3d-white w-full py-2.5 rounded-xl text-xs uppercase font-black tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
-                            title="Bấm để mở khóa tự do và vào học ngay"
-                          >
-                            <Unlock className="w-3.5 h-3.5 text-amber-500" />
-                            <span>Mở Khóa Ngay</span>
-                          </button>
-                        ) : isCompleted ? (
-                          <button
-                            onClick={() => {
-                              sounds.playTap?.();
-                              startLesson(lesson.id);
-                            }}
-                            className="duo-btn duo-btn-outline w-full py-2.5 rounded-xl text-xs uppercase font-black tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
-                          >
-                            <Play className="w-3.5 h-3.5" />
-                            <span>Ôn Tập (+5 XP)</span>
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => {
-                              sounds.playTap?.();
-                              startLesson(lesson.id);
-                            }}
-                            className={`${theme.btnClass} w-full py-2.5 rounded-xl text-xs uppercase font-black tracking-wider flex items-center justify-center gap-1.5 cursor-pointer shadow-sm`}
-                          >
-                            <Play className="w-3.5 h-3.5 fill-white" />
-                            <span>Bắt Đầu (+{lesson.xp_reward || 15} XP)</span>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+      ) : currentUnit && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 sm:p-5 shadow-sm">
+          {/* Tiêu đề chương đang chọn + Nút Sổ tay */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base sm:text-lg font-black text-slate-800 dark:text-white">
+                {currentUnit.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                {currentUnit.description}
+              </p>
             </div>
-          );
-        })
+            <button
+              onClick={() => onOpenGuidebook && onOpenGuidebook(currentUnit)}
+              className="shrink-0 px-3.5 py-2 rounded-xl bg-sky-50 dark:bg-sky-950/60 text-[#1CB0F6] border border-sky-200 dark:border-sky-800 font-extrabold text-xs sm:text-sm flex items-center gap-1.5 hover:bg-sky-100 cursor-pointer"
+            >
+              <span>📖 Sổ tay chương</span>
+            </button>
+          </div>
+
+          {/* Lưới bài học xếp ngang từ trái qua phải (2 cột trên điện thoại, 3-4 cột trên máy tính) */}
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+            {currentUnit.lessons?.map((lesson, idx) => {
+              const isCompleted = lesson.completed || lesson.status === 'completed' || lesson.is_completed === 1;
+              const isUnlocked = isFreeMode || isCompleted || idx === 0 || currentUnit.lessons[idx - 1]?.is_completed === 1 || currentUnit.lessons[idx - 1]?.completed;
+              const isLocked = !isUnlocked;
+              const isCurrent = !isCompleted && !isLocked;
+
+              return (
+                <div
+                  key={lesson.id || idx}
+                  onClick={() => !isLocked && onSelectLesson(lesson)}
+                  className={`relative rounded-2xl border-2 p-3.5 flex flex-col justify-between transition-all ${
+                    isLocked
+                      ? 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 opacity-65 cursor-not-allowed'
+                      : isCurrent
+                      ? 'bg-lime-50/60 dark:bg-lime-950/20 border-[#58CC02] shadow-sm cursor-pointer hover:shadow-md'
+                      : 'bg-white dark:bg-slate-800 border-amber-300 dark:border-amber-600/60 cursor-pointer hover:border-amber-400'
+                  }`}
+                >
+                  <div>
+                    {/* Dòng trên cùng: Số bài + Nhãn trạng thái */}
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-xs font-extrabold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                        Bài {lesson.lesson_number || idx + 1}
+                      </span>
+                      {isCompleted ? (
+                        <span className="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+                          ✓ Đã xong
+                        </span>
+                      ) : isCurrent ? (
+                        <span className="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-[#58CC02] text-white">
+                          ★ Đang học
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500">
+                          🔒 Khóa
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Tên bài học hiển thị đầy đủ, không bị cắt hay đè */}
+                    <h4 className="font-extrabold text-sm sm:text-base text-slate-800 dark:text-slate-100 line-clamp-2 mb-1">
+                      {lesson.title}
+                    </h4>
+                    {lesson.description && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium line-clamp-2 mt-0.5">
+                        {lesson.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Nút hành động dưới đáy thẻ */}
+                  <button
+                    disabled={isLocked}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isLocked) {
+                        sounds.playTap?.();
+                        toggleFreeMode();
+                        startLesson(lesson.id);
+                        return;
+                      }
+                      onSelectLesson(lesson);
+                    }}
+                    className={`mt-3 w-full py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-center transition-all cursor-pointer ${
+                      isCompleted
+                        ? 'bg-amber-400 hover:bg-amber-500 text-slate-900'
+                        : isCurrent
+                        ? 'bg-[#58CC02] hover:bg-[#46A302] text-white'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-400 hover:text-slate-600'
+                    }`}
+                  >
+                    {isCompleted ? 'Ôn tập lại' : isCurrent ? 'Bắt đầu học ➔' : 'Mở khóa ngay'}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       )}
     </div>
   );

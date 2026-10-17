@@ -15,7 +15,6 @@ import { PodcastPlayerModal } from './components/podcast/PodcastPlayerModal';
 import { PlacementTestModal } from './components/placement/PlacementTestModal';
 import { LevelSelectorModal } from './components/learn/LevelSelectorModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
-import { Bot } from 'lucide-react';
 
 function MainContent() {
   const { 
@@ -35,9 +34,6 @@ function MainContent() {
     closeLevelModal,
     setCurrentLevel
   } = useApp();
-
-  // Hide global floating button when in a lesson or in the AI Speak tab
-  const showFab = !isAiTutorOpen && !activeLessonId && activeTab !== 'speak';
 
   return (
     <>
