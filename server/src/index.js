@@ -24,6 +24,12 @@ if (!fs.existsSync(uploadDir)) {
 seedDatabase();
 seedExpandedData();
 enrichCurriculum();
+try {
+  const { seedFullCurriculum } = require('./db/seedFullCurriculum');
+  seedFullCurriculum();
+} catch (e) {
+  console.warn('seedFullCurriculum skipped or failed:', e.message);
+}
 
 // Route handlers
 app.use('/api', require('./routes/lessons'));

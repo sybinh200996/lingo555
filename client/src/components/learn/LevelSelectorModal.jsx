@@ -18,8 +18,14 @@ export const LevelSelectorModal = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const availableLevels = levels.filter(l => l.language_id === currentLang);
-  const currentLangLevels = availableLevels.length > 0 ? availableLevels : getCurriculumLevels(currentLang);
+  const localLevels = getCurriculumLevels(currentLang);
+  const serverLevels = levels.filter(l => l.language_id === currentLang);
+  const serverLevelIds = new Set(serverLevels.map(l => l.id));
+  const currentLangLevels = (
+    serverLevels.length > 0
+      ? [...serverLevels, ...localLevels.filter(l => !serverLevelIds.has(l.id))]
+      : localLevels
+  ).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">

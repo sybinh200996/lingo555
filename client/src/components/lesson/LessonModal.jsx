@@ -6,6 +6,8 @@ import { speech, normalizeSpeechText } from '../../services/speechService';
 import { sounds } from '../../services/soundEffects';
 import { HanziCanvas } from './HanziCanvas';
 import { TonePitchCanvas } from './TonePitchCanvas';
+import { StrokeOrderWriter } from '../writing/StrokeOrderWriter';
+import { EnglishSpellingWriter } from '../writing/EnglishSpellingWriter';
 import { questTracker } from '../../utils/questTracker';
 import { 
   X, 
@@ -936,25 +938,29 @@ export const LessonModal = () => {
                 </div>
               )}
 
-              {/* 3. HANZI WRITING EXERCISE */}
+              {/* 3. WRITING & SPELLING EXERCISE */}
               {currentExercise.type === 'writing' && (
                 <div className="space-y-4 text-center">
-                  <div className="text-center mb-2">
-                    <span className="text-xs font-bold text-slate-400">Chữ Hán:</span>
-                    <h4 className="text-2xl font-black text-slate-800 dark:text-white">
-                      {currentExercise.target_text} [{currentExercise.phonetic}]
-                    </h4>
-                    <p className="text-xs text-slate-500">{currentExercise.vietnamese_meaning}</p>
-                  </div>
-
-                  {/* HanziWriter Canvas */}
-                  <HanziCanvas
-                    character={currentExercise.stroke_char || currentExercise.target_text.charAt(0)}
-                    onComplete={() => {
-                      setHanziDone(true);
-                    }}
-                    size={220}
-                  />
+                  {currentLang === 'zh' ? (
+                    <StrokeOrderWriter
+                      word={currentExercise.stroke_char || currentExercise.target_text}
+                      pinyin={currentExercise.phonetic}
+                      meaning={currentExercise.vietnamese_meaning}
+                      size={210}
+                      onWordComplete={() => {
+                        setHanziDone(true);
+                      }}
+                    />
+                  ) : (
+                    <EnglishSpellingWriter
+                      word={currentExercise.target_text}
+                      phonetic={currentExercise.phonetic}
+                      meaning={currentExercise.vietnamese_meaning}
+                      onComplete={() => {
+                        setHanziDone(true);
+                      }}
+                    />
+                  )}
 
                   {!hanziDone && (
                     <div className="pt-2">

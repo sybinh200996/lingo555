@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
 import { sounds } from '../../services/soundEffects';
+import { getCurriculumUnitsWithExtra } from '../../data/curriculumData';
 import { 
   Check, 
   Lock, 
@@ -117,15 +118,36 @@ export const SkillTree = () => {
   const loadUnits = async (levelId) => {
     setLoading(true);
     try {
-      const data = await api.getUnits(levelId, userProfile.id);
-      setUnits(data || []);
-      if (data && data.length > 0) {
-        setSelectedUnitId(data[0].id);
+      // Load from server first
+      const serverData = await api.getUnits(levelId, userProfile.id);
+      // Merge with local extra curriculum (provides richer content offline & supplements thin server data)
+      const localData = await getCurriculumUnitsWithExtra(levelId).catch(() => []);
+
+      let merged = serverData || [];
+      if (localData.length > 0) {
+        const serverIds = new Set(merged.map(u => u.id));
+        const extraLocal = localData.filter(u => !serverIds.has(u.id));
+        merged = [...merged, ...extraLocal].sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
+      }
+
+      setUnits(merged);
+      if (merged.length > 0) {
+        setSelectedUnitId(merged[0].id);
       } else {
         setSelectedUnitId(null);
       }
     } catch (e) {
-      console.warn('Failed to load units:', e);
+      console.warn('Failed to load units from server, falling back to local data:', e);
+      try {
+        const localData = await getCurriculumUnitsWithExtra(levelId);
+        setUnits(localData || []);
+        if (localData && localData.length > 0) {
+          setSelectedUnitId(localData[0].id);
+        }
+      } catch (_) {
+        setUnits([]);
+        setSelectedUnitId(null);
+      }
     } finally {
       setLoading(false);
     }

@@ -4,6 +4,8 @@
  * Ensures 100% resilient lesson loading without server dependency.
  */
 
+import { getCurriculumUnitsForLevel, getCurriculumLessonById } from './fullCurriculumGenerator.js';
+
 export const CURRICULUM_LEVELS = [
   {
     "id": "zh_pinyin",
@@ -121,6 +123,15 @@ export const CURRICULUM_LEVELS = [
     "subtitle": "5000+ từ vựng chuyên ngành, văn học, học thuật",
     "color": "#dc2626",
     "order_index": 7
+  },
+  {
+    "id": "zh_practical",
+    "language_id": "zh",
+    "code": "THỰC CHIẾN",
+    "title": "Tiếng Trung Thực Chiến",
+    "subtitle": "Xưởng may, nhà máy, xuất nhập khẩu, logistics và đời sống",
+    "color": "#059669",
+    "order_index": 8
   },
   {
     "id": "en_c2",
@@ -9580,9 +9591,31 @@ export const getCurriculumLevels = (lang = 'zh') => {
 };
 
 export const getCurriculumUnits = (levelId) => {
-  return CURRICULUM_UNITS_BY_LEVEL[levelId] || [];
+  const base = CURRICULUM_UNITS_BY_LEVEL[levelId] || [];
+  try {
+    const extras = getCurriculumUnitsForLevel(levelId) || [];
+    const baseIds = new Set(base.map(u => u.id));
+    const uniqueExtras = extras.filter(u => !baseIds.has(u.id));
+    return [...base, ...uniqueExtras].sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
+  } catch (_) {
+    return base;
+  }
 };
 
 export const getCurriculumLesson = (lessonId) => {
-  return CURRICULUM_LESSONS_BY_ID[lessonId] || null;
+  const baseLesson = CURRICULUM_LESSONS_BY_ID[lessonId];
+  if (baseLesson) return baseLesson;
+  try {
+    return getCurriculumLessonById(lessonId) || null;
+  } catch (_) {
+    return null;
+  }
+};
+
+/**
+ * Merge base units with extra units from fullCurriculumZH/EN.
+ * Returns combined array sorted by unit_number.
+ */
+export const getCurriculumUnitsWithExtra = async (levelId) => {
+  return getCurriculumUnits(levelId);
 };
