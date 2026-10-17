@@ -62,6 +62,14 @@ export const SkillTree = () => {
 
   return (
     <div className="space-y-8 max-w-xl mx-auto">
+      {/* Transparent click-outside backdrop when any tooltip is open */}
+      {activeTooltip && (
+        <div
+          className="fixed inset-0 z-40 bg-black/15 dark:bg-black/35 backdrop-blur-[0.5px]"
+          onClick={() => setActiveTooltip(null)}
+        />
+      )}
+
       {/* Level Selector Dropdown Bar */}
       <div className="duo-card p-4 flex items-center justify-between shadow-sm">
         <div>
@@ -159,12 +167,22 @@ export const SkillTree = () => {
                   return (
                     <div
                       key={lesson.id}
-                      className="my-3.5 relative flex flex-col items-center transition-all duration-300"
+                      className={`my-3.5 relative flex flex-col items-center transition-all duration-300 ${
+                        activeTooltip === lesson.id ? 'z-50' : 'z-0'
+                      }`}
                       style={{ transform: `translateX(${xOffset}px)` }}
                     >
                       {/* Active Current Lesson Tooltip Callout */}
                       {isCurrent && (
-                        <div className="absolute -top-11 z-10 animate-bounce-short">
+                        <div
+                          onClick={() => {
+                            setActiveTooltip(
+                              activeTooltip === lesson.id ? null : lesson.id
+                            );
+                          }}
+                          className="absolute -top-11 z-20 animate-bounce-short cursor-pointer hover:scale-105 active:scale-95 transition-all"
+                          title="Bấm để xem chi tiết bài học"
+                        >
                           <div className="bg-emerald-500 text-white text-xs font-black px-3.5 py-1.5 rounded-xl shadow-md border-b-2 border-emerald-700 uppercase tracking-wider whitespace-nowrap">
                             Bắt đầu ngay!
                           </div>
@@ -211,26 +229,32 @@ export const SkillTree = () => {
 
                       {/* Lesson Details Popup Card */}
                       {activeTooltip === lesson.id && (
-                        <div className="absolute top-22 z-30 w-72 bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-xl border-2 border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95">
+                        <div className="absolute top-22 z-50 w-72 sm:w-80 bg-white dark:bg-slate-900 rounded-3xl p-5 shadow-2xl border-2 border-emerald-400/80 dark:border-emerald-500/60 animate-in fade-in zoom-in-95">
+                          {/* Top pointing speech bubble arrow */}
+                          <div className="w-3.5 h-3.5 bg-white dark:bg-slate-900 border-t-2 border-l-2 border-emerald-400/80 dark:border-emerald-500/60 rotate-45 mx-auto -mt-6.5 mb-2 shadow-2xs" />
+
                           <div className="flex items-start justify-between mb-2">
-                            <h4 className="font-extrabold text-sm text-slate-800 dark:text-white">
+                            <h4 className="font-black text-sm text-slate-900 dark:text-white leading-tight">
                               {lesson.title}
                             </h4>
-                            <span className="text-xs font-bold text-amber-500 shrink-0 ml-2">
+                            <span className="text-xs font-black text-amber-500 shrink-0 ml-2 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
                               +{lesson.xp_reward || 15} XP
                             </span>
                           </div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mb-3 leading-relaxed">
+
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed font-medium">
                             {lesson.description}
                           </p>
+
                           <button
                             onClick={() => {
                               setActiveTooltip(null);
                               startLesson(lesson.id);
                             }}
-                            className="duo-btn duo-btn-green w-full py-2.5 rounded-xl text-xs uppercase"
+                            className="duo-btn duo-btn-green w-full py-3 rounded-2xl text-xs uppercase font-black shadow-md tracking-wider flex items-center justify-center gap-2"
                           >
-                            {isCompleted ? 'Ôn Tập Lại' : 'Bắt Đầu Bài Học'}
+                            <Play className="w-4 h-4 fill-white" />
+                            <span>{isCompleted ? 'Ôn Tập Lại' : 'Bắt Đầu Bài Học'}</span>
                           </button>
                         </div>
                       )}
