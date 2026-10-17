@@ -188,9 +188,24 @@ function getEnLevel(word) {
   return 'C1';
 }
 
+const { seedDatabase } = require('./seedData');
+
 async function runImport() {
   console.log('🚀 Starting Massive Dictionary Import (> 200,000 words)...');
   const startTime = Date.now();
+
+  // Ensure core schema, languages, and curriculum are seeded first
+  try {
+    seedDatabase();
+    db.prepare(`
+      INSERT OR IGNORE INTO languages (id, name, native_name, flag, default_level)
+      VALUES 
+        ('zh', 'Tiếng Trung', '中文 (汉语)', '🇨🇳', 'PINYIN'),
+        ('en', 'Tiếng Anh', 'English (US/UK)', '🇬🇧', 'IPA')
+    `).run();
+  } catch (e) {
+    console.warn('Seeding notice:', e.message);
+  }
 
   // Create additional fast search indexes
   db.exec(`
