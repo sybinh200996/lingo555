@@ -810,6 +810,18 @@ export const LessonModal = () => {
                     }}
                     size={220}
                   />
+
+                  {!hanziDone && (
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setHanziDone(true)}
+                        className="text-xs text-slate-400 hover:text-emerald-500 font-bold underline cursor-pointer"
+                      >
+                        Tôi đã viết xong trên giấy / Bỏ qua câu viết
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
