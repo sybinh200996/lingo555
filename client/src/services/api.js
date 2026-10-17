@@ -1,25 +1,63 @@
+import { 
+  getCurriculumLevels, 
+  getCurriculumUnits, 
+  getCurriculumLesson 
+} from '../data/curriculumData';
+
 const API_BASE = '/api';
 
 export const api = {
   // Languages & Levels
   getLanguages: async () => {
-    const res = await fetch(`${API_BASE}/languages`);
-    return res.json();
+    try {
+      const res = await fetch(`${API_BASE}/languages`);
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('API getLanguages failed, fallback to defaults');
+    }
+    return [
+      { id: 'zh', name: 'Tiếng Trung', native_name: '中文 (汉语)', flag: '🇨🇳', default_level: 'PINYIN' },
+      { id: 'en', name: 'Tiếng Anh', native_name: 'English (US/UK)', flag: '🇬🇧', default_level: 'IPA' }
+    ];
   },
 
   getLevels: async (lang = 'zh') => {
-    const res = await fetch(`${API_BASE}/levels?lang=${lang}`);
-    return res.json();
+    try {
+      const res = await fetch(`${API_BASE}/levels?lang=${lang}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) return data;
+      }
+    } catch (e) {
+      console.warn('API getLevels failed, fallback to local curriculum', e);
+    }
+    return getCurriculumLevels(lang);
   },
 
   getUnits: async (levelId, userId = 'default_user') => {
-    const res = await fetch(`${API_BASE}/units?level_id=${levelId}&user_id=${userId}`);
-    return res.json();
+    try {
+      const res = await fetch(`${API_BASE}/units?level_id=${levelId}&user_id=${userId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) return data;
+      }
+    } catch (e) {
+      console.warn('API getUnits failed, fallback to local curriculum', e);
+    }
+    return getCurriculumUnits(levelId);
   },
 
   getLesson: async (lessonId) => {
-    const res = await fetch(`${API_BASE}/lessons/${lessonId}`);
-    return res.json();
+    try {
+      const res = await fetch(`${API_BASE}/lessons/${lessonId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.exercises && data.exercises.length > 0) return data;
+      }
+    } catch (e) {
+      console.warn('API getLesson failed, fallback to local curriculum', e);
+    }
+    return getCurriculumLesson(lessonId);
   },
 
   completeLesson: async (lessonId, data) => {

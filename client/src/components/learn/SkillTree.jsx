@@ -385,13 +385,13 @@ export const SkillTree = () => {
               return (
                 <div
                   key={lesson.id || idx}
-                  onClick={() => !isLocked && onSelectLesson(lesson)}
-                  className={`relative rounded-2xl border-2 p-3.5 flex flex-col justify-between transition-all ${
-                    isLocked
-                      ? 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 opacity-65 cursor-not-allowed'
+                  onClick={() => onSelectLesson(lesson)}
+                  className={`relative rounded-2xl border-2 p-3.5 flex flex-col justify-between transition-all cursor-pointer hover:shadow-md ${
+                    isCompleted
+                      ? 'bg-white dark:bg-slate-800 border-amber-300 dark:border-amber-600/60 hover:border-amber-400'
                       : isCurrent
-                      ? 'bg-lime-50/60 dark:bg-lime-950/20 border-[#58CC02] shadow-sm cursor-pointer hover:shadow-md'
-                      : 'bg-white dark:bg-slate-800 border-amber-300 dark:border-amber-600/60 cursor-pointer hover:border-amber-400'
+                      ? 'bg-lime-50/60 dark:bg-lime-950/20 border-[#58CC02] shadow-sm'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-[#58CC02]'
                   }`}
                 >
                   <div>
@@ -409,8 +409,8 @@ export const SkillTree = () => {
                           ★ Đang học
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500">
-                          🔒 Khóa
+                        <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                          Chưa học
                         </span>
                       )}
                     </div>
@@ -428,26 +428,19 @@ export const SkillTree = () => {
 
                   {/* Nút hành động dưới đáy thẻ */}
                   <button
-                    disabled={isLocked}
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (isLocked) {
-                        sounds.playTap?.();
-                        toggleFreeMode();
-                        startLesson(lesson.id);
-                        return;
-                      }
                       onSelectLesson(lesson);
                     }}
                     className={`mt-3 w-full py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-center transition-all cursor-pointer ${
                       isCompleted
-                        ? 'bg-amber-400 hover:bg-amber-500 text-slate-900'
+                        ? 'bg-amber-400 hover:bg-amber-500 text-slate-900 shadow-xs'
                         : isCurrent
-                        ? 'bg-[#58CC02] hover:bg-[#46A302] text-white'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-400 hover:text-slate-600'
+                        ? 'bg-[#58CC02] hover:bg-[#46A302] text-white shadow-xs'
+                        : 'bg-slate-100 dark:bg-slate-700 hover:bg-[#58CC02] hover:text-white text-slate-700 dark:text-slate-200'
                     }`}
                   >
-                    {isCompleted ? 'Ôn tập lại' : isCurrent ? 'Bắt đầu học ➔' : 'Mở khóa ngay'}
+                    {isCompleted ? 'Ôn tập lại' : isCurrent ? 'Bắt đầu học ➔' : 'Vào học ngay'}
                   </button>
                 </div>
               );
