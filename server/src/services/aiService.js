@@ -12,7 +12,48 @@ class AIService {
     return new GoogleGenAI({ apiKey: key });
   }
 
-  async generateContentWithFallback(client, { model, contents, systemInstruction, responseMimeType }) {
+  /**
+   * Safe JSON Parser: strips markdown code fences (```json and ```)
+   * and falls back to fallbackData without crashing.
+   */
+  safeParseAIJson(rawText, fallbackData = null) {
+    if (!rawText) return fallbackData;
+    if (typeof rawText === 'object') return rawText;
+    try {
+      const cleaned = String(rawText)
+        .replace(/```json\s*/gi, '')
+        .replace(/```\s*/g, '')
+        .trim();
+      return JSON.parse(cleaned);
+    } catch (err) {
+      console.error('AI JSON Parse Error:', err.message);
+      // Secondary attempt: extract JSON substring from first '{' or '[' to last '}' or ']'
+      try {
+        const firstBrace = rawText.indexOf('{');
+        const firstBracket = rawText.indexOf('[');
+        let startIdx = -1;
+        let endIdx = -1;
+
+        if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+          startIdx = firstBrace;
+          endIdx = rawText.lastIndexOf('}');
+        } else if (firstBracket !== -1) {
+          startIdx = firstBracket;
+          endIdx = rawText.lastIndexOf(']');
+        }
+
+        if (startIdx !== -1 && endIdx > startIdx) {
+          const sub = rawText.substring(startIdx, endIdx + 1);
+          return JSON.parse(sub);
+        }
+      } catch (subErr) {
+        console.error('AI JSON Substring Parse Error:', subErr.message);
+      }
+      return fallbackData;
+    }
+  }
+
+  async generateContentWithFallback(client, { model, contents, systemInstruction, responseMimeType, fallbackData }) {
     const modelsToTry = [];
     if (model && !modelsToTry.includes(model)) modelsToTry.push(model);
     for (const cm of this.candidateModels) {
@@ -34,14 +75,17 @@ class AIService {
 
         const rawText = response.text;
         if (responseMimeType === 'application/json') {
-          const cleaned = rawText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
-          return JSON.parse(cleaned);
+          const parsed = this.safeParseAIJson(rawText, fallbackData);
+          if (parsed !== undefined) return parsed;
         }
         return rawText;
       } catch (err) {
         lastError = err;
         console.warn(`Model ${m} failed, trying next candidate:`, err.message);
       }
+    }
+    if (fallbackData !== undefined) {
+      return fallbackData;
     }
     throw lastError || new Error('All model candidates failed');
   }
@@ -78,21 +122,25 @@ ${hint ? `- Gợi ý bổ sung: "${hint}"` : ''}
 
 Hãy phân tích và trả về JSON theo đúng định dạng được yêu cầu.`;
 
+    const fallback = this.getLocalMistakeExplanation({ question, userAnswer, correctAnswer, language, hint });
+
     if (client) {
       try {
-        return await this.generateContentWithFallback(client, {
+        const result = await this.generateContentWithFallback(client, {
           model,
           contents: userPrompt,
           systemInstruction: systemPrompt,
-          responseMimeType: 'application/json'
+          responseMimeType: 'application/json',
+          fallbackData: fallback
         });
+        if (result && result.summary) return result;
       } catch (err) {
         console.warn('Gemini API call failed, falling back to local pedagogical generator:', err.message);
       }
     }
 
     // High quality local fallback if no API key or network error
-    return this.getLocalMistakeExplanation({ question, userAnswer, correctAnswer, language, hint });
+    return fallback;
   }
 
   /**
@@ -143,55 +191,70 @@ Khi trả lời tiếng Trung, luôn kèm Pinyin và dịch nghĩa. Khi trả l�
   }
 
   /**
-   * 3. AI ROLEPLAY & VOICE CHAT WITH INSTANT FEEDBACK
+   * 3. AI ROLEPLAY & VOICE CHAT WITH INSTANT FEEDBACK & CONVERSATION HISTORY (Up to 10 recent turns)
    */
   async chatRoleplay({ scenario, messages = [], userMessage, language = 'zh', apiKey, model = this.defaultModel }) {
     const client = this.getClient(apiKey);
-    const langName = language === 'zh' ? 'Tiếng Trung' : 'Tiếng Anh';
+    const langName = language === 'zh' ? 'Tiếng Trung (HSK)' : 'Tiếng Anh (CEFR/IELTS)';
 
-    const systemPrompt = `Bạn đang tham gia bài tập nhập vai hội thoại ngôn ngữ ${langName} với người học.
-Tình huống: "${scenario.title} - ${scenario.description}".
-Bạn đóng vai: "${scenario.role || 'Người bản xứ'}".
-Nhiệm vụ:
-1. Trả lời người học một cách tự nhiên như người bản xứ theo đúng ngữ cảnh tình huống.
-2. Cung cấp phiên âm (${language === 'zh' ? 'Pinyin' : 'IPA'}) và bản dịch tiếng Việt cho câu bạn nói.
-3. Đánh giá câu nói của người dùng:
-   - Câu nói đã tự nhiên chưa?
-   - Có lỗi ngữ pháp/từ vựng nào không?
-   - Đề xuất câu nói chuẩn bản xứ hơn (Native polish).
-4. Gợi ý 1 câu trả lời tiếp theo (Hint) để người học có thể nói tiếp nếu bị bí.
+    const systemPrompt = `Bạn là một trợ lý AI thông minh đóng vai trong bài tập luyện giao tiếp ${langName}.
+Tình huống giao tiếp: "${scenario?.title || 'Giao tiếp hàng ngày'}" - ${scenario?.description || 'Hội thoại tự nhiên'}.
+Bạn đóng vai: "${scenario?.role || 'Người bản xứ'}".
+Ngôn ngữ sử dụng: ${langName}.
+
+NHIỆM VỤ & QUY TẮC BẮT BUỘC:
+1. Tiếp tục cuộc trò chuyện một cách liền mạch, nhập đúng vai trò và bám sát toàn bộ diễn biến lịch sử các câu thoại trước đó.
+2. Trả lời bằng ngôn ngữ đích, luôn đi kèm phiên âm (${language === 'zh' ? 'Pinyin chuẩn có dấu thanh điệu' : 'Phiên âm IPA'}) và bản dịch tiếng Việt tự nhiên.
+3. Luôn đánh giá câu nói của người học và cung cấp phản hồi sư phạm:
+   - Nhận xét tính tự nhiên (isNatural: true/false).
+   - Đánh giá chất lượng (rating): "Xuất sắc" | "Tốt" | "Cần cải thiện".
+   - Chỉ rõ lỗi ngữ pháp/từ vựng (nếu có) trong grammarCritique.
+   - Đề xuất câu nói chuẩn bản xứ hơn (betterAlternative).
+4. Luôn gợi ý 1 câu trả lời tiếp theo (hintForUser) kèm phiên âm và dịch nghĩa tiếng Việt để người học có thể nói tiếp dễ dàng nếu bí ý tưởng.
 
 BẮT BUỘC TRẢ VỀ JSON HỢP LỆ THEO SCHEMA:
 {
   "replyText": "Câu thoại tiếp theo của bạn bằng ngôn ngữ đích",
-  "phonetic": "Phiên âm Pinyin hoặc IPA",
+  "phonetic": "${language === 'zh' ? 'Pinyin có dấu' : 'Phiên âm IPA'}",
   "translation": "Dịch nghĩa câu thoại sang tiếng Việt",
   "userFeedback": {
-    "isNatural": true/false,
-    "rating": "Xuất sắc" | "Tốt" | "Cần cải thiện",
+    "isNatural": true,
+    "rating": "Xuất sắc",
     "grammarCritique": "Nhận xét ngữ pháp hoặc từ vựng trong câu của người học",
     "betterAlternative": "Cách diễn đạt tự nhiên hơn của người bản xứ"
   },
   "hintForUser": "Gợi ý câu người học có thể nói tiếp theo (kèm phiên âm & dịch)"
 }`;
 
-    const formattedHistory = messages.map(m => `${m.role === 'bot' ? 'Bạn' : 'Người học'}: ${m.text}`).join('\n');
-    const prompt = `Lịch sử hội thoại:\n${formattedHistory}\n\nNgười học vừa nói: "${userMessage}"\nHãy nhập vai và đưa ra phản hồi theo định dạng JSON chuẩn.`;
+    // Lưu và gửi kèm lịch sử tin nhắn trước đó (tối đa 10 lượt gần nhất)
+    const recentMessages = (messages || []).slice(-10);
+    const formattedHistory = recentMessages.map(m => {
+      const speaker = m.role === 'bot' ? (scenario?.role || 'Bạn') : 'Người học';
+      return `${speaker}: "${m.text}"`;
+    }).join('\n');
+
+    const prompt = `${formattedHistory ? `Lịch sử hội thoại trước đó (tối đa 10 lượt gần nhất):\n${formattedHistory}\n\n` : ''}Người học vừa nói: "${userMessage}"\nHãy nhập vai, duy trì ngữ cảnh liền mạch và đưa ra phản hồi theo định dạng JSON chuẩn.`;
+
+    const fallback = this.getLocalRoleplayResponse(userMessage, scenario, language);
 
     if (client) {
       try {
-        return await this.generateContentWithFallback(client, {
+        const result = await this.generateContentWithFallback(client, {
           model,
           contents: prompt,
           systemInstruction: systemPrompt,
-          responseMimeType: 'application/json'
+          responseMimeType: 'application/json',
+          fallbackData: fallback
         });
+        if (result && result.replyText) {
+          return result;
+        }
       } catch (err) {
         console.warn('Gemini roleplay failed, using local dialogue generator:', err.message);
       }
     }
 
-    return this.getLocalRoleplayResponse(userMessage, scenario, language);
+    return fallback;
   }
 
   /**
@@ -234,20 +297,24 @@ TRẢ VỀ KẾT QUẢ DẠNG JSON SCHEMA:
 
     const userPrompt = `Đề bài viết: "${prompt}"\nTrình độ mục tiêu: ${level}\nBài làm của người học:\n"""\n${text}\n"""\nHãy chấm điểm và trả về JSON chuẩn.`;
 
+    const fallback = this.getLocalWritingReview(text, prompt, level, language);
+
     if (client) {
       try {
-        return await this.generateContentWithFallback(client, {
+        const result = await this.generateContentWithFallback(client, {
           model,
           contents: userPrompt,
           systemInstruction: systemPrompt,
-          responseMimeType: 'application/json'
+          responseMimeType: 'application/json',
+          fallbackData: fallback
         });
+        if (result && result.score) return result;
       } catch (err) {
         console.warn('Gemini writing review failed, using local evaluation:', err.message);
       }
     }
 
-    return this.getLocalWritingReview(text, prompt, level, language);
+    return fallback;
   }
 
   /**
@@ -289,20 +356,24 @@ TRẢ VỀ JSON THEO SCHEMA CHUẨN:
 
     const prompt = `Hãy tạo một bài đọc ${langName} cấp độ ${level} chủ đề "${topic}", tích hợp các từ vựng: ${words.join(', ')}.`;
 
+    const fallback = this.getLocalReadingPassage(words, topic, level, language);
+
     if (client) {
       try {
-        return await this.generateContentWithFallback(client, {
+        const result = await this.generateContentWithFallback(client, {
           model,
           contents: prompt,
           systemInstruction: systemPrompt,
-          responseMimeType: 'application/json'
+          responseMimeType: 'application/json',
+          fallbackData: fallback
         });
+        if (result && result.content) return result;
       } catch (err) {
         console.warn('Gemini reading generator failed, using local reading sample:', err.message);
       }
     }
 
-    return this.getLocalReadingPassage(words, topic, level, language);
+    return fallback;
   }
 
   // ----------------------------------------------------------------------

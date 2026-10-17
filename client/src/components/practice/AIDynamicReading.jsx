@@ -37,6 +37,7 @@ export const AIDynamicReading = () => {
   // Comprehension quiz states
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizScore, setQuizScore] = useState(null);
+  const [apiError, setApiError] = useState(null);
 
   useEffect(() => {
     // Reset defaults when language switches
@@ -50,6 +51,7 @@ export const AIDynamicReading = () => {
     setReadingData(null);
     setQuizAnswers({});
     setQuizScore(null);
+    setApiError(null);
   }, [currentLang]);
 
   const handleAddWord = () => {
@@ -73,6 +75,7 @@ export const AIDynamicReading = () => {
     setQuizAnswers({});
     setQuizScore(null);
     setSelectedWordTooltip(null);
+    setApiError(null);
 
     try {
       const res = await ai.generateReading({
@@ -82,12 +85,56 @@ export const AIDynamicReading = () => {
         language: currentLang
       });
 
-      if (res.success && res.data) {
+      if (res && res.success && res.data) {
         sounds.playCorrect();
         setReadingData(res.data);
+      } else {
+        setApiError(res?.error || 'Chưa thể kết nối tới Google Gemini. Đang nạp bài đọc mẫu nội bộ.');
+        // Provide local fallback passage
+        sounds.playCorrect();
+        if (currentLang === 'zh') {
+          setReadingData({
+            title: '周末的一天 (Một ngày cuối tuần)',
+            level,
+            topic: topic || 'Đời sống hàng ngày',
+            targetWords: selectedWords,
+            content: '今天是星期六。阳光明媚，小明去学校看望他的老朋友。他们一起在图书馆里学习汉语，还喝了中国绿茶。小明说：“学习虽然很辛苦，但是和朋友在一起非常快乐。” 他们度过了充实美好的一天。',
+            pinyin: 'Jīntiān shì xīngqīliù. Yángguāng míngmèi, Xiǎomíng qù xuéxiào kànwàng tā de lǎo péngyou. Tāmen yìqǐ zài túshūguǎn lǐ xuéxí Hànyǔ, hái hē le Zhōngguó lǜchá. Xiǎomíng shuō: “Xuéxí suīrán hěn xīnkǔ, dànshì hé péngyou zài yìqǐ fēicháng kuàilè.” Tāmen dùguò le chōngshí měihǎo de yì tiān.',
+            vietnameseTranslation: 'Hôm nay là thứ bảy. Ánh nắng rực rỡ, Tiểu Minh đến trường thăm người bạn cũ của mình. Họ cùng nhau học tiếng Trung trong thư viện và còn uống trà xanh Trung Quốc. Họ đã trải qua một ngày thật trọn vẹn và tốt đẹp.',
+            vocabularyList: selectedWords.map(w => ({ word: w, phonetic: 'Pinyin', meaning: 'Từ vựng trọng tâm trong bài' })),
+            quiz: [
+              {
+                question: 'Tiểu Minh đã đến đâu để gặp bạn của mình?',
+                options: ['Đến trường học (学校)', 'Đến sân bay (机场)', 'Đến bệnh viện (医院)', 'Đến công viên (公园)'],
+                correctIndex: 0,
+                explanation: 'Dẫn chứng trong bài: "小明去学校看望他的老朋友".'
+              }
+            ]
+          });
+        } else {
+          setReadingData({
+            title: 'A Productive Weekend at the Central Cafe',
+            level,
+            topic: topic || 'Daily Life',
+            targetWords: selectedWords,
+            content: 'Saturday morning was bright and crisp. Alex, an enthusiastic student, met his childhood friend at a local cafe. While sipping freshly brewed coffee, they discussed an exciting opportunity coming up next semester.',
+            pinyin: '',
+            vietnameseTranslation: 'Sáng thứ bảy trời trong lành và se lạnh. Alex, một sinh viên nhiệt huyết, đã gặp người bạn thời thơ ấu tại một quán cà phê địa phương.',
+            vocabularyList: selectedWords.map(w => ({ word: w, phonetic: '/.../', meaning: 'Key vocabulary word' })),
+            quiz: [
+              {
+                question: 'Where did the two friends meet?',
+                options: ['At a local cafe', 'At a hospital', 'At the airport', 'At the cinema'],
+                correctIndex: 0,
+                explanation: 'Evidence: "...met his childhood friend at a local cafe."'
+              }
+            ]
+          });
+        }
       }
     } catch (e) {
       console.warn('Error generating reading:', e);
+      setApiError('Lỗi kết nối mạng khi tạo bài đọc. Vui lòng kiểm tra API Key.');
     } finally {
       setIsGenerating(false);
     }
@@ -171,6 +218,25 @@ export const AIDynamicReading = () => {
           </button>
         </div>
       </div>
+
+      {/* Missing Key or Error Banner */}
+      {(!hasAiKey || apiError) && (
+        <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-xs flex flex-wrap items-center justify-between gap-2.5 animate-in fade-in">
+          <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
+            <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+            <span className="font-semibold">
+              {apiError || 'Bạn đang dùng bài đọc mẫu offline. Kích hoạt Google Gemini API Key để tự do sáng tác bài đọc theo bất kỳ chủ đề và từ vựng nào.'}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={openAiSettings}
+            className="duo-btn duo-btn-yellow text-xs py-1.5 px-3 rounded-xl font-black shrink-0"
+          >
+            Cài Đặt API Key
+          </button>
+        </div>
+      )}
 
       {/* Configuration Controls */}
       <div className="duo-card p-5 space-y-4">

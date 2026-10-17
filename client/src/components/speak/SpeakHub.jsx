@@ -60,6 +60,7 @@ export const SpeakHub = () => {
   const [suggestedHint, setSuggestedHint] = useState(null);
   const [showPinyin, setShowPinyin] = useState(true);
   const [showTranslation, setShowTranslation] = useState(true);
+  const [apiError, setApiError] = useState(null);
 
   const messagesEndRef = useRef(null);
 
@@ -108,20 +109,23 @@ export const SpeakHub = () => {
     sounds.playTap();
     setUserInput('');
     setSuggestedHint(null);
+    setApiError(null);
 
     const newMsgs = [...messages, { role: 'user', text }];
     setMessages(newMsgs);
     setIsAiResponding(true);
 
     try {
+      // Retain conversation history: send up to 10 most recent dialogue turns
+      const recentTurns = newMsgs.slice(-10);
       const res = await ai.chatRoleplay({
         scenario: activeScenario,
-        messages: newMsgs,
+        messages: recentTurns,
         userMessage: text,
         language: currentLang
       });
 
-      if (res.success && res.data) {
+      if (res && res.success && res.data) {
         const aiData = res.data;
         const botMsg = {
           role: 'bot',
@@ -137,9 +141,28 @@ export const SpeakHub = () => {
         sounds.playCorrect();
         // Speak AI voice
         speech.speak(aiData.replyText, currentLang, 1.0);
+      } else {
+        // Friendly fallback notification without crashing or white-screen
+        setApiError(res?.error || 'Chưa thể kết nối tới Google Gemini. Đang sử dụng câu trả lời mẫu thông minh.');
+        const fallbackMsg = currentLang === 'zh'
+          ? {
+              role: 'bot',
+              text: '好的，我已经明白了。请问您还需要别的帮助吗？',
+              pinyin: 'Hǎo de, wǒ yǐjīng míngbái le. Qǐngwèn nín hái xūyào bié de bāngzhù ma?',
+              vn: 'Dạ vâng, tôi đã hiểu rồi. Xin hỏi bạn có cần giúp đỡ gì thêm không ạ?'
+            }
+          : {
+              role: 'bot',
+              text: 'I understand! Is there anything else I can help you with?',
+              pinyin: '',
+              vn: 'Tôi hoàn toàn hiểu! Bạn có cần tôi giúp thêm điều gì không?'
+            };
+        setMessages(prev => [...prev, fallbackMsg]);
+        speech.speak(fallbackMsg.text, currentLang, 1.0);
       }
     } catch (e) {
       console.warn('Roleplay error:', e);
+      setApiError('Lỗi kết nối mạng: Không thể gọi AI. Vui lòng kiểm tra API Key.');
     } finally {
       setIsAiResponding(false);
     }
@@ -249,6 +272,25 @@ export const SpeakHub = () => {
       ) : (
         /* ACTIVE AI VOICE CHAT & FEEDBACK */
         <div className="space-y-4">
+          {/* Missing API Key or Network Alert Banner */}
+          {(!hasAiKey || apiError) && (
+            <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-xs flex flex-wrap items-center justify-between gap-2.5 animate-in fade-in">
+              <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
+                <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+                <span className="font-semibold">
+                  {apiError || 'Chưa cấu hình API Key. Hãy kích hoạt Google Gemini để AI phản hồi chuyên sâu và tự nhiên.'}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={openAiSettings}
+                className="duo-btn duo-btn-yellow text-xs py-1.5 px-3 rounded-xl font-black shrink-0"
+              >
+                Cài Đặt API Key
+              </button>
+            </div>
+          )}
+
           {/* Header Controls */}
           <div className="duo-card p-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">

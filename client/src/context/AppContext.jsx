@@ -68,6 +68,15 @@ export const AppProvider = ({ children }) => {
   // Load languages and user profile on mount
   useEffect(() => {
     loadInitialData();
+
+    const handleOpenAiModal = () => {
+      setIsAiSettingsOpen(true);
+    };
+    window.addEventListener('lingo555:open-ai-settings', handleOpenAiModal);
+
+    return () => {
+      window.removeEventListener('lingo555:open-ai-settings', handleOpenAiModal);
+    };
   }, []);
 
   // Sync Dark mode with document class and localStorage

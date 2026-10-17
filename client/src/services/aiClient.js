@@ -1,4 +1,40 @@
-// AI Client Service communicating with /api/ai endpoints and managing API Key
+// AI Client Service communicating with /api/ai endpoints, managing API Key & Safe JSON Parsing
+
+export const safeParseAIJson = (rawText, fallbackData = null) => {
+  if (!rawText) return fallbackData;
+  if (typeof rawText === 'object') return rawText;
+  try {
+    const cleaned = String(rawText)
+      .replace(/```json\s*/gi, '')
+      .replace(/```\s*/g, '')
+      .trim();
+    return JSON.parse(cleaned);
+  } catch (err) {
+    console.error('AI JSON Parse Error:', err);
+    try {
+      const firstBrace = rawText.indexOf('{');
+      const firstBracket = rawText.indexOf('[');
+      let startIdx = -1;
+      let endIdx = -1;
+
+      if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+        startIdx = firstBrace;
+        endIdx = rawText.lastIndexOf('}');
+      } else if (firstBracket !== -1) {
+        startIdx = firstBracket;
+        endIdx = rawText.lastIndexOf(']');
+      }
+
+      if (startIdx !== -1 && endIdx > startIdx) {
+        const sub = rawText.substring(startIdx, endIdx + 1);
+        return JSON.parse(sub);
+      }
+    } catch (subErr) {
+      console.error('AI JSON Substring Parse Error:', subErr);
+    }
+    return fallbackData;
+  }
+};
 
 class AIClient {
   constructor() {
@@ -35,6 +71,7 @@ class AIClient {
   async getStatus() {
     try {
       const res = await fetch('/api/ai/status');
+      if (!res.ok) return { active: false, hasServerKey: false };
       return await res.json();
     } catch (e) {
       return { active: false, hasServerKey: false };
@@ -52,60 +89,91 @@ class AIClient {
   }
 
   async verifyKey(key, model) {
-    const res = await fetch('/api/ai/verify-key', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-gemini-api-key': key || this.getApiKey(),
-        'x-gemini-model': model || this.getModel()
-      }
-    });
-    return res.json();
+    try {
+      const res = await fetch('/api/ai/verify-key', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-gemini-api-key': key || this.getApiKey(),
+          'x-gemini-model': model || this.getModel()
+        }
+      });
+      return await res.json();
+    } catch (err) {
+      return { valid: false, message: 'Lỗi mạng hoặc không thể kết nối tới máy chủ AI: ' + err.message };
+    }
   }
 
   async explainMistake({ question, userAnswer, correctAnswer, language, hint }) {
-    const res = await fetch('/api/ai/explain-mistake', {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify({ question, userAnswer, correctAnswer, language, hint })
-    });
-    return res.json();
+    try {
+      const res = await fetch('/api/ai/explain-mistake', {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ question, userAnswer, correctAnswer, language, hint })
+      });
+      return await res.json();
+    } catch (err) {
+      console.warn('explainMistake fetch error:', err);
+      return { success: false, error: err.message };
+    }
   }
 
   async askTutor({ query, currentContext, language, history }) {
-    const res = await fetch('/api/ai/ask-tutor', {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify({ query, currentContext, language, history })
-    });
-    return res.json();
+    try {
+      const res = await fetch('/api/ai/ask-tutor', {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ query, currentContext, language, history })
+      });
+      return await res.json();
+    } catch (err) {
+      console.warn('askTutor fetch error:', err);
+      return { success: false, error: err.message };
+    }
   }
 
   async chatRoleplay({ scenario, messages, userMessage, language }) {
-    const res = await fetch('/api/ai/chat-roleplay', {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify({ scenario, messages, userMessage, language })
-    });
-    return res.json();
+    try {
+      // Retain up to 10 most recent conversation history items
+      const recentMessages = (messages || []).slice(-10);
+      const res = await fetch('/api/ai/chat-roleplay', {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ scenario, messages: recentMessages, userMessage, language })
+      });
+      return await res.json();
+    } catch (err) {
+      console.warn('chatRoleplay fetch error:', err);
+      return { success: false, error: err.message };
+    }
   }
 
   async reviewWriting({ prompt, text, level, language }) {
-    const res = await fetch('/api/ai/review-writing', {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify({ prompt, text, level, language })
-    });
-    return res.json();
+    try {
+      const res = await fetch('/api/ai/review-writing', {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ prompt, text, level, language })
+      });
+      return await res.json();
+    } catch (err) {
+      console.warn('reviewWriting fetch error:', err);
+      return { success: false, error: err.message };
+    }
   }
 
   async generateReading({ words, topic, level, language }) {
-    const res = await fetch('/api/ai/generate-reading', {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify({ words, topic, level, language })
-    });
-    return res.json();
+    try {
+      const res = await fetch('/api/ai/generate-reading', {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ words, topic, level, language })
+      });
+      return await res.json();
+    } catch (err) {
+      console.warn('generateReading fetch error:', err);
+      return { success: false, error: err.message };
+    }
   }
 }
 

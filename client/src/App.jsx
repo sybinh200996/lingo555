@@ -9,6 +9,7 @@ import { ProfileHub } from './components/profile/ProfileHub';
 import { LessonModal } from './components/lesson/LessonModal';
 import { FloatingAITutor } from './components/ai/FloatingAITutor';
 import { AISettingsModal } from './components/ai/AISettingsModal';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Bot } from 'lucide-react';
 
 function MainContent() {
@@ -19,16 +20,24 @@ function MainContent() {
 
   return (
     <>
-      {activeTab === 'learn' && <SkillTree />}
-      {activeTab === 'dict' && <SmartDictionary />}
-      {activeTab === 'practice' && <PracticeHub />}
-      {activeTab === 'speak' && <SpeakHub />}
-      {activeTab === 'profile' && <ProfileHub />}
+      <ErrorBoundary title="Lỗi hiển thị nội dung học tập">
+        {activeTab === 'learn' && <SkillTree />}
+        {activeTab === 'dict' && <SmartDictionary />}
+        {activeTab === 'practice' && <PracticeHub />}
+        {activeTab === 'speak' && <SpeakHub />}
+        {activeTab === 'profile' && <ProfileHub />}
+      </ErrorBoundary>
       
-      {/* Modals */}
-      <LessonModal />
-      <AISettingsModal />
-      <FloatingAITutor />
+      {/* Modals with isolated ErrorBoundaries */}
+      <ErrorBoundary title="Lỗi trong bài học">
+        <LessonModal />
+      </ErrorBoundary>
+      <ErrorBoundary title="Lỗi cấu hình AI">
+        <AISettingsModal />
+      </ErrorBoundary>
+      <ErrorBoundary title="Lỗi Gia Sư AI">
+        <FloatingAITutor />
+      </ErrorBoundary>
 
       {/* Global Sleek Floating AI Tutor Trigger (Neatly pinned at bottom-right) */}
       {showFab && (
