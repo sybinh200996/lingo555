@@ -125,3 +125,27 @@
 .animate-pulse-glow {
   animation: pulseGlow 2s infinite;
 }
+
+/* Hiệu ứng nút bấm 3D có độ lún vật lý chuẩn Duolingo */
+.btn-3d-green {
+  @apply bg-[#58CC02] text-white font-extrabold rounded-2xl border-b-[5px] border-[#46A302] hover:bg-[#61E002] active:border-b-0 active:translate-y-[5px] transition-all duration-75 select-none;
+}
+.btn-3d-blue {
+  @apply bg-[#1CB0F6] text-white font-extrabold rounded-2xl border-b-[5px] border-[#1899D6] hover:bg-[#2BDEFF] active:border-b-0 active:translate-y-[5px] transition-all duration-75 select-none;
+}
+.btn-3d-purple {
+  @apply bg-[#CE82FF] text-white font-extrabold rounded-2xl border-b-[5px] border-[#A568CC] hover:bg-[#D99BFF] active:border-b-0 active:translate-y-[5px] transition-all duration-75 select-none;
+}
+.btn-3d-white {
+  @apply bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-2xl border-2 border-b-[5px] border-slate-200 dark:border-slate-700 hover:bg-slate-50 active:border-b-2 active:translate-y-[3px] transition-all duration-75 select-none;
+}
+
+/* Hiệu ứng nhãn "BẮT ĐẦU" nảy nhẹ trên bài học hiện tại */
+@keyframes floatBounce {
+  0%, 100% { transform: translateY(0) translateX(-50%); }
+  50% { transform: translateY(-6px) translateX(-50%); }
+}
+.animate-float-badge {
+  animation: floatBounce 1.6s ease-in-out infinite;
+}
+

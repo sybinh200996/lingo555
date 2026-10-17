@@ -32,30 +32,30 @@ export const DesktopRightPanel = () => {
   return (
     <aside className="hidden xl:flex flex-col w-80 2xl:w-96 sticky top-0 h-[100dvh] overflow-y-auto border-l-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 z-20 space-y-6">
       {/* Top Header Gamification Stats Bar */}
-      <div className="grid grid-cols-3 gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
+      <div className="grid grid-cols-3 gap-2.5">
         {/* Streak */}
         <button 
           onClick={openQuests}
-          className="flex items-center justify-center gap-1.5 py-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all"
+          className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-b-[4px] border-amber-200 dark:border-amber-800/80 hover:scale-105 active:border-b-2 active:translate-y-0.5 transition-all"
           title="Nhiệm vụ hôm nay"
         >
           <Flame className="w-5 h-5 text-amber-500 fill-amber-500 animate-bounce-short" />
-          <span className="font-extrabold text-amber-600 dark:text-amber-400 text-sm">
+          <span className="font-black text-amber-600 dark:text-amber-400 text-sm">
             {userProfile.streak || 1}
           </span>
           {userProfile.streak_freezes > 0 && (
-            <span className="text-[11px]" title={`${userProfile.streak_freezes} khiên đóng băng`}>❄️</span>
+            <span className="text-[10px]" title={`${userProfile.streak_freezes} khiên đóng băng`}>❄️</span>
           )}
         </button>
 
         {/* Gems */}
         <button 
           onClick={openGemShop}
-          className="flex items-center justify-center gap-1.5 py-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all"
+          className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-2xl bg-sky-50 dark:bg-sky-950/40 border-2 border-b-[4px] border-sky-200 dark:border-sky-800/80 hover:scale-105 active:border-b-2 active:translate-y-0.5 transition-all"
           title="Cửa hàng Đá Quý"
         >
-          <Gem className="w-5 h-5 text-sky-500 fill-sky-500" />
-          <span className="font-extrabold text-sky-600 dark:text-sky-400 text-sm">
+          <Gem className="w-5 h-5 text-[#1CB0F6] fill-[#1CB0F6]" />
+          <span className="font-black text-[#1CB0F6] dark:text-sky-400 text-sm">
             {userProfile.gems || 0}
           </span>
         </button>
@@ -63,11 +63,11 @@ export const DesktopRightPanel = () => {
         {/* Hearts */}
         <button
           onClick={handleRefill}
-          className="flex items-center justify-center gap-1.5 py-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all"
+          className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border-2 border-b-[4px] border-rose-200 dark:border-rose-800/80 hover:scale-105 active:border-b-2 active:translate-y-0.5 transition-all"
           title="Nạp lại tim"
         >
-          <Heart className="w-5 h-5 text-rose-500 fill-rose-500" />
-          <span className="font-extrabold text-rose-600 dark:text-rose-400 text-sm">
+          <Heart className="w-5 h-5 text-[#FF4B4B] fill-[#FF4B4B]" />
+          <span className="font-black text-[#FF4B4B] dark:text-rose-400 text-sm">
             {userProfile.hearts}/{userProfile.max_hearts || 5}
           </span>
         </button>
@@ -80,24 +80,24 @@ export const DesktopRightPanel = () => {
             <Zap className="w-4 h-4 fill-current text-purple-500" />
             <span>Đang kích hoạt x2 XP!</span>
           </div>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500 text-white">15p</span>
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500 text-white font-black">15p</span>
         </div>
       )}
 
       {/* Quick Action Gamification Buttons */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2.5">
         <button
           onClick={openGemShop}
-          className="p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 font-extrabold text-xs flex items-center justify-center gap-1.5 hover:scale-[1.02] transition-all"
+          className="btn-3d-blue py-2.5 px-3 rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-sm"
         >
-          <Gem className="w-4 h-4 fill-sky-500 text-sky-500" />
+          <Gem className="w-4 h-4 fill-white" />
           <span>Cửa Hàng</span>
         </button>
         <button
           onClick={openQuests}
-          className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 font-extrabold text-xs flex items-center justify-center gap-1.5 hover:scale-[1.02] transition-all"
+          className="btn-3d-white py-2.5 px-3 rounded-2xl text-xs flex items-center justify-center gap-1.5 text-amber-600 dark:text-amber-400 shadow-sm"
         >
-          <Trophy className="w-4 h-4 text-amber-500" />
+          <Trophy className="w-4 h-4 text-amber-500 fill-amber-500" />
           <span>Nhiệm Vụ</span>
         </button>
       </div>
@@ -106,60 +106,68 @@ export const DesktopRightPanel = () => {
       {userProfile.hearts < 5 && (
         <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border-2 border-rose-200 dark:border-rose-900/50 flex items-center justify-between">
           <div>
-            <h4 className="font-extrabold text-rose-600 dark:text-rose-400 text-sm">
+            <h4 className="font-black text-[#FF4B4B] dark:text-rose-400 text-sm">
               Bạn đang còn {userProfile.hearts} tim!
             </h4>
-            <p className="text-xs text-rose-500/80 mt-0.5">
-              Hồi phục ngay bằng 100 Đá Quý
+            <p className="text-xs text-rose-500/80 mt-0.5 font-medium">
+              Hồi phục ngay bằng 30 Đá Quý
             </p>
           </div>
           <button
             onClick={handleRefill}
             disabled={isRefilling}
-            className="duo-btn duo-btn-red text-xs py-2 px-3 rounded-xl flex items-center gap-1"
+            className="btn-3d-green text-xs py-2 px-3.5 rounded-xl flex items-center gap-1"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 stroke-[3]" />
             <span>Nạp tim</span>
           </button>
         </div>
       )}
 
       {/* Daily XP Goal */}
-      <div className="duo-card p-4">
-        <div className="flex items-center justify-between mb-2">
+      <div className="duo-card p-4 space-y-3">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-amber-500 fill-amber-500" />
-            <h3 className="font-extrabold text-sm text-slate-800 dark:text-slate-200">
+            <h3 className="font-black text-xs uppercase tracking-wider text-slate-800 dark:text-slate-200">
               Mục Tiêu Hôm Nay
             </h3>
           </div>
-          <span className="text-xs font-bold text-slate-400">
+          <span className="text-xs font-black text-amber-500">
             {Math.min(userProfile.xp, 50)} / 50 XP
           </span>
         </div>
-        <div className="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden">
+        <div className="w-full bg-slate-100 dark:bg-slate-800 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-700">
           <div
-            className="h-full bg-amber-400 rounded-full transition-all duration-500"
+            className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-500 shadow-inner"
             style={{ width: `${Math.min(100, (userProfile.xp / 50) * 100)}%` }}
           />
         </div>
-        <p className="text-xs text-slate-400 mt-2">
-          {userProfile.xp >= 50
-            ? '🎉 Chúc mừng! Bạn đã hoàn thành mục tiêu ngày hôm nay!'
-            : `Còn thiếu ${50 - Math.min(userProfile.xp, 50)} XP nữa để hoàn thành mục tiêu.`}
-        </p>
+        <div className="flex items-center justify-between pt-1">
+          <p className="text-[11px] text-slate-400 font-bold">
+            {userProfile.xp >= 50
+              ? '🎉 Hoàn thành mục tiêu!'
+              : `Còn ${50 - Math.min(userProfile.xp, 50)} XP nữa`}
+          </p>
+          <button 
+            onClick={openQuests}
+            className="text-[11px] font-black text-[#1CB0F6] hover:underline uppercase tracking-wider"
+          >
+            Nhiệm vụ &rarr;
+          </button>
+        </div>
       </div>
 
       {/* Weekly League Leaderboard */}
       <div className="duo-card p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-amber-500" />
-            <h3 className="font-extrabold text-sm text-slate-800 dark:text-slate-200">
+            <Trophy className="w-5 h-5 text-amber-500 fill-amber-500" />
+            <h3 className="font-black text-xs uppercase tracking-wider text-slate-800 dark:text-slate-200">
               Bảng Xếp Hạng Vàng
             </h3>
           </div>
-          <span className="text-xs font-bold text-emerald-500 uppercase tracking-wider">
+          <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 uppercase tracking-wider">
             Top 10
           </span>
         </div>
