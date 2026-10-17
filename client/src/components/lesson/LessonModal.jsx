@@ -488,7 +488,7 @@ export const LessonModal = () => {
               <div className="duo-card p-4">
                 <span className="text-xs font-bold text-slate-400 uppercase">Độ Chính Xác</span>
                 <p className="text-2xl font-black text-emerald-500 mt-1">
-                  {Math.round(((correctCount) / exercises.length) * 100)}%
+                  {exercises.length > 0 ? Math.round(((correctCount) / exercises.length) * 100) : 100}%
                 </p>
               </div>
             </div>
@@ -498,6 +498,26 @@ export const LessonModal = () => {
               className="duo-btn duo-btn-green w-full max-w-sm py-4 rounded-2xl text-base uppercase tracking-wider mx-auto"
             >
               Tiếp Tục Lộ Trình
+            </button>
+          </div>
+        ) : exercises.length === 0 ? (
+          <div className="text-center py-12 space-y-5 animate-in fade-in">
+            <div className="w-20 h-20 mx-auto rounded-3xl bg-amber-100 dark:bg-amber-950/60 border-2 border-amber-300 dark:border-amber-700 flex items-center justify-center text-3xl shadow-sm">
+              📝
+            </div>
+            <div>
+              <h3 className="text-xl font-black text-slate-800 dark:text-white">
+                Bài học đang được cập nhật câu hỏi
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">
+                Bài học "{lesson?.title}" sẽ sớm có thêm các câu hỏi nâng cao.
+              </p>
+            </div>
+            <button
+              onClick={closeLesson}
+              className="btn-3d-green px-6 py-3.5 rounded-2xl text-xs uppercase font-black tracking-wider mx-auto shadow-md cursor-pointer"
+            >
+              Quay Lại Lộ Trình
             </button>
           </div>
         ) : (

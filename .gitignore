@@ -31,3 +31,4 @@ deploy-vps.cjs
 Thumbs.db
 .idea/
 .vscode/
+scratch/

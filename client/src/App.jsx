@@ -13,6 +13,7 @@ import { GemShopModal } from './components/gamification/GemShopModal';
 import { DailyQuestsModal } from './components/gamification/DailyQuestsModal';
 import { PodcastPlayerModal } from './components/podcast/PodcastPlayerModal';
 import { PlacementTestModal } from './components/placement/PlacementTestModal';
+import { LevelSelectorModal } from './components/learn/LevelSelectorModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Bot } from 'lucide-react';
 
@@ -29,7 +30,10 @@ function MainContent() {
     isPodcastOpen,
     closePodcast,
     isPlacementOpen,
-    closePlacement
+    closePlacement,
+    isLevelModalOpen,
+    closeLevelModal,
+    setCurrentLevel
   } = useApp();
 
   // Hide global floating button when in a lesson or in the AI Speak tab
@@ -65,7 +69,18 @@ function MainContent() {
         <PodcastPlayerModal isOpen={isPodcastOpen} onClose={closePodcast} />
       </ErrorBoundary>
       <ErrorBoundary title="Lỗi Bài Test Xếp Lớp">
-        <PlacementTestModal isOpen={isPlacementOpen} onClose={closePlacement} />
+        <PlacementTestModal 
+          isOpen={isPlacementOpen} 
+          onClose={closePlacement} 
+          onPlacementComplete={(targetLevel) => {
+            if (targetLevel) {
+              setCurrentLevel(targetLevel);
+            }
+          }}
+        />
+      </ErrorBoundary>
+      <ErrorBoundary title="Lỗi Chọn Lộ Trình">
+        <LevelSelectorModal isOpen={isLevelModalOpen} onClose={closeLevelModal} />
       </ErrorBoundary>
 
       {/* Global Sleek Floating AI Tutor Trigger (Neatly pinned at bottom-right) */}

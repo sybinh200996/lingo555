@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const { seedDatabase } = require('./db/seedData');
 const { seedExpandedData } = require('./db/seedDataExpanded');
+const enrichCurriculum = require('./db/enrichAllLessons');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,9 +20,10 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Auto-seed starter and expanded curriculum data on start
+// Auto-seed starter, expanded curriculum, and enriched exercises on start
 seedDatabase();
 seedExpandedData();
+enrichCurriculum();
 
 // Route handlers
 app.use('/api', require('./routes/lessons'));

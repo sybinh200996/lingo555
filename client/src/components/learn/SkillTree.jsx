@@ -5,12 +5,14 @@ import { sounds } from '../../services/soundEffects';
 import { 
   Check, 
   Lock, 
+  Unlock,
   Star, 
   BookOpen, 
   Play, 
   Sparkles, 
   ChevronDown,
-  Headphones
+  Headphones,
+  Compass
 } from 'lucide-react';
 
 // Multi-color Unit Themes (Chương 1-5 & lặp lại)
@@ -76,7 +78,10 @@ export const SkillTree = () => {
     startLesson, 
     userProfile,
     openPlacement,
-    openPodcast
+    openPodcast,
+    isFreeMode,
+    toggleFreeMode,
+    openLevelModal
   } = useApp();
 
   const [units, setUnits] = useState([]);
@@ -194,60 +199,79 @@ export const SkillTree = () => {
         </div>
       )}
 
-      {/* Level Selector Dropdown Bar & Podcast Trigger */}
-      <div className="duo-card p-4 rounded-3xl flex items-center justify-between shadow-sm">
-        <div>
-          <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">
-            Cấp Độ Hiện Tại
-          </span>
+      {/* Level Selector Dropdown Bar, Free Mode Toggle & Podcast Trigger */}
+      <div className="duo-card p-4 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+        <div 
+          onClick={() => {
+            sounds.playTap?.();
+            openLevelModal();
+          }}
+          className="cursor-pointer group flex-1 min-w-0"
+          title="Bấm để mở danh sách chọn lộ trình HSK / CEFR"
+        >
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">
+              Cấp Độ Hiện Tại
+            </span>
+            <span className="text-[10px] text-sky-500 font-extrabold flex items-center gap-0.5 group-hover:underline">
+              • Đổi cấp độ ▾
+            </span>
+          </div>
           <div className="flex items-center gap-2 mt-0.5">
-            <h2 className="text-lg font-black text-slate-800 dark:text-white">
+            <h2 className="text-lg font-black text-slate-800 dark:text-white group-hover:text-[#58CC02] transition-colors truncate">
               {currentLevel?.title || 'Đang tải...'}
             </h2>
             <span
-              className="text-[11px] px-2.5 py-0.5 rounded-full font-black text-white shadow-xs"
+              className="text-[11px] px-2.5 py-0.5 rounded-full font-black text-white shadow-xs shrink-0"
               style={{ backgroundColor: currentLevel?.color || '#58CC02' }}
             >
               {currentLevel?.code}
             </span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium line-clamp-1">
             {currentLevel?.subtitle}
           </p>
         </div>
 
-        {/* Level Switcher Dropdown & Podcast Mode Button */}
-        <div className="flex items-center gap-2">
+        {/* Level Controls: Free Mode Toggle + Podcast + Dropdown/Modal */}
+        <div className="flex items-center flex-wrap gap-2 shrink-0">
+          {/* Free Mode Toggle Button */}
+          <button
+            onClick={toggleFreeMode}
+            className={`text-xs py-2 px-3 rounded-2xl font-black uppercase flex items-center gap-1.5 transition-all cursor-pointer ${
+              isFreeMode
+                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border-2 border-amber-300 dark:border-amber-700 shadow-xs'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-2 border-slate-200 dark:border-slate-700'
+            }`}
+            title={isFreeMode ? "Đang bật chế độ mở khóa tự do toàn bộ bài học" : "Đang ở chế độ học tuần tự"}
+          >
+            {isFreeMode ? <Unlock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" /> : <Lock className="w-3.5 h-3.5" />}
+            <span>{isFreeMode ? 'Học Tự Do' : 'Tuần Tự'}</span>
+          </button>
+
           <button
             onClick={() => {
               sounds.playTap?.();
               openPodcast();
             }}
-            className="btn-3d-blue text-xs py-2.5 px-3.5 rounded-2xl font-black uppercase flex items-center gap-1.5 shadow-xs cursor-pointer"
+            className="btn-3d-blue text-xs py-2 px-3 sm:px-3.5 rounded-2xl font-black uppercase flex items-center gap-1.5 shadow-xs cursor-pointer"
             title="Nghe thụ động podcast khi tắt màn hình"
           >
             <Headphones className="w-4 h-4 stroke-[2.5]" />
             <span className="hidden sm:inline">Podcast</span>
           </button>
 
-          <div className="relative">
-            <select
-              value={currentLevel?.id || ''}
-              onChange={(e) => {
-                sounds.playTap?.();
-                const selected = levels.find((l) => l.id === e.target.value);
-                if (selected) setCurrentLevel(selected);
-              }}
-              className="appearance-none bg-slate-100 dark:bg-[#131F24] border-2 border-b-4 border-[#E5E5E5] dark:border-[#37464F] text-slate-800 dark:text-slate-200 font-black text-xs py-2.5 pl-3.5 pr-8 rounded-2xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none"
-            >
-              {levels.map((lvl) => (
-                <option key={lvl.id} value={lvl.id}>
-                  {lvl.code} - {lvl.title}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-          </div>
+          <button
+            onClick={() => {
+              sounds.playTap?.();
+              openLevelModal();
+            }}
+            className="bg-slate-100 dark:bg-[#131F24] border-2 border-b-4 border-[#E5E5E5] dark:border-[#37464F] text-slate-800 dark:text-slate-200 font-black text-xs py-2 px-3 rounded-2xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 flex items-center gap-1"
+            title="Xem danh sách tất cả các cấp độ HSK / CEFR"
+          >
+            <Compass className="w-3.5 h-3.5 text-slate-400" />
+            <span>Đổi Cấp Độ</span>
+          </button>
         </div>
       </div>
 
@@ -348,8 +372,8 @@ export const SkillTree = () => {
                   const xOffset = offsets[idx % offsets.length];
 
                   const isCompleted = lesson.completed || lesson.status === 'completed' || lesson.is_completed === 1;
-                  const isUnlocked = isCompleted || idx === 0 || unit.lessons[idx - 1]?.is_completed === 1 || unit.lessons[idx - 1]?.completed;
-                  const isLocked = lesson.locked || lesson.status === 'locked' || !isUnlocked;
+                  const isUnlocked = isFreeMode || isCompleted || idx === 0 || unit.lessons[idx - 1]?.is_completed === 1 || unit.lessons[idx - 1]?.completed;
+                  const isLocked = !isUnlocked;
                   const isCurrent = lesson.current || lesson.status === 'current' || (!isCompleted && !isLocked);
 
                   return (
@@ -375,14 +399,15 @@ export const SkillTree = () => {
                       {/* Vòng tròn Crown / Progress bao ngoài bài học hiện tại */}
                       <div className={`relative p-2 rounded-full ${isCurrent ? theme.currentRing : ''}`}>
                         <button
-                          onClick={() => !isLocked && onSelectLesson(lesson)}
-                          disabled={isLocked}
+                          onClick={() => onSelectLesson(lesson)}
                           className={`relative w-[72px] h-[68px] sm:w-[80px] sm:h-[74px] rounded-full flex items-center justify-center transition-all duration-100 cursor-pointer ${
                             isCompleted
                               ? 'bg-[#FFC800] border-b-[8px] border-[#E5A400] text-white hover:brightness-105 active:border-b-0 active:translate-y-[8px] shadow-lg'
                               : isCurrent
                               ? theme.currentBtnBg
-                              : 'bg-[#E5E5E5] dark:bg-slate-800 border-b-[8px] border-[#B7B7B7] dark:border-slate-700 text-[#AFAFAF] dark:text-slate-500 cursor-not-allowed'
+                              : isUnlocked
+                              ? theme.currentBtnBg
+                              : 'bg-[#E5E5E5] dark:bg-slate-800 border-b-[8px] border-[#B7B7B7] dark:border-slate-700 text-[#AFAFAF] dark:text-slate-500'
                           }`}
                         >
                           {/* Vệt sáng phản chiếu 3D trên mặt nút */}
@@ -393,7 +418,7 @@ export const SkillTree = () => {
                           {/* Icon trạng thái bài học */}
                           {isCompleted ? (
                             <Check className="w-8 h-8 stroke-[3.5]"/>
-                          ) : isCurrent ? (
+                          ) : isUnlocked ? (
                             <Star className="w-8 h-8 fill-current"/>
                           ) : (
                             <Lock className="w-7 h-7"/>
@@ -427,17 +452,37 @@ export const SkillTree = () => {
                             {lesson.description}
                           </p>
 
-                          <button
-                            onClick={() => {
-                              sounds.playTap?.();
-                              setActiveTooltip(null);
-                              startLesson(lesson.id);
-                            }}
-                            className="btn-3d-green w-full py-3.5 rounded-2xl text-xs uppercase font-black tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
-                          >
-                            <Play className="w-4 h-4 fill-white" />
-                            <span>{isCompleted ? 'ÔN TẬP +5 XP' : `BẮT ĐẦU +${lesson.xp_reward || 15} XP`}</span>
-                          </button>
+                          {isLocked ? (
+                            <div className="space-y-3">
+                              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-200 dark:border-amber-800 text-xs font-bold text-amber-800 dark:text-amber-300">
+                                🔒 Bài học này đang khóa tuần tự. Bấm nút dưới để mở khóa học ngay:
+                              </div>
+                              <button
+                                onClick={() => {
+                                  sounds.playTap?.();
+                                  toggleFreeMode();
+                                  setActiveTooltip(null);
+                                  startLesson(lesson.id);
+                                }}
+                                className="btn-3d-green w-full py-3.5 rounded-2xl text-xs uppercase font-black tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                              >
+                                <Unlock className="w-4 h-4" />
+                                <span>MỞ KHÓA VÀ HỌC NGAY</span>
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                sounds.playTap?.();
+                                setActiveTooltip(null);
+                                startLesson(lesson.id);
+                              }}
+                              className="btn-3d-green w-full py-3.5 rounded-2xl text-xs uppercase font-black tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                            >
+                              <Play className="w-4 h-4 fill-white" />
+                              <span>{isCompleted ? 'ÔN TẬP +5 XP' : `BẮT ĐẦU +${lesson.xp_reward || 15} XP`}</span>
+                            </button>
+                          )}
                         </div>
                       )}
                     </div>

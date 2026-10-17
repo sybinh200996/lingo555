@@ -25,7 +25,8 @@ export const DesktopRightPanel = () => {
     openPlacement,
     openAiSettings,
     openAiTutor,
-    hasAiKey
+    hasAiKey,
+    openLevelModal
   } = useApp();
 
   const [isRefilling, setIsRefilling] = useState(false);
@@ -50,30 +51,38 @@ export const DesktopRightPanel = () => {
           <button
             onClick={() => {
               sounds.playTap?.();
-              switchLanguage('zh');
+              if (currentLang === 'zh') {
+                openLevelModal();
+              } else {
+                switchLanguage('zh');
+              }
             }}
             className={`px-2 py-1 rounded-xl text-xs font-black transition-all cursor-pointer ${
               currentLang === 'zh' 
                 ? 'bg-white dark:bg-slate-700 text-[#58CC02] shadow-xs' 
                 : 'text-slate-400 hover:text-slate-600'
             }`}
-            title="Học Tiếng Trung"
+            title="Bấm để chọn cấp độ HSK"
           >
-            🇨🇳 {currentLang === 'zh' ? (currentLevel?.code || 'HSK1') : 'Trung'}
+            🇨🇳 {currentLang === 'zh' ? `${currentLevel?.code || 'HSK'} ▾` : 'Trung'}
           </button>
           <button
             onClick={() => {
               sounds.playTap?.();
-              switchLanguage('en');
+              if (currentLang === 'en') {
+                openLevelModal();
+              } else {
+                switchLanguage('en');
+              }
             }}
             className={`px-2 py-1 rounded-xl text-xs font-black transition-all cursor-pointer ${
               currentLang === 'en' 
                 ? 'bg-white dark:bg-slate-700 text-[#1CB0F6] shadow-xs' 
                 : 'text-slate-400 hover:text-slate-600'
             }`}
-            title="Học Tiếng Anh"
+            title="Bấm để chọn cấp độ CEFR"
           >
-            🇬🇧 {currentLang === 'en' ? (currentLevel?.code || 'A1') : 'Anh'}
+            🇬🇧 {currentLang === 'en' ? `${currentLevel?.code || 'A1'} ▾` : 'Anh'}
           </button>
         </div>
 

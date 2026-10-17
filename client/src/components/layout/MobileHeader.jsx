@@ -13,7 +13,9 @@ export const MobileHeader = () => {
     hasAiKey,
     openGemShop,
     openQuests,
-    activeLessonId
+    activeLessonId,
+    currentLevel,
+    openLevelModal
   } = useApp();
 
   // Hide mobile header when lesson is active to preserve 100% full screen
@@ -23,33 +25,43 @@ export const MobileHeader = () => {
 
   return (
     <header className="lg:hidden sticky top-0 z-30 h-14 bg-white/95 dark:bg-[#131F24]/95 backdrop-blur-md border-b-2 border-[#E5E5E5] dark:border-[#37464F] px-4 flex items-center justify-between select-none">
-      {/* 1. Nút chọn Ngôn ngữ (🇨🇳 Tiếng Trung / 🇬🇧 Tiếng Anh dạng pill bo tròn) */}
+      {/* 1. Nút chọn Ngôn ngữ & Cấp độ */}
       <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-full border border-slate-200 dark:border-slate-700">
         <button
           onClick={() => {
             sounds.playTap?.();
-            switchLanguage('zh');
+            if (currentLang === 'zh') {
+              openLevelModal();
+            } else {
+              switchLanguage('zh');
+            }
           }}
           className={`px-2.5 py-1 rounded-full text-xs font-black transition-all cursor-pointer ${
             currentLang === 'zh'
               ? 'bg-white dark:bg-slate-700 text-[#58CC02] shadow-xs'
               : 'text-slate-400'
           }`}
+          title="Bấm để chọn cấp độ HSK"
         >
-          🇨🇳 Trung
+          🇨🇳 {currentLang === 'zh' ? (currentLevel?.code || 'HSK') : 'Trung'}
         </button>
         <button
           onClick={() => {
             sounds.playTap?.();
-            switchLanguage('en');
+            if (currentLang === 'en') {
+              openLevelModal();
+            } else {
+              switchLanguage('en');
+            }
           }}
           className={`px-2.5 py-1 rounded-full text-xs font-black transition-all cursor-pointer ${
             currentLang === 'en'
               ? 'bg-white dark:bg-slate-700 text-[#1CB0F6] shadow-xs'
               : 'text-slate-400'
           }`}
+          title="Bấm để chọn cấp độ CEFR"
         >
-          🇬🇧 Anh
+          🇬🇧 {currentLang === 'en' ? (currentLevel?.code || 'A1') : 'Anh'}
         </button>
       </div>
 

@@ -38,6 +38,16 @@ export const AppProvider = ({ children }) => {
   const [isQuestsOpen, setIsQuestsOpen] = useState(false);
   const [isPodcastOpen, setIsPodcastOpen] = useState(false);
   const [isPlacementOpen, setIsPlacementOpen] = useState(false);
+  const [isLevelModalOpen, setIsLevelModalOpen] = useState(false);
+
+  // Free learning mode: Allows instant access to all lessons across all levels
+  const [isFreeMode, setIsFreeMode] = useState(() => {
+    try {
+      return localStorage.getItem('lingo_free_learning_mode') !== 'false';
+    } catch (e) {
+      return true;
+    }
+  });
 
   const [userProfile, setUserProfile] = useState(() => {
     try {
@@ -305,6 +315,27 @@ export const AppProvider = ({ children }) => {
     setIsPlacementOpen(false);
   };
 
+  const openLevelModal = () => {
+    sounds.playTap();
+    setIsLevelModalOpen(true);
+  };
+
+  const closeLevelModal = () => {
+    sounds.playTap();
+    setIsLevelModalOpen(false);
+  };
+
+  const toggleFreeMode = () => {
+    sounds.playTap();
+    setIsFreeMode(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('lingo_free_learning_mode', String(next));
+      } catch (e) {}
+      return next;
+    });
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -346,7 +377,12 @@ export const AppProvider = ({ children }) => {
         closePodcast,
         isPlacementOpen,
         openPlacement,
-        closePlacement
+        closePlacement,
+        isFreeMode,
+        toggleFreeMode,
+        isLevelModalOpen,
+        openLevelModal,
+        closeLevelModal
       }}
     >
       {children}
