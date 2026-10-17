@@ -3,6 +3,7 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');
 const { seedDatabase } = require('./db/seedData');
+const { seedExpandedData } = require('./db/seedDataExpanded');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,8 +19,9 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Auto-seed starter data on start
+// Auto-seed starter and expanded curriculum data on start
 seedDatabase();
+seedExpandedData();
 
 // Route handlers
 app.use('/api', require('./routes/lessons'));
