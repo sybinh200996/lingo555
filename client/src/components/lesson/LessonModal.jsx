@@ -48,11 +48,35 @@ export const LessonModal = () => {
   const [micError, setMicError] = useState(null);
   const [useTextFallback, setUseTextFallback] = useState(false);
   const [fallbackText, setFallbackText] = useState('');
+  const [showQuitConfirm, setShowQuitConfirm] = useState(false);
 
   // Evaluation states: null | 'correct' | 'wrong' | 'completed'
   const [evalState, setEvalState] = useState(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [totalXP, setTotalXP] = useState(15);
+
+  // Intercept browser / mobile edge-swipe Back gestures to protect learner progress
+  useEffect(() => {
+    if (!activeLessonId) return;
+
+    // Push state so back gesture doesn't jump immediately to another website
+    window.history.pushState({ modal: 'lesson' }, '', window.location.href);
+
+    const handlePopState = () => {
+      if (evalState === 'completed') {
+        closeLesson();
+      } else {
+        // Re-push state to prevent leaving, then trigger confirmation popup
+        window.history.pushState({ modal: 'lesson' }, '', window.location.href);
+        setShowQuitConfirm(true);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [activeLessonId, evalState]);
 
   useEffect(() => {
     if (activeLessonId) {
@@ -379,16 +403,32 @@ export const LessonModal = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeLessonId, evalState, currentExercise, selectedOption, assembledWords, speechResult, hanziDone, matchedPairs]);
 
+  const handleRequestClose = () => {
+    sounds.playTap();
+    if (evalState === 'completed') {
+      closeLesson();
+    } else {
+      setShowQuitConfirm(true);
+    }
+  };
+
+  const handleConfirmQuit = () => {
+    sounds.playTap();
+    setShowQuitConfirm(false);
+    closeLesson();
+  };
+
   if (!activeLessonId) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-white dark:bg-slate-950 flex flex-col justify-between overflow-hidden animate-in fade-in duration-200">
       {/* Top Header Bar */}
       <div className="max-w-2xl w-full mx-auto px-4 py-4 flex items-center gap-4">
-        {/* Close Button */}
+        {/* Close Button with Confirmation Guard */}
         <button
-          onClick={closeLesson}
+          onClick={handleRequestClose}
           className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl"
+          title="Thoát bài học"
         >
           <X className="w-6 h-6 stroke-[2.5]" />
         </button>
@@ -1024,7 +1064,7 @@ export const LessonModal = () => {
         )}
       </div>
 
-      {/* Bottom Evaluation Banner (Green / Red / Neutral) */}
+      {/* Bottom Evaluation Banner (Green / Red / Neutral) with iPhone Safe Area */}
       {evalState !== 'completed' && (
         <div
           className={`border-t-2 p-4 transition-all ${
@@ -1034,6 +1074,7 @@ export const LessonModal = () => {
               ? 'bg-rose-100 dark:bg-rose-950 border-rose-400'
               : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
           }`}
+          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)' }}
         >
           <div className="max-w-xl mx-auto flex items-center justify-between gap-4">
             {evalState === 'correct' ? (
@@ -1101,6 +1142,45 @@ export const LessonModal = () => {
                 Tiếp Tục
               </button>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Quit Confirmation Dialog (Duolingo Style Popup) */}
+      {showQuitConfirm && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="duo-card max-w-sm w-full p-6 text-center space-y-4 shadow-2xl animate-in zoom-in-95 border-2 border-slate-200 dark:border-slate-800">
+            <div className="w-16 h-16 rounded-3xl bg-amber-100 dark:bg-amber-950/60 border-2 border-amber-300 dark:border-amber-700 flex items-center justify-center mx-auto text-amber-500 shadow-sm">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-xl font-black text-slate-900 dark:text-white">
+                Bạn có chắc muốn thoát?
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-semibold">
+                Tiến trình bài học và điểm thưởng kinh nghiệm (XP) sẽ không được lưu nếu bạn rời đi bây giờ.
+              </p>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <button
+                onClick={() => {
+                  sounds.playTap();
+                  setShowQuitConfirm(false);
+                }}
+                className="duo-btn duo-btn-green w-full py-3.5 rounded-2xl font-black text-sm uppercase tracking-wider shadow-md"
+              >
+                Ở Lại Học Tiếp
+              </button>
+
+              <button
+                onClick={handleConfirmQuit}
+                className="w-full py-2.5 rounded-xl text-xs font-black text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all uppercase tracking-wider"
+              >
+                Thoát Bài Học
+              </button>
+            </div>
           </div>
         </div>
       )}
