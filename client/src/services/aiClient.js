@@ -234,6 +234,20 @@ class AIClient {
       return { success: false, error: err.message };
     }
   }
+
+  async generateLessonVariation({ words, level, language, currentExercises }) {
+    try {
+      const res = await fetch('/api/ai/generate-lesson-variation', {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ words, level, language, currentExercises })
+      });
+      return await res.json();
+    } catch (err) {
+      console.warn('generateLessonVariation fetch error:', err);
+      return { success: false, error: err.message };
+    }
+  }
 }
 
 export const ai = new AIClient();

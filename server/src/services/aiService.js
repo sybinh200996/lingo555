@@ -634,6 +634,147 @@ Khi trả lời tiếng Trung, luôn kèm Pinyin và dịch nghĩa. Khi trả l�
       await new Promise(r => setTimeout(r, 20));
     }
   }
+
+  /**
+   * 8. GENERATE LESSON VARIATION VIA GEMINI AI
+   * Generates a fresh set of realistic practice exercises for the current lesson context
+   */
+  async generateLessonVariation({ words = [], level = 'HSK 1', language = 'zh', currentExercises = [], apiKey, model = this.defaultModel }) {
+    const client = this.getClient(apiKey);
+    const langName = language === 'zh' ? 'Tiếng Trung (HSK)' : 'Tiếng Anh (CEFR)';
+    const wordListStr = Array.isArray(words) && words.length > 0
+      ? words.map(w => typeof w === 'string' ? w : `${w.word} (${w.meaningVi || ''})`).join(', ')
+      : (language === 'zh' ? '你好, 谢谢, 朋友' : 'hello, thank you, friend');
+
+    const prompt = `Bạn là chuyên gia sư phạm ngôn ngữ ${langName}.
+Hãy tạo một bộ bài tập biến thể thực chiến mới (5 câu) cho học viên cấp độ ${level} dựa trên các từ vựng cốt lõi: ${wordListStr}.
+Định dạng kết quả trả về BẮT BUỘC là một mảng JSON thuần túy (Array of Objects) không có bọc markdown hay text nào khác ngoài JSON:
+[
+  {
+    "id": "ai_var_1",
+    "type": "listening",
+    "prompt": "Nghe/Đọc và chọn nghĩa đúng của câu/từ sau:",
+    "target_text": "Từ hoặc câu tiếng ${language === 'zh' ? 'Trung' : 'Anh'}",
+    "target_audio_text": "Từ hoặc câu tiếng ${language === 'zh' ? 'Trung' : 'Anh'}",
+    "phonetic": "Phiên âm Pinyin có dấu hoặc IPA",
+    "vietnamese_meaning": "Nghĩa tiếng Việt chuẩn",
+    "options": ["Đáp án đúng", "Phương án nhiễu 1", "Phương án nhiễu 2", "Phương án nhiễu 3"],
+    "correct_answer": "Đáp án đúng",
+    "hint": "Gợi ý sư phạm ngắn gọn"
+  },
+  {
+    "id": "ai_var_2",
+    "type": "writing",
+    "prompt": "Tập viết chữ / từ vựng thực tế:",
+    "target_text": "${language === 'zh' ? 'Chữ Hán 1-2 chữ' : 'Từ tiếng Anh'}",
+    "target_audio_text": "${language === 'zh' ? 'Chữ Hán' : 'Từ tiếng Anh'}",
+    "stroke_char": "${language === 'zh' ? 'Chữ Hán đầu tiên' : ''}",
+    "phonetic": "Phiên âm",
+    "vietnamese_meaning": "Nghĩa tiếng Việt",
+    "hint": "Gợi ý nhớ từ"
+  },
+  {
+    "id": "ai_var_3",
+    "type": "translation",
+    "prompt": "Sắp xếp các từ thành câu hoàn chỉnh theo nghĩa: ...",
+    "target_text": "Câu mẫu hoàn chỉnh",
+    "target_audio_text": "Câu mẫu hoàn chỉnh",
+    "phonetic": "Phiên âm",
+    "vietnamese_meaning": "Nghĩa tiếng Việt của câu",
+    "options": ["từ1", "từ2", "từ3", "từ_nhiễu1", "từ_nhiễu2"],
+    "correct_answer": "Câu mẫu hoàn chỉnh",
+    "hint": "Chú ý ngữ pháp trật tự từ"
+  },
+  {
+    "id": "ai_var_4",
+    "type": "speaking",
+    "prompt": "Luyện phát âm mẫu câu giao tiếp thực tế mới:",
+    "target_text": "Câu giao tiếp tự nhiên",
+    "target_audio_text": "Câu giao tiếp tự nhiên",
+    "phonetic": "Phiên âm",
+    "vietnamese_meaning": "Nghĩa tiếng Việt",
+    "hint": "Nói rõ từng âm"
+  },
+  {
+    "id": "ai_var_5",
+    "type": "listening",
+    "prompt": "Hoàn thành câu hội thoại thực tế:",
+    "target_text": "Câu thực tế",
+    "target_audio_text": "Câu thực tế",
+    "phonetic": "Phiên âm",
+    "vietnamese_meaning": "Nghĩa tiếng Việt",
+    "options": ["Đáp án đúng", "Nhiễu 1", "Nhiễu 2", "Nhiễu 3"],
+    "correct_answer": "Đáp án đúng",
+    "hint": "Ngữ cảnh giao tiếp thực chiến"
+  }
+]`;
+
+    if (client) {
+      const modelsToTry = [model, ...this.candidateModels].filter(Boolean);
+      for (const m of modelsToTry) {
+        try {
+          const res = await client.models.generateContent({
+            model: m,
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            config: {
+              responseMimeType: 'application/json'
+            }
+          });
+          const parsed = this.safeParseAIJson(res.text);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
+        } catch (err) {
+          console.warn(`Generate lesson variation with model ${m} failed:`, err.message);
+        }
+      }
+    }
+
+    return this.generateLocalVariation(words, level, language);
+  }
+
+  generateLocalVariation(words, level, language) {
+    const isZh = language === 'zh';
+    const sampleWord = (Array.isArray(words) && words.length > 0)
+      ? (typeof words[0] === 'string' ? { word: words[0], meaningVi: words[0] } : words[0])
+      : (isZh ? { word: '你好', pronunciation: 'nǐ hǎo', meaningVi: 'Xin chào' } : { word: 'hello', pronunciation: '/həˈloʊ/', meaningVi: 'Xin chào' });
+
+    return [
+      {
+        id: 'local_var_1',
+        type: 'listening',
+        prompt: `Nghe và chọn nghĩa chính xác trong ngữ cảnh giao tiếp:`,
+        target_text: sampleWord.word,
+        target_audio_text: sampleWord.word,
+        phonetic: sampleWord.pronunciation || '',
+        vietnamese_meaning: sampleWord.meaningVi || '',
+        options: [sampleWord.meaningVi, 'Tạm biệt', 'Cảm ơn nhiều', 'Xin lỗi'],
+        correct_answer: sampleWord.meaningVi,
+        hint: 'Gợi ý: Lời chào hỏi lịch sự cơ bản'
+      },
+      {
+        id: 'local_var_2',
+        type: 'writing',
+        prompt: isZh ? `Tập viết chữ "${sampleWord.word}" chuẩn thứ tự nét:` : `Luyện viết và đánh vần từ "${sampleWord.word}":`,
+        target_text: sampleWord.word,
+        target_audio_text: sampleWord.word,
+        stroke_char: isZh ? sampleWord.word.charAt(0) : '',
+        phonetic: sampleWord.pronunciation || '',
+        vietnamese_meaning: sampleWord.meaningVi || '',
+        hint: 'Viết từ tốn và chuẩn nét'
+      },
+      {
+        id: 'local_var_3',
+        type: 'speaking',
+        prompt: `Luyện phát âm mẫu câu giao tiếp tự nhiên:`,
+        target_text: isZh ? `${sampleWord.word}！很高兴认识你。` : `${sampleWord.word}! Nice to meet you.`,
+        target_audio_text: isZh ? `${sampleWord.word}！很高兴认识你。` : `${sampleWord.word}! Nice to meet you.`,
+        phonetic: isZh ? `${sampleWord.pronunciation || 'nǐ hǎo'}! Hěn gāoxìng rènshi nǐ.` : `${sampleWord.pronunciation || 'həˈloʊ'}! naɪs tuː miːt juː.`,
+        vietnamese_meaning: `${sampleWord.meaningVi}! Rất vui được làm quen với bạn.`,
+        hint: 'Nói to và truyền cảm'
+      }
+    ];
+  }
 }
 
 module.exports = new AIService();

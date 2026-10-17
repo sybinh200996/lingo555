@@ -5,6 +5,8 @@
  */
 
 import { getCurriculumUnitsForLevel, getCurriculumLessonById } from './fullCurriculumGenerator.js';
+import { AUTHENTIC_ZH_DATA, AUTHENTIC_EN_DATA, getAuthenticLesson } from './authenticCurriculumData.js';
+import { buildScaffoldedLessonFlow } from '../utils/smartLessonBuilder.js';
 
 export const CURRICULUM_LEVELS = [
   {
@@ -9590,26 +9592,72 @@ export const getCurriculumLevels = (lang = 'zh') => {
   return CURRICULUM_LEVELS.filter(l => l.language_id === lang);
 };
 
+export const getAuthenticUnitsForLevel = (levelId) => {
+  const isZh = levelId.startsWith('zh');
+  const dataset = isZh ? AUTHENTIC_ZH_DATA[levelId] : AUTHENTIC_EN_DATA[levelId];
+  if (!dataset || !dataset.lessons || dataset.lessons.length === 0) return [];
+
+  return [
+    {
+      id: `unit_auth_${levelId}`,
+      level_id: levelId,
+      unit_number: 0,
+      title: `Chuyên Sâu Thực Chiến: ${dataset.title}`,
+      description: `Lộ trình 5 giai đoạn: Khởi động ➔ Phản xạ nghe ➔ Tập viết ➔ Ghép câu ➔ Luyện phát âm`,
+      icon: 'Sparkles',
+      banner_color: isZh ? '#58CC02' : '#1CB0F6',
+      levelBadge: dataset.code || 'CHUYÊN SÂU',
+      lessons: dataset.lessons.map((l, idx) => ({
+        id: l.id,
+        unit_id: `unit_auth_${levelId}`,
+        lesson_number: idx + 1,
+        title: l.title,
+        description: l.grammarFocus || 'Kho từ vựng & ngữ pháp chuẩn quốc tế',
+        xp_reward: 25,
+        type: 'standard',
+        completed: false,
+        status: 'unlocked',
+        vocabularies: l.vocabularies,
+        exercises: []
+      }))
+    }
+  ];
+};
+
 export const getCurriculumUnits = (levelId) => {
   const base = CURRICULUM_UNITS_BY_LEVEL[levelId] || [];
   try {
+    const authUnits = getAuthenticUnitsForLevel(levelId);
     const extras = getCurriculumUnitsForLevel(levelId) || [];
     const baseIds = new Set(base.map(u => u.id));
     const uniqueExtras = extras.filter(u => !baseIds.has(u.id));
-    return [...base, ...uniqueExtras].sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
+    return [...authUnits, ...base, ...uniqueExtras].sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
   } catch (_) {
     return base;
   }
 };
 
 export const getCurriculumLesson = (lessonId) => {
-  const baseLesson = CURRICULUM_LESSONS_BY_ID[lessonId];
-  if (baseLesson) return baseLesson;
-  try {
-    return getCurriculumLessonById(lessonId) || null;
-  } catch (_) {
-    return null;
+  // Check authentic dataset first (with 5-phase scaffolded flow)
+  const authLesson = getAuthenticLesson(lessonId);
+  if (authLesson) {
+    const exercises = buildScaffoldedLessonFlow(authLesson, [], { lang: authLesson.language });
+    return {
+      ...authLesson,
+      xp_reward: 25,
+      exercises
+    };
   }
+
+  const baseLesson = CURRICULUM_LESSONS_BY_ID[lessonId] || getCurriculumLessonById(lessonId);
+  if (baseLesson) {
+    if (baseLesson.vocabularies && baseLesson.vocabularies.length > 0) {
+      const exercises = buildScaffoldedLessonFlow(baseLesson);
+      return { ...baseLesson, exercises };
+    }
+    return baseLesson;
+  }
+  return null;
 };
 
 /**

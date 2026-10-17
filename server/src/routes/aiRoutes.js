@@ -177,4 +177,22 @@ router.post('/verify-key', async (req, res) => {
   }
 });
 
+// 7. POST /api/ai/generate-lesson-variation
+router.post('/generate-lesson-variation', async (req, res) => {
+  try {
+    const { words, level, language, currentExercises } = req.body;
+    const result = await aiService.generateLessonVariation({
+      words: words || [],
+      level: level || 'HSK 1',
+      language: language || 'zh',
+      currentExercises: currentExercises || [],
+      apiKey: req.apiKey,
+      model: req.model
+    });
+    res.json({ success: true, data: result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
