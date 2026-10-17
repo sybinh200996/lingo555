@@ -66,6 +66,39 @@ router.post('/ask-tutor', async (req, res) => {
   }
 });
 
+// 2b. POST /api/ai/ask-tutor-stream (Server-Sent Events Real-Time Streaming)
+router.post('/ask-tutor-stream', async (req, res) => {
+  const { query, currentContext, language, history } = req.body;
+  if (!query) return res.status(400).json({ error: 'Missing query' });
+
+  // Setup SSE headers
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no'); // Disable Nginx response proxy buffering
+  if (res.flushHeaders) res.flushHeaders();
+
+  try {
+    await aiService.streamTutorResponse({
+      query,
+      currentContext,
+      language: language || 'zh',
+      history: history || [],
+      apiKey: req.apiKey,
+      model: req.model,
+      onChunk: (chunkText) => {
+        res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
+      }
+    });
+    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+    res.end();
+  } catch (err) {
+    console.error('SSE Stream Error:', err.message);
+    res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`);
+    res.end();
+  }
+});
+
 // 3. POST /api/ai/chat-roleplay
 router.post('/chat-roleplay', async (req, res) => {
   try {

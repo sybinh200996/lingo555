@@ -81,28 +81,64 @@ export const FloatingAITutor = () => {
     const query = inputQuery.trim();
     setInputQuery('');
 
-    const newMessages = [...chatMessages, { role: 'user', content: query }];
-    setChatMessages(newMessages);
+    // Append user message AND an empty bot message ready for real-time streaming
+    const userMsg = { role: 'user', content: query };
+    const botPlaceholder = { role: 'bot', content: '' };
+    setChatMessages(prev => [...prev, userMsg, botPlaceholder]);
     setLoadingChat(true);
 
     try {
-      const res = await ai.askTutor({
+      await ai.askTutorStream({
         query,
         currentContext: aiTutorPayload || {},
         language: currentLang,
-        history: newMessages
+        history: [...chatMessages, userMsg],
+        onChunk: (chunkText) => {
+          setChatMessages(prev => {
+            if (prev.length === 0) return prev;
+            const updated = [...prev];
+            const lastIdx = updated.length - 1;
+            if (updated[lastIdx].role === 'bot') {
+              updated[lastIdx] = {
+                ...updated[lastIdx],
+                content: (updated[lastIdx].content || '') + chunkText
+              };
+            }
+            return updated;
+          });
+        },
+        onDone: () => {
+          setLoadingChat(false);
+          sounds.playCorrect();
+        },
+        onError: (errMsg) => {
+          console.warn('Streaming error:', errMsg);
+          setChatMessages(prev => {
+            const updated = [...prev];
+            const lastIdx = updated.length - 1;
+            if (updated[lastIdx].role === 'bot') {
+              updated[lastIdx] = {
+                ...updated[lastIdx],
+                content: updated[lastIdx].content || 'Xin lỗi bạn, có sự cố kết nối tới Gia sư AI. Vui lòng thử lại sau.'
+              };
+            }
+            return updated;
+          });
+          setLoadingChat(false);
+        }
       });
-
-      if (res.success) {
-        setChatMessages(prev => [...prev, { role: 'bot', content: res.data.reply }]);
-        sounds.playCorrect();
-      }
     } catch (e) {
-      setChatMessages(prev => [
-        ...prev,
-        { role: 'bot', content: 'Xin lỗi bạn, có sự cố kết nối tới Gia sư AI. Vui lòng thử lại sau.' }
-      ]);
-    } finally {
+      setChatMessages(prev => {
+        const updated = [...prev];
+        const lastIdx = updated.length - 1;
+        if (updated[lastIdx].role === 'bot') {
+          updated[lastIdx] = {
+            ...updated[lastIdx],
+            content: updated[lastIdx].content || 'Xin lỗi bạn, có sự cố kết nối tới Gia sư AI.'
+          };
+        }
+        return updated;
+      });
       setLoadingChat(false);
     }
   };
@@ -360,7 +396,12 @@ export const FloatingAITutor = () => {
                           : 'duo-card text-slate-800 dark:text-slate-200 rounded-tl-none space-y-1'
                       }`}
                     >
-                      <div className="whitespace-pre-wrap">{msg.content}</div>
+                      <div className="whitespace-pre-wrap">
+                        {msg.content || (!isUser && loadingChat && idx === chatMessages.length - 1 ? '...' : '')}
+                        {!isUser && loadingChat && idx === chatMessages.length - 1 && (
+                          <span className="inline-block w-1.5 h-3.5 bg-emerald-500 animate-pulse ml-1 align-middle rounded-xs" />
+                        )}
+                      </div>
                     </div>
                   </div>
                 );

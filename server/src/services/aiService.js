@@ -577,6 +577,63 @@ Hello! Regarding your question **"${query}"**:
       };
     }
   }
+
+  /**
+   * 7. REAL-TIME AI STREAMING (SSE) FOR FLOATING AI TUTOR
+   */
+  async streamTutorResponse({ query, currentContext, language = 'zh', history = [], apiKey, model = this.defaultModel, onChunk }) {
+    const client = this.getClient(apiKey);
+    const langName = language === 'zh' ? 'Tiếng Trung' : 'Tiếng Anh';
+
+    const systemPrompt = `Bạn là "LingoBot" - Gia sư AI chuyên dạy ${langName} theo phương pháp Duolingo: thân thiện, giải thích ngắn gọn, súc tích, dễ nhớ, luôn có ví dụ thực tế.
+Khi trả lời tiếng Trung, luôn kèm Pinyin và dịch nghĩa. Khi trả lời tiếng Anh, kèm phiên âm IPA và giải thích ngữ cảnh.
+Định dạng câu trả lời bằng Markdown đẹp mắt (sử dụng in đậm, bullet points, emoji sinh động).`;
+
+    const contents = [
+      ...history.map(h => ({
+        role: h.role === 'user' ? 'user' : 'model',
+        parts: [{ text: h.content }]
+      })),
+      {
+        role: 'user',
+        parts: [{
+          text: `[Ngữ cảnh đang học: ${JSON.stringify(currentContext || {})}]\n\nCâu hỏi của tôi: ${query}`
+        }]
+      }
+    ];
+
+    if (client) {
+      const modelsToTry = [model, ...this.candidateModels].filter(Boolean);
+      for (const m of modelsToTry) {
+        try {
+          const stream = await client.models.generateContentStream({
+            model: m,
+            contents,
+            config: {
+              systemInstruction: systemPrompt
+            }
+          });
+
+          for await (const chunk of stream) {
+            if (chunk.text) {
+              onChunk(chunk.text);
+            }
+          }
+          return;
+        } catch (err) {
+          console.warn(`Streaming with model ${m} failed:`, err.message);
+        }
+      }
+    }
+
+    // High quality pedagogical fallback streaming simulation if no API key or network glitch
+    const fallbackText = this.getLocalTutorReply(query, language);
+    const words = fallbackText.split(' ');
+    for (const w of words) {
+      onChunk(w + ' ');
+      await new Promise(r => setTimeout(r, 20));
+    }
+  }
 }
 
 module.exports = new AIService();

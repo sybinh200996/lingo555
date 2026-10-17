@@ -76,9 +76,64 @@ const EN_HOMOPHONES = {
   one: ['won']
 };
 
-export const normalizeSpeechText = (text) => {
+const ZH_NUM_TO_CHAR = {
+  '0': '零', '1': '一', '2': '二', '3': '三', '4': '四',
+  '5': '五', '6': '六', '7': '七', '8': '八', '9': '九',
+  '10': '十', '100': '一百'
+};
+
+const EN_NUM_TO_WORD = {
+  '0': 'zero', '1': 'one', '2': 'two', '3': 'three', '4': 'four',
+  '5': 'five', '6': 'six', '7': 'seven', '8': 'eight', '9': 'nine',
+  '10': 'ten', '11': 'eleven', '12': 'twelve', '13': 'thirteen',
+  '14': 'fourteen', '15': 'fifteen', '16': 'sixteen', '17': 'seventeen',
+  '18': 'eighteen', '19': 'nineteen', '20': 'twenty', '30': 'thirty',
+  '40': 'forty', '50': 'fifty', '60': 'sixty', '70': 'seventy',
+  '80': 'eighty', '90': 'ninety', '100': 'one hundred',
+  '1st': 'first', '2nd': 'second', '3rd': 'third', '4th': 'fourth', '5th': 'fifth'
+};
+
+/**
+ * Bi-directional number-to-words normalizer.
+ * Converts Arabic digits (1, 2, 3...) to Chinese characters (一, 二, 三...)
+ * or English words (one, two, three...) to prevent false failures when
+ * browser speech recognition outputs numbers instead of text.
+ */
+export const normalizeNumbersToWords = (text, lang = 'zh') => {
+  if (!text) return '';
+  let str = String(text);
+
+  if (lang === 'zh') {
+    // 1. Time & special number forms
+    str = str.replace(/2点/g, '两点')
+             .replace(/两/g, '二') // Unify 两 and 二 for matching
+             .replace(/100/g, '一百')
+             .replace(/10/g, '十');
+    // 2. Individual digits 0-9
+    str = str.replace(/[0-9]/g, (digit) => ZH_NUM_TO_CHAR[digit] || digit);
+  } else {
+    // 1. Ordinals (1st, 2nd, 3rd...)
+    str = str.replace(/\b(1st|2nd|3rd|[0-9]+th)\b/gi, (m) => EN_NUM_TO_WORD[m.toLowerCase()] || m);
+    // 2. Cardinal numbers 0-100
+    str = str.replace(/\b([0-9]{1,3})\b/g, (m) => {
+      if (EN_NUM_TO_WORD[m]) return EN_NUM_TO_WORD[m];
+      const num = parseInt(m, 10);
+      if (num > 20 && num < 100) {
+        const tens = Math.floor(num / 10) * 10;
+        const ones = num % 10;
+        return `${EN_NUM_TO_WORD[tens] || ''} ${EN_NUM_TO_WORD[ones] || ''}`.trim();
+      }
+      return m;
+    });
+  }
+
+  return str;
+};
+
+export const normalizeSpeechText = (text, lang = 'zh') => {
   if (!text) return "";
-  return text
+  const converted = normalizeNumbersToWords(text, lang);
+  return converted
     .toLowerCase()
     .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()？。，！、；：“”‘’（）《》【】\s]/g, "")
     .trim();
@@ -430,13 +485,24 @@ class SpeechService {
       };
     }
 
-    // Combine primary transcript with alternatives for comprehensive checking
-    const allSpokenCandidates = [spokenText, ...(alternatives || [])].map(s => this.cleanText(s)).filter(Boolean);
+    // Combine primary transcript with alternatives and number-to-words variants for robust matching
+    const baseCandidates = [spokenText, ...(alternatives || [])].filter(Boolean);
+    const allSpokenCandidates = [];
+    for (const c of baseCandidates) {
+      const cleaned = this.cleanText(c);
+      if (cleaned && !allSpokenCandidates.includes(cleaned)) {
+        allSpokenCandidates.push(cleaned);
+      }
+      const withWords = this.cleanText(normalizeNumbersToWords(c, lang));
+      if (withWords && !allSpokenCandidates.includes(withWords)) {
+        allSpokenCandidates.push(withWords);
+      }
+    }
 
-    // Immediate 100% exact match check using standardized normalizer (eliminates false failures caused by punctuation/spaces)
-    const normTarget = normalizeSpeechText(targetText);
-    const normSpoken = normalizeSpeechText(spokenText);
-    if (normTarget && (allSpokenCandidates.some(c => normalizeSpeechText(c) === normTarget) || normSpoken === normTarget)) {
+    // Immediate 100% exact match check using standardized normalizer (eliminates false failures caused by numbers, punctuation, spaces)
+    const normTarget = normalizeSpeechText(targetText, lang);
+    const normSpoken = normalizeSpeechText(spokenText, lang);
+    if (normTarget && (allSpokenCandidates.some(c => normalizeSpeechText(c, lang) === normTarget) || normSpoken === normTarget)) {
       const isZh = lang === 'zh';
       const wordList = isZh ? targetText.split('') : targetText.split(/\s+/).filter(Boolean);
       return {

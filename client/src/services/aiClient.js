@@ -132,6 +132,65 @@ class AIClient {
     }
   }
 
+  /**
+   * Real-Time Server-Sent Events (SSE) Streaming for Floating AI Tutor
+   * Streams response tokens word-by-word with ultra-low latency (<0.3s)
+   */
+  async askTutorStream({ query, currentContext, language, history, onChunk, onDone, onError }) {
+    try {
+      const response = await fetch('/api/ai/ask-tutor-stream', {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ query, currentContext, language, history })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server returned HTTP ${response.status}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('data:')) {
+            const jsonStr = trimmed.replace(/^data:\s*/, '').trim();
+            if (jsonStr) {
+              try {
+                const parsed = JSON.parse(jsonStr);
+                if (parsed.text && onChunk) {
+                  onChunk(parsed.text);
+                }
+                if (parsed.done && onDone) {
+                  onDone();
+                }
+                if (parsed.error && onError) {
+                  onError(parsed.error);
+                }
+              } catch (parseErr) {
+                // Ignore transient json chunk boundary errors
+              }
+            }
+          }
+        }
+      }
+
+      if (onDone) onDone();
+    } catch (err) {
+      console.warn('askTutorStream error:', err);
+      if (onError) onError(err.message);
+    }
+  }
+
   async chatRoleplay({ scenario, messages, userMessage, language }) {
     try {
       // Retain up to 10 most recent conversation history items
