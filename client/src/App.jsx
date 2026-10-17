@@ -82,25 +82,6 @@ function MainContent() {
       <ErrorBoundary title="Lỗi Chọn Lộ Trình">
         <LevelSelectorModal isOpen={isLevelModalOpen} onClose={closeLevelModal} />
       </ErrorBoundary>
-
-      {/* Global Sleek Floating AI Tutor Trigger (Desktop only, never overlaps on mobile) */}
-      {showFab && (
-        <button
-          onClick={() => openAiTutor(null)}
-          className="hidden lg:flex fixed bottom-6 right-6 z-30 duo-btn duo-btn-green px-4 py-3 rounded-full items-center justify-center gap-2 shadow-2xl hover:scale-105 active:scale-95 transition-all group cursor-pointer"
-          title="Hỏi Gia Sư AI 24/7"
-          aria-label="Hỏi Gia Sư AI"
-        >
-          <div className="relative flex items-center justify-center">
-            <Bot className="w-6 h-6 text-white group-hover:rotate-12 transition-transform" />
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-300 animate-ping" />
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-white" />
-          </div>
-          <span className="hidden lg:inline text-xs font-black uppercase tracking-wider text-white">
-            Gia Sư AI 24/7
-          </span>
-        </button>
-      )}
     </>
   );
 }

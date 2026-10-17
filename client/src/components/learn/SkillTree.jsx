@@ -15,7 +15,8 @@ import {
   Headphones,
   Compass,
   CheckCircle2,
-  Zap
+  Zap,
+  Bot
 } from 'lucide-react';
 
 // Multi-color Unit Themes (Chương 1-5 & lặp lại)
@@ -79,7 +80,8 @@ export const SkillTree = () => {
     openPodcast,
     isFreeMode,
     toggleFreeMode,
-    openLevelModal
+    openLevelModal,
+    openAiTutor
   } = useApp();
 
   const [units, setUnits] = useState([]);
@@ -235,8 +237,29 @@ export const SkillTree = () => {
           </p>
         </div>
 
-        {/* Controls: Free Mode Toggle + Podcast + Switch Level */}
+        {/* Controls: AI Tutor + Placement + Free Mode Toggle + Podcast + Switch Level */}
         <div className="flex items-center flex-wrap gap-2 shrink-0">
+          <button
+            onClick={() => {
+              sounds.playTap?.();
+              openAiTutor();
+            }}
+            className="btn-3d-purple text-xs py-2 px-3 sm:px-3.5 rounded-2xl font-black uppercase flex items-center gap-1.5 shadow-xs cursor-pointer"
+            title="Trò chuyện & luyện tập cùng Gia Sư AI"
+          >
+            <Bot className="w-4 h-4 stroke-[2.5]" />
+            <span>Gia Sư AI</span>
+          </button>
+
+          <button
+            onClick={onOpenPlacementTest}
+            className="bg-amber-500 hover:bg-amber-600 border-b-4 border-amber-700 active:border-b-0 active:translate-y-1 text-white text-xs py-2 px-3 sm:px-3.5 rounded-2xl font-black uppercase flex items-center gap-1.5 shadow-xs cursor-pointer"
+            title="Làm bài kiểm tra đánh giá năng lực để xếp lớp tự động"
+          >
+            <Zap className="w-4 h-4 fill-current" />
+            <span>Test Xếp Lớp</span>
+          </button>
+
           <button
             onClick={toggleFreeMode}
             className={`text-xs py-2 px-3 rounded-2xl font-black uppercase flex items-center gap-1.5 transition-all cursor-pointer ${
@@ -271,7 +294,7 @@ export const SkillTree = () => {
             title="Xem danh sách tất cả các cấp độ HSK / CEFR"
           >
             <Compass className="w-3.5 h-3.5 text-slate-400" />
-            <span>Đổi Cấp Độ</span>
+            <span>Đổi Cấp</span>
           </button>
         </div>
       </div>

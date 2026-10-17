@@ -430,35 +430,38 @@ export const LessonModal = () => {
   if (!activeLessonId) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-white dark:bg-slate-950 flex flex-col justify-between overflow-hidden animate-in fade-in duration-200">
-      {/* Top Header Bar */}
-      <div className="max-w-2xl w-full mx-auto px-4 py-4 flex items-center gap-4">
-        {/* Close Button with Confirmation Guard */}
-        <button
-          onClick={handleRequestClose}
-          className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl"
-          title="Thoát bài học"
-        >
-          <X className="w-6 h-6 stroke-[2.5]" />
-        </button>
+    <div className="fixed inset-0 z-50 bg-white dark:bg-slate-900 flex flex-col overflow-hidden select-none animate-in fade-in duration-200">
+      {/* 1. Header Bài Học (shrink-0 h-14 sm:h-16) */}
+      <header className="shrink-0 h-14 sm:h-16 w-full border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 flex items-center z-10">
+        <div className="max-w-2xl w-full mx-auto flex items-center gap-3 sm:gap-4">
+          {/* Close Button with Confirmation Guard */}
+          <button
+            onClick={handleRequestClose}
+            className="p-1.5 sm:p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl cursor-pointer shrink-0 transition-colors"
+            title="Thoát bài học"
+          >
+            <X className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
+          </button>
 
-        {/* Smooth Progress Bar */}
-        <div className="flex-1 bg-slate-200 dark:bg-slate-800 h-4 rounded-full overflow-hidden p-0.5">
-          <div
-            className="h-full bg-emerald-500 rounded-full transition-all duration-300"
-            style={{ width: `${progressPercent}%` }}
-          />
+          {/* Smooth Progress Bar */}
+          <div className="flex-1 bg-slate-200 dark:bg-slate-800 h-3.5 sm:h-4 rounded-full overflow-hidden p-0.5 min-w-0">
+            <div
+              className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+
+          {/* Hearts Indicator */}
+          <div className="flex items-center gap-1.5 text-rose-500 font-extrabold text-xs sm:text-sm shrink-0">
+            <Heart className="w-5 h-5 sm:w-6 sm:h-6 fill-rose-500" />
+            <span>{userProfile.hearts}</span>
+          </div>
         </div>
+      </header>
 
-        {/* Hearts Indicator */}
-        <div className="flex items-center gap-1.5 text-rose-500 font-extrabold text-sm">
-          <Heart className="w-6 h-6 fill-rose-500" />
-          <span>{userProfile.hearts}</span>
-        </div>
-      </div>
-
-      {/* Main Exercise Viewport */}
-      <div className="flex-1 max-w-xl w-full mx-auto px-4 py-4 overflow-y-auto flex flex-col justify-center">
+      {/* 2. Thân Bài Học (flex-1 overflow-y-auto) */}
+      <main className="flex-1 w-full overflow-y-auto p-4 sm:p-6 flex flex-col">
+        <div className="max-w-xl w-full mx-auto my-auto space-y-6">
         {loading ? (
           <div className="text-center py-20 text-slate-400">
             <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
@@ -1112,41 +1115,42 @@ export const LessonModal = () => {
             </div>
           )
         )}
-      </div>
+        </div>
+      </main>
 
-      {/* Bottom Evaluation Banner (Green / Red / Neutral) with iPhone Safe Area */}
+      {/* 3. Chân Bài Học (shrink-0 border-t-2 p-3 sm:p-4) */}
       {evalState !== 'completed' && (
-        <div
-          className={`border-t-2 p-4 transition-all ${
+        <footer
+          className={`shrink-0 border-t-2 p-3 sm:p-4 transition-all z-10 ${
             evalState === 'correct'
               ? 'bg-emerald-100 dark:bg-emerald-950 border-emerald-400'
               : evalState === 'wrong'
               ? 'bg-rose-100 dark:bg-rose-950 border-rose-400'
               : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
           }`}
-          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)' }}
+          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 14px)' }}
         >
-          <div className="max-w-xl mx-auto flex items-center justify-between gap-4">
+          <div className="max-w-xl mx-auto flex items-center justify-between gap-3 sm:gap-4">
             {evalState === 'correct' ? (
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
-                <div>
-                  <h4 className="font-black text-emerald-800 dark:text-emerald-300 text-base">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <div className="min-w-0">
+                  <h4 className="font-black text-emerald-800 dark:text-emerald-300 text-sm sm:text-base truncate">
                     Tuyệt vời! Chính xác!
                   </h4>
-                  <p className="text-xs text-emerald-700 dark:text-emerald-400">
+                  <p className="text-xs text-emerald-700 dark:text-emerald-400 font-bold">
                     +{totalXP} XP
                   </p>
                 </div>
               </div>
             ) : evalState === 'wrong' ? (
-              <div className="flex items-center gap-3">
-                <XCircle className="w-8 h-8 text-rose-600 dark:text-rose-400" />
-                <div>
-                  <h4 className="font-black text-rose-800 dark:text-rose-300 text-sm">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                <XCircle className="w-7 h-7 sm:w-8 sm:h-8 text-rose-600 dark:text-rose-400 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <h4 className="font-black text-rose-800 dark:text-rose-300 text-xs sm:text-sm">
                     Đáp án đúng là:
                   </h4>
-                  <p className="text-xs font-bold text-rose-700 dark:text-rose-400">
+                  <p className="text-xs font-bold text-rose-700 dark:text-rose-400 break-words line-clamp-2">
                     {currentExercise?.correct_answer}
                   </p>
                   <button
@@ -1156,15 +1160,15 @@ export const LessonModal = () => {
                       correctAnswer: currentExercise?.correct_answer,
                       hint: currentExercise?.hint
                     })}
-                    className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 dark:bg-slate-800 text-rose-700 dark:text-rose-300 font-extrabold text-xs hover:bg-white shadow-xs border border-rose-300 dark:border-rose-700 transition-all cursor-pointer"
+                    className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/90 dark:bg-slate-800 text-rose-700 dark:text-rose-300 font-extrabold text-[11px] hover:bg-white shadow-xs border border-rose-300 dark:border-rose-700 transition-all cursor-pointer"
                   >
-                    <Bot className="w-3.5 h-3.5 text-rose-500" />
-                    <span>Tại sao sai? Hỏi Gia Sư AI</span>
+                    <Bot className="w-3 h-3 text-rose-500 shrink-0" />
+                    <span className="truncate">Hỏi Gia Sư AI</span>
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="hidden sm:block text-xs font-semibold text-slate-400">
+              <div className="hidden sm:block text-xs font-semibold text-slate-400 flex-1">
                 Hãy hoàn thành bài tập rồi nhấn Kiểm Tra
               </div>
             )}
@@ -1174,7 +1178,7 @@ export const LessonModal = () => {
               <button
                 onClick={handleCheck}
                 disabled={!canCheck()}
-                className={`duo-btn text-sm uppercase px-8 py-3.5 rounded-2xl font-black ${
+                className={`duo-btn text-xs sm:text-sm uppercase px-5 sm:px-8 py-3 sm:py-3.5 rounded-2xl font-black shrink-0 ${
                   canCheck()
                     ? 'duo-btn-green'
                     : 'duo-btn-gray opacity-50 cursor-not-allowed'
@@ -1185,7 +1189,7 @@ export const LessonModal = () => {
             ) : (
               <button
                 onClick={handleContinue}
-                className={`duo-btn text-sm uppercase px-8 py-3.5 rounded-2xl font-black ${
+                className={`duo-btn text-xs sm:text-sm uppercase px-5 sm:px-8 py-3 sm:py-3.5 rounded-2xl font-black shrink-0 ${
                   evalState === 'correct' ? 'duo-btn-green' : 'duo-btn-red'
                 }`}
               >
@@ -1193,7 +1197,7 @@ export const LessonModal = () => {
               </button>
             )}
           </div>
-        </div>
+        </footer>
       )}
 
       {/* Quit Confirmation Dialog (Duolingo Style Popup) */}

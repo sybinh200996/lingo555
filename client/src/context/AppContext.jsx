@@ -27,18 +27,20 @@ export const AppProvider = ({ children }) => {
   const [activeLessonId, setActiveLessonId] = useState(null);
   const [activeWordModal, setActiveWordModal] = useState(null);
 
-  // AI Ecosystem states
-  const [isAiSettingsOpen, setIsAiSettingsOpen] = useState(false);
-  const [isAiTutorOpen, setIsAiTutorOpen] = useState(false);
+  // Single Active Modal System (Zero Modal Stacking Guarantee)
+  // activeModal: 'lesson' | 'aiTutor' | 'shop' | 'quests' | 'settings' | 'placementTest' | 'levelSelector' | 'podcast' | 'word' | null
+  const [activeModal, setActiveModal] = useState(null);
   const [aiTutorPayload, setAiTutorPayload] = useState(null);
   const [hasAiKey, setHasAiKey] = useState(false);
 
-  // Version 2.0 Features Modals
-  const [isGemShopOpen, setIsGemShopOpen] = useState(false);
-  const [isQuestsOpen, setIsQuestsOpen] = useState(false);
-  const [isPodcastOpen, setIsPodcastOpen] = useState(false);
-  const [isPlacementOpen, setIsPlacementOpen] = useState(false);
-  const [isLevelModalOpen, setIsLevelModalOpen] = useState(false);
+  // Derived modal booleans ensuring only 1 modal is ever open simultaneously
+  const isAiSettingsOpen = activeModal === 'settings';
+  const isAiTutorOpen = activeModal === 'aiTutor';
+  const isGemShopOpen = activeModal === 'shop';
+  const isQuestsOpen = activeModal === 'quests';
+  const isPodcastOpen = activeModal === 'podcast';
+  const isPlacementOpen = activeModal === 'placementTest';
+  const isLevelModalOpen = activeModal === 'levelSelector';
 
   // Free learning mode: Allows instant access to all lessons across all levels
   const [isFreeMode, setIsFreeMode] = useState(() => {
@@ -242,91 +244,101 @@ export const AppProvider = ({ children }) => {
   };
 
   const startLesson = (lessonId) => {
-    sounds.playTap();
+    sounds.playTap?.();
     setActiveLessonId(lessonId);
+    setActiveModal('lesson');
   };
 
   const closeLesson = () => {
-    sounds.playTap();
+    sounds.playTap?.();
     setActiveLessonId(null);
+    setActiveModal(prev => prev === 'lesson' ? null : prev);
     refreshProfile();
   };
 
   const openAiSettings = () => {
-    sounds.playTap();
-    setIsAiSettingsOpen(true);
+    sounds.playTap?.();
+    setActiveModal('settings');
   };
 
   const closeAiSettings = () => {
-    sounds.playTap();
-    setIsAiSettingsOpen(false);
+    sounds.playTap?.();
+    setActiveModal(prev => prev === 'settings' ? null : prev);
     setHasAiKey(!!ai.getApiKey() || !!serverAiStatus?.hasServerKey);
   };
 
   const openAiTutor = (payload = null) => {
-    sounds.playTap();
+    sounds.playTap?.();
     setAiTutorPayload(payload);
-    setIsAiTutorOpen(true);
+    setActiveModal('aiTutor');
   };
 
   const closeAiTutor = () => {
-    sounds.playTap();
-    setIsAiTutorOpen(false);
+    sounds.playTap?.();
     setAiTutorPayload(null);
+    setActiveModal(prev => prev === 'aiTutor' ? null : prev);
   };
 
   const openGemShop = () => {
-    sounds.playTap();
-    setIsGemShopOpen(true);
+    sounds.playTap?.();
+    setActiveModal('shop');
   };
 
   const closeGemShop = () => {
-    sounds.playTap();
-    setIsGemShopOpen(false);
+    sounds.playTap?.();
+    setActiveModal(prev => prev === 'shop' ? null : prev);
   };
 
   const openQuests = () => {
-    sounds.playTap();
-    setIsQuestsOpen(true);
+    sounds.playTap?.();
+    setActiveModal('quests');
   };
 
   const closeQuests = () => {
-    sounds.playTap();
-    setIsQuestsOpen(false);
+    sounds.playTap?.();
+    setActiveModal(prev => prev === 'quests' ? null : prev);
   };
 
   const openPodcast = () => {
-    sounds.playTap();
-    setIsPodcastOpen(true);
+    sounds.playTap?.();
+    setActiveModal('podcast');
   };
 
   const closePodcast = () => {
-    sounds.playTap();
-    setIsPodcastOpen(false);
+    sounds.playTap?.();
+    setActiveModal(prev => prev === 'podcast' ? null : prev);
   };
 
   const openPlacement = () => {
-    sounds.playTap();
-    setIsPlacementOpen(true);
+    sounds.playTap?.();
+    setActiveModal('placementTest');
   };
 
   const closePlacement = () => {
-    sounds.playTap();
-    setIsPlacementOpen(false);
+    sounds.playTap?.();
+    setActiveModal(prev => prev === 'placementTest' ? null : prev);
   };
 
   const openLevelModal = () => {
-    sounds.playTap();
-    setIsLevelModalOpen(true);
+    sounds.playTap?.();
+    setActiveModal('levelSelector');
   };
 
   const closeLevelModal = () => {
-    sounds.playTap();
-    setIsLevelModalOpen(false);
+    sounds.playTap?.();
+    setActiveModal(prev => prev === 'levelSelector' ? null : prev);
+  };
+
+  const closeAllModals = () => {
+    sounds.playTap?.();
+    setActiveModal(null);
+    setActiveLessonId(null);
+    setActiveWordModal(null);
+    setAiTutorPayload(null);
   };
 
   const toggleFreeMode = () => {
-    sounds.playTap();
+    sounds.playTap?.();
     setIsFreeMode(prev => {
       const next = !prev;
       try {
@@ -382,7 +394,10 @@ export const AppProvider = ({ children }) => {
         toggleFreeMode,
         isLevelModalOpen,
         openLevelModal,
-        closeLevelModal
+        closeLevelModal,
+        activeModal,
+        setActiveModal,
+        closeAllModals
       }}
     >
       {children}
