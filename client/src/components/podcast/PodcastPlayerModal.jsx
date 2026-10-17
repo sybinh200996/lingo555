@@ -55,8 +55,9 @@ export const PodcastPlayerModal = ({ isOpen, onClose }) => {
         level: currentLevel?.code || '',
         limit: 35
       });
-      if (res && res.words && res.words.length > 0) {
-        setPlaylist(res.words);
+      const items = res?.items || res?.words || [];
+      if (items.length > 0) {
+        setPlaylist(items);
         setCurrentIndex(0);
       }
     } catch (e) {
