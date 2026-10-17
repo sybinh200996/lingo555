@@ -26,6 +26,13 @@
   .dark body {
     @apply bg-slate-950 text-slate-100 selection:bg-emerald-800;
   }
+
+  /* Prevent iOS Safari auto-zoom on input and textarea focus */
+  @media (max-width: 767px) {
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+  }
 }
 
 /* 3D Duolingo Button Styles */

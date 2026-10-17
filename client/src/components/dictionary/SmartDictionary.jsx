@@ -38,6 +38,8 @@ export const SmartDictionary = () => {
   const activeLevelsList = currentLang === 'zh' ? zhLevels : enLevels;
 
   useEffect(() => {
+    setSelectedLevel('');
+    setPage(1);
     loadStats();
     loadNotebook();
   }, [currentLang]);

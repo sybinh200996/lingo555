@@ -6,12 +6,24 @@ import { ai } from '../services/aiClient';
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [currentLang, setCurrentLang] = useState('zh'); // 'zh' or 'en'
+  const [currentLang, setCurrentLang] = useState(() => {
+    try {
+      return localStorage.getItem('lingo555_current_lang') || 'zh';
+    } catch (e) {
+      return 'zh';
+    }
+  });
   const [languages, setLanguages] = useState([]);
   const [levels, setLevels] = useState([]);
   const [currentLevel, setCurrentLevel] = useState(null);
   const [activeTab, setActiveTab] = useState('learn'); // 'learn', 'dict', 'practice', 'speak', 'profile'
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    try {
+      return localStorage.getItem('lingo555_theme') === 'dark';
+    } catch (e) {
+      return false;
+    }
+  });
   const [activeLessonId, setActiveLessonId] = useState(null);
   const [activeWordModal, setActiveWordModal] = useState(null);
 
@@ -21,34 +33,51 @@ export const AppProvider = ({ children }) => {
   const [aiTutorPayload, setAiTutorPayload] = useState(null);
   const [hasAiKey, setHasAiKey] = useState(false);
 
-  const [userProfile, setUserProfile] = useState({
-    id: 'default_user',
-    username: 'Học viên Polyglot',
-    avatar: '🐼',
-    current_language: 'zh',
-    hearts: 5,
-    max_hearts: 5,
-    gems: 350,
-    xp: 120,
-    streak: 3,
-    stats: {
-      completedLessons: 0,
-      wordsMastered: 0,
-      difficultWords: 0
-    }
+  const [userProfile, setUserProfile] = useState(() => {
+    try {
+      const saved = localStorage.getItem('lingo555_user_profile');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {}
+    return {
+      id: 'default_user',
+      username: 'Học viên Polyglot',
+      avatar: '🐼',
+      current_language: 'zh',
+      hearts: 5,
+      max_hearts: 5,
+      gems: 350,
+      xp: 120,
+      streak: 3,
+      stats: {
+        completedLessons: 0,
+        wordsMastered: 0,
+        difficultWords: 0
+      }
+    };
   });
+
+  // Sync userProfile to localStorage whenever updated
+  useEffect(() => {
+    try {
+      localStorage.setItem('lingo555_user_profile', JSON.stringify(userProfile));
+    } catch (e) {}
+  }, [userProfile]);
 
   // Load languages and user profile on mount
   useEffect(() => {
     loadInitialData();
   }, []);
 
-  // Sync Dark mode with document class
+  // Sync Dark mode with document class and localStorage
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('lingo555_theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('lingo555_theme', 'light');
     }
   }, [isDarkMode]);
 
@@ -100,16 +129,45 @@ export const AppProvider = ({ children }) => {
 
   const switchLanguage = async (newLang) => {
     sounds.playTap();
+
+    // 1. Immediately reset active modal/lesson states so lessons do not carry over
+    setActiveLessonId(null);
+    setActiveWordModal(null);
+    setIsAiTutorOpen(false);
+    setAiTutorPayload(null);
+
+    // 2. Stop any active speech synthesis and recognition immediately
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+
+    // 3. Persist and switch current language
+    try {
+      localStorage.setItem('lingo555_current_lang', newLang);
+    } catch (e) {}
     setCurrentLang(newLang);
-    setUserProfile(prev => ({
-      ...prev,
-      avatar: newLang === 'zh' ? '🐼' : '🦉',
-      current_language: newLang
-    }));
+
+    // 4. Update user profile state and localStorage
+    setUserProfile(prev => {
+      const updated = {
+        ...prev,
+        avatar: newLang === 'zh' ? '🐼' : '🦉',
+        current_language: newLang
+      };
+      try {
+        localStorage.setItem('lingo555_user_profile', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    // 5. Instantly trigger levels loading for SkillTree
+    loadLevels(newLang);
+
+    // 6. Sync language preference to Backend Database
     try {
       await api.updateUserProfile({ current_language: newLang });
     } catch (e) {
-      // ignore
+      console.warn('Failed to update language on backend:', e);
     }
   };
 

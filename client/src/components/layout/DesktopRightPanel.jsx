@@ -28,7 +28,7 @@ export const DesktopRightPanel = () => {
   };
 
   return (
-    <aside className="hidden xl:flex flex-col w-80 2xl:w-96 h-screen sticky top-0 border-l-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 overflow-y-auto z-20 space-y-6">
+    <aside className="hidden xl:flex flex-col w-80 2xl:w-96 sticky top-0 h-[100dvh] overflow-y-auto border-l-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 z-20 space-y-6">
       {/* Top Header Gamification Stats Bar */}
       <div className="grid grid-cols-3 gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
         {/* Streak */}

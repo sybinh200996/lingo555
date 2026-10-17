@@ -44,6 +44,14 @@ export const AIWritingLab = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reviewResult, setReviewResult] = useState(null);
 
+  React.useEffect(() => {
+    const newPrompts = SUGGESTED_PROMPTS[currentLang] || SUGGESTED_PROMPTS.zh;
+    setSelectedPrompt(newPrompts[0]);
+    setUserText('');
+    setReviewResult(null);
+    setUseCustom(false);
+  }, [currentLang]);
+
   const activePromptText = useCustom ? customPrompt : selectedPrompt.prompt;
   const wordCount = userText.trim().length > 0 ? (currentLang === 'zh' ? userText.trim().replace(/\s+/g, '').length : userText.trim().split(/\s+/).length) : 0;
 

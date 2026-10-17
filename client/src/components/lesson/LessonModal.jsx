@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
-import { speech } from '../../services/speechService';
+import { speech, normalizeSpeechText } from '../../services/speechService';
 import { sounds } from '../../services/soundEffects';
 import { HanziCanvas } from './HanziCanvas';
 import { 
@@ -132,21 +132,19 @@ export const LessonModal = () => {
     });
   };
 
-  // Check answer logic
+  // Check answer logic with standardized Text Normalizer
   const handleCheck = () => {
     if (!currentExercise) return;
 
     let isCorrect = false;
 
     if (currentExercise.type === 'listening') {
-      isCorrect = selectedOption === currentExercise.correct_answer;
+      isCorrect = normalizeSpeechText(selectedOption) === normalizeSpeechText(currentExercise.correct_answer);
     } else if (currentExercise.type === 'dictation' || currentExercise.type === 'translation') {
       const assembledSentence = assembledWords.join(' ').trim();
-      const targetSentence = currentExercise.correct_answer.trim();
-      // Compare ignoring punctuation differences
-      const cleanAssembled = assembledSentence.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()？!。，、]/g, '').trim();
-      const cleanTarget = targetSentence.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()？!。，、]/g, '').trim();
-      isCorrect = cleanAssembled.toLowerCase() === cleanTarget.toLowerCase();
+      const targetSentence = (currentExercise.correct_answer || '').trim();
+      // Normalize both sentences ignoring punctuation and whitespace
+      isCorrect = normalizeSpeechText(assembledSentence) === normalizeSpeechText(targetSentence);
     } else if (currentExercise.type === 'speaking') {
       isCorrect = speechResult && speechResult.isPass;
     } else if (currentExercise.type === 'writing') {
@@ -227,6 +225,52 @@ export const LessonModal = () => {
     }
     return true;
   };
+
+  // Desktop Keyboard Shortcuts: Enter (Check/Continue), 1-4 (Options), Space (Replay audio)
+  useEffect(() => {
+    if (!activeLessonId) return;
+
+    const handleKeyDown = (e) => {
+      const targetTag = document.activeElement?.tagName?.toLowerCase();
+      if (targetTag === 'input' || targetTag === 'textarea' || document.activeElement?.isContentEditable) {
+        return;
+      }
+
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (evalState === 'completed') {
+          closeLesson();
+        } else if (evalState === null) {
+          if (canCheck()) {
+            handleCheck();
+          }
+        } else {
+          handleContinue();
+        }
+      } else if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        if (currentExercise?.target_audio_text) {
+          sounds.playTap();
+          speech.speak(currentExercise.target_audio_text, currentLang, 1.0);
+        } else if (currentExercise?.target_text) {
+          sounds.playTap();
+          speech.speak(currentExercise.target_text, currentLang, 1.0);
+        }
+      } else if (['1', '2', '3', '4'].includes(e.key)) {
+        if (evalState === null && currentExercise?.type === 'listening' && Array.isArray(currentExercise?.options)) {
+          const idx = parseInt(e.key, 10) - 1;
+          if (idx >= 0 && idx < currentExercise.options.length) {
+            e.preventDefault();
+            sounds.playTap();
+            setSelectedOption(currentExercise.options[idx]);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeLessonId, evalState, currentExercise, selectedOption, assembledWords, speechResult, hanziDone, matchedPairs]);
 
   if (!activeLessonId) return null;
 
@@ -690,7 +734,7 @@ export const LessonModal = () => {
                   </div>
 
                   {/* Available Word Bank */}
-                  <div className="flex flex-wrap gap-2.5 justify-center pt-2">
+                  <div className="flex flex-wrap gap-2 justify-center pt-2 max-h-48 overflow-y-auto">
                     {availableBank.map((word, idx) => (
                       <button
                         key={idx}
@@ -699,7 +743,7 @@ export const LessonModal = () => {
                           setAvailableBank(prev => prev.filter((_, i) => i !== idx));
                           setAssembledWords(prev => [...prev, word]);
                         }}
-                        className="duo-btn duo-btn-outline px-4 py-2.5 rounded-xl text-sm font-black"
+                        className="duo-btn duo-btn-outline px-3.5 py-2 rounded-xl text-sm font-black"
                       >
                         {word}
                       </button>

@@ -61,7 +61,7 @@ export const SkillTree = () => {
   };
 
   return (
-    <div className="space-y-8 max-w-xl mx-auto">
+    <div className="space-y-8 max-w-xl mx-auto overflow-x-hidden max-w-full">
       {/* Transparent click-outside backdrop when any tooltip is open */}
       {activeTooltip && (
         <div

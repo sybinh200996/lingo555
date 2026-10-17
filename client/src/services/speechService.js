@@ -1,3 +1,5 @@
+import { tts } from '../utils/tts';
+
 // Advanced Web Speech API Service with Deep Phonetic & Linguistic Diagnostics
 // Supports Pinyin Sound Mapping, English Homophones, Sequence Alignment & Detailed Critique
 
@@ -74,39 +76,29 @@ const EN_HOMOPHONES = {
   one: ['won']
 };
 
+export const normalizeSpeechText = (text) => {
+  if (!text) return "";
+  return text
+    .toLowerCase()
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()？。，！、；：“”‘’（）《》【】\s]/g, "")
+    .trim();
+};
+
 class SpeechService {
   constructor() {
-    this.synth = typeof window !== 'undefined' ? window.speechSynthesis : null;
     this.recognition = null;
     this.isListening = false;
   }
 
   /**
-   * Speak text in native accent with fallback voice selection
+   * Standardized Speak text via tts utility with priority voice selection
    */
-  speak(text, lang = 'zh', rate = 1.0) {
-    if (!this.synth) return;
-    this.synth.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
-    utterance.rate = rate;
-    utterance.pitch = 1.0;
-
-    const voices = this.synth.getVoices();
-    const targetLangCode = lang === 'zh' ? 'zh' : 'en';
-    const preferredVoice = voices.find(v => v.lang.startsWith(targetLangCode));
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
-    }
-
-    this.synth.speak(utterance);
+  speak(text, lang = 'zh', rate = 1.0, onEnd = null) {
+    tts.speak(text, lang, rate, onEnd);
   }
 
   stopSpeaking() {
-    if (this.synth) {
-      this.synth.cancel();
-    }
+    tts.stop();
   }
 
   isRecognitionSupported() {
@@ -199,9 +191,10 @@ class SpeechService {
   }
 
   cleanText(str) {
-    return (str || '')
+    if (!str) return '';
+    return str
       .toLowerCase()
-      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()？!。，、]/g, '')
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()？。，！、；：“”‘’（）《》【】]/g, '')
       .replace(/\s+/g, ' ')
       .trim();
   }
@@ -250,6 +243,33 @@ class SpeechService {
 
     // Combine primary transcript with alternatives for comprehensive checking
     const allSpokenCandidates = [spokenText, ...(alternatives || [])].map(s => this.cleanText(s)).filter(Boolean);
+
+    // Immediate 100% exact match check using standardized normalizer (eliminates false failures caused by punctuation/spaces)
+    const normTarget = normalizeSpeechText(targetText);
+    const normSpoken = normalizeSpeechText(spokenText);
+    if (normTarget && (allSpokenCandidates.some(c => normalizeSpeechText(c) === normTarget) || normSpoken === normTarget)) {
+      const isZh = lang === 'zh';
+      const wordList = isZh ? targetText.split('') : targetText.split(/\s+/).filter(Boolean);
+      return {
+        score: 100,
+        isPass: true,
+        spoken: spokenText,
+        target: targetText,
+        words: wordList.map(w => ({
+          word: w,
+          status: 'correct',
+          score: 100,
+          note: 'Chuẩn xác 100%'
+        })),
+        diagnostics: ['Phát âm xuất sắc, toàn bộ câu/từ đều đạt chuẩn bản xứ.'],
+        critique: {
+          category: 'Độ chuẩn xác',
+          observation: 'Phát âm rõ ràng, chuẩn ngữ âm và ngữ điệu.',
+          advice: 'Tuyệt vời! Tiếp tục duy trì phong độ.'
+        },
+        feedback: 'Xuất sắc! Bạn phát âm hoàn toàn chính xác.'
+      };
+    }
 
     // ==========================================
     // 1. CHINESE (ZH) EVALUATION

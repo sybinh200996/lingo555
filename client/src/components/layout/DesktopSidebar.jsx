@@ -33,7 +33,7 @@ export const DesktopSidebar = () => {
   ];
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 xl:w-72 h-screen sticky top-0 border-r-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 justify-between z-20">
+    <aside className="hidden lg:flex flex-col w-64 xl:w-72 sticky top-0 h-[100dvh] overflow-y-auto border-r-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 justify-between z-20">
       <div>
         {/* Brand Logo */}
         <div className="flex items-center gap-3 px-3 py-4 mb-4">
