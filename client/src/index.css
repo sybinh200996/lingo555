@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --duo-green: #58cc02;
+    --duo-green-border: #46a302;
+    --duo-blue: #1cb0f6;
+    --duo-blue-border: #1899d6;
+    --duo-red: #ff4b4b;
+    --duo-red-border: #ea2b2b;
+    --duo-yellow: #ffc800;
+    --duo-yellow-border: #e5a400;
+    --duo-purple: #ce82ff;
+    --duo-purple-border: #a855f7;
+    --duo-gray: #e5e5e5;
+    --duo-gray-border: #cecece;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased selection:bg-emerald-200;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .dark body {
+    @apply bg-slate-950 text-slate-100 selection:bg-emerald-800;
+  }
+}
+
+/* 3D Duolingo Button Styles */
+.duo-btn {
+  @apply relative inline-flex items-center justify-center font-bold tracking-wide transition-all select-none cursor-pointer;
+  border-bottom-width: 4px;
+}
+
+.duo-btn:active:not(:disabled) {
+  transform: translateY(3px);
+  border-bottom-width: 1px;
+  margin-top: 3px;
+}
+
+.duo-btn-green {
+  @apply bg-emerald-500 hover:bg-emerald-400 text-white border-emerald-700 active:border-emerald-600;
+}
+
+.duo-btn-blue {
+  @apply bg-sky-500 hover:bg-sky-400 text-white border-sky-700 active:border-sky-600;
+}
+
+.duo-btn-yellow {
+  @apply bg-amber-400 hover:bg-amber-300 text-amber-950 border-amber-600 active:border-amber-500;
+}
+
+.duo-btn-red {
+  @apply bg-rose-500 hover:bg-rose-400 text-white border-rose-700 active:border-rose-600;
+}
+
+.duo-btn-purple {
+  @apply bg-purple-500 hover:bg-purple-400 text-white border-purple-700 active:border-purple-600;
+}
+
+.duo-btn-gray {
+  @apply bg-slate-200 hover:bg-slate-100 text-slate-700 border-slate-300 active:border-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-900;
+}
+
+.duo-btn-outline {
+  @apply bg-white hover:bg-slate-50 text-slate-700 border-2 border-b-4 border-slate-300 active:border-slate-400 dark:bg-slate-900 dark:text-slate-200 dark:border-slate-700;
+}
+
+/* Duolingo Card 3D border */
+.duo-card {
+  @apply bg-white dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 transition-all;
+}
+
+.duo-card-interactive {
+  @apply bg-white dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 transition-all hover:border-slate-300 dark:hover:border-slate-700 cursor-pointer;
+}
+
+.duo-card-interactive:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 dark:bg-slate-700 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400 dark:bg-slate-600;
+}
+
+/* Animations */
+@keyframes bounceShort {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-bounce-short {
+  animation: bounceShort 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s infinite;
+}

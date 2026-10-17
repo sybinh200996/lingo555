@@ -1,0 +1,10 @@
+{
+  "name": "lingo555",
+  "version": "1.0.0",
+  "description": "Bilingual Duolingo-style Language Learning Web App (Chinese & English)",
+  "scripts": {
+    "server": "node server/src/index.js",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build"
+  }
+}

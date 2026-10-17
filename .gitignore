@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Production build outputs
+dist/
+client/dist/
+
+# Environment configurations (Keep your keys secure)
+.env
+.env.local
+server/.env
+server/.env.local
+client/.env
+client/.env.local
+
+# SQLite runtime locks & logs
+*.log
+*.sqlite-journal
+*.db-wal
+*.db-shm
+server/data/uploads/*
+!server/data/uploads/.gitkeep
+
+# System files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
