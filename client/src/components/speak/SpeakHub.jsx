@@ -178,6 +178,11 @@ export const SpeakHub = () => {
     setIsRecording(true);
     speech.startListening({
       lang: currentLang,
+      maxDuration: 25000,
+      silenceTimeout: 3500,
+      onInterim: (text) => {
+        setUserInput(text);
+      },
       onResult: (transcript) => {
         setIsRecording(false);
         setUserInput(transcript);

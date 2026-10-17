@@ -88,6 +88,16 @@ class SpeechService {
   constructor() {
     this.recognition = null;
     this.isListening = false;
+    this.manualStopRequested = false;
+    this.accumulatedTranscript = '';
+    this.interimTranscript = '';
+    this.capturedAlternatives = [];
+    this.lastConfidence = 0.9;
+    this.silenceTimer = null;
+    this.maxTimer = null;
+    this.hasHeardSpeech = false;
+    this.currentCallbacks = null;
+    this.currentLang = 'zh';
   }
 
   /**
@@ -106,9 +116,102 @@ class SpeechService {
   }
 
   /**
-   * Start listening with multi-alternative capture and mobile stabilization
+   * Reset the silence timeout timer.
+   * If learner pauses speaking for more than silenceTimeoutMs (default 3.5s)
+   * after having already spoken some words, automatically finalize and deliver results.
    */
-  startListening({ lang = 'zh', onResult, onError, onEnd }) {
+  resetSilenceTimer(silenceTimeoutMs = 3500) {
+    if (this.silenceTimer) {
+      clearTimeout(this.silenceTimer);
+      this.silenceTimer = null;
+    }
+
+    if (!this.isListening || this.manualStopRequested) return;
+
+    // Only set auto-finish silence timer if user has actually uttered words
+    if (this.hasHeardSpeech) {
+      this.silenceTimer = setTimeout(() => {
+        if (this.isListening && !this.manualStopRequested) {
+          this.finishAndDeliver();
+        }
+      }, silenceTimeoutMs);
+    }
+  }
+
+  /**
+   * Finalize the listening session and deliver the collected transcripts
+   */
+  finishAndDeliver() {
+    if (!this.isListening) return;
+    this.isListening = false;
+    this.manualStopRequested = true;
+
+    if (this.silenceTimer) {
+      clearTimeout(this.silenceTimer);
+      this.silenceTimer = null;
+    }
+    if (this.maxTimer) {
+      clearTimeout(this.maxTimer);
+      this.maxTimer = null;
+    }
+
+    if (this.recognition) {
+      try {
+        this.recognition.onstart = null;
+        this.recognition.onresult = null;
+        this.recognition.onerror = null;
+        this.recognition.onend = null;
+        this.recognition.stop();
+      } catch (e) {
+        // Ignore stop error
+      }
+    }
+
+    const fullTranscript = ((this.accumulatedTranscript || '') + ' ' + (this.interimTranscript || '')).trim();
+    const finalAlternatives = Array.from(new Set([
+      fullTranscript,
+      this.accumulatedTranscript.trim(),
+      ...this.capturedAlternatives
+    ])).filter(Boolean);
+
+    const cbs = this.currentCallbacks;
+    this.currentCallbacks = null;
+
+    if (cbs) {
+      if (fullTranscript) {
+        if (cbs.onResult) {
+          cbs.onResult(fullTranscript, this.lastConfidence, finalAlternatives);
+        }
+      } else {
+        // No speech detected at all
+        if (cbs.onError) {
+          cbs.onError('no-speech');
+        }
+      }
+      if (cbs.onEnd) {
+        cbs.onEnd();
+      }
+    }
+  }
+
+  /**
+   * Start listening with continuous recognition, multi-phrase accumulation,
+   * live interim preview, and smart pause tolerance (prevents 2-3s auto-cutoff).
+   */
+  startListening({ 
+    lang = 'zh', 
+    onResult, 
+    onError, 
+    onEnd, 
+    onInterim,
+    maxDuration = 20000,
+    silenceTimeout = 3500 
+  }) {
+    // If an existing session is running, close it first
+    if (this.isListening) {
+      this.stopListening();
+    }
+
     if (!this.isRecognitionSupported()) {
       if (onError) onError('Trình duyệt của bạn chưa hỗ trợ Web Speech Recognition. Hãy dùng Chrome hoặc Safari.');
       return;
@@ -116,58 +219,128 @@ class SpeechService {
 
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     this.recognition = new SpeechRec();
+    this.currentLang = lang;
     this.recognition.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
-    this.recognition.interimResults = false;
+    // CRITICAL: continuous = true allows learner to speak full sentences without browser cutting off after 1.5s
+    this.recognition.continuous = true;
+    this.recognition.interimResults = true;
     this.recognition.maxAlternatives = 3;
-    this.recognition.continuous = false;
+
+    this.isListening = true;
+    this.manualStopRequested = false;
+    this.accumulatedTranscript = '';
+    this.interimTranscript = '';
+    this.capturedAlternatives = [];
+    this.lastConfidence = 0.9;
+    this.hasHeardSpeech = false;
+    this.currentCallbacks = { onResult, onError, onEnd, onInterim };
+
+    // Safety timeout: auto-finish if user forgets to stop (default 20 seconds)
+    this.maxTimer = setTimeout(() => {
+      if (this.isListening && !this.manualStopRequested) {
+        this.finishAndDeliver();
+      }
+    }, maxDuration);
 
     this.recognition.onstart = () => {
       this.isListening = true;
     };
 
     this.recognition.onresult = (event) => {
-      this.isListening = false;
-      const results = event.results[0];
-      const primaryResult = results[0];
-      const transcript = primaryResult.transcript;
-      const confidence = primaryResult.confidence !== undefined ? primaryResult.confidence : 0.9;
+      let currentInterim = '';
 
-      // Extract all captured alternatives
-      const alternatives = [];
-      for (let i = 0; i < results.length; i++) {
-        if (results[i]?.transcript) {
-          alternatives.push(results[i].transcript);
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const res = event.results[i];
+        const topAlternative = res[0];
+        const text = topAlternative?.transcript || '';
+
+        if (res.isFinal) {
+          if (text.trim()) {
+            this.accumulatedTranscript += (this.accumulatedTranscript ? ' ' : '') + text.trim();
+          }
+          // Collect alternatives
+          for (let a = 0; a < res.length; a++) {
+            if (res[a]?.transcript && !this.capturedAlternatives.includes(res[a].transcript)) {
+              this.capturedAlternatives.push(res[a].transcript);
+            }
+          }
+          if (topAlternative?.confidence !== undefined && topAlternative.confidence > 0) {
+            this.lastConfidence = topAlternative.confidence;
+          }
+        } else {
+          currentInterim += (currentInterim ? ' ' : '') + text.trim();
         }
       }
 
-      if (onResult) {
-        onResult(transcript, confidence, alternatives);
+      this.interimTranscript = currentInterim;
+      const combinedNow = ((this.accumulatedTranscript || '') + ' ' + (currentInterim || '')).trim();
+
+      if (combinedNow) {
+        this.hasHeardSpeech = true;
+        if (onInterim) {
+          onInterim(combinedNow);
+        }
+        // Learner spoke something! Give them 3.5s of silence before auto-finishing
+        this.resetSilenceTimer(silenceTimeout);
       }
     };
 
     this.recognition.onerror = (event) => {
-      this.isListening = false;
-      if (onError) onError(event.error);
+      console.warn('Speech recognition event error:', event.error);
+
+      // Crucial: 'no-speech' is triggered by Chrome if user takes 2s to start reading.
+      // Do NOT kill the session if we are still within listening window and user hasn't stopped!
+      if (event.error === 'no-speech') {
+        if (this.isListening && !this.manualStopRequested) {
+          // If learner hasn't spoken yet, keep listening until max duration
+          return;
+        }
+      }
+
+      if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+        this.isListening = false;
+        if (onError) onError(event.error);
+        this.finishAndDeliver();
+        return;
+      }
+
+      // For network or audio-capture errors
+      if (event.error === 'audio-capture') {
+        this.isListening = false;
+        if (onError) onError(event.error);
+        this.finishAndDeliver();
+        return;
+      }
     };
 
     this.recognition.onend = () => {
-      this.isListening = false;
-      if (onEnd) onEnd();
+      // Chrome/Safari often auto-closes connection after a few seconds even with continuous=true.
+      // If user is still in listening mode and hasn't manually stopped, auto-restart to continue capturing!
+      if (this.isListening && !this.manualStopRequested) {
+        try {
+          this.recognition.start();
+          return;
+        } catch (e) {
+          // If restart fails (e.g. mic permission closed), deliver whatever we got
+          this.finishAndDeliver();
+        }
+      } else {
+        this.finishAndDeliver();
+      }
     };
 
     try {
       this.recognition.start();
     } catch (e) {
       console.warn('SpeechRecognition start error:', e);
+      this.isListening = false;
       if (onError) onError(e.message);
     }
   }
 
   stopListening() {
-    if (this.recognition && this.isListening) {
-      this.recognition.stop();
-      this.isListening = false;
-    }
+    this.manualStopRequested = true;
+    this.finishAndDeliver();
   }
 
   levenshteinDistance(a, b) {

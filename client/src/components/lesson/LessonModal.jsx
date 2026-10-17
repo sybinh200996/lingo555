@@ -21,7 +21,8 @@ import {
   Bot,
   AlertTriangle,
   Keyboard,
-  SkipForward
+  SkipForward,
+  Square
 } from 'lucide-react';
 
 export const LessonModal = () => {
@@ -40,6 +41,7 @@ export const LessonModal = () => {
   const [selectedPairLeft, setSelectedPairLeft] = useState(null);
   const [isSpeakingListening, setIsSpeakingListening] = useState(false);
   const [speechResult, setSpeechResult] = useState(null);
+  const [interimSpeechText, setInterimSpeechText] = useState('');
   const [hanziDone, setHanziDone] = useState(false);
 
   // Microphone compatibility & text fallback states
@@ -56,6 +58,10 @@ export const LessonModal = () => {
     if (activeLessonId) {
       loadLessonData();
     }
+    return () => {
+      speech.stopListening();
+      speech.stopSpeaking();
+    };
   }, [activeLessonId]);
 
   const loadLessonData = async () => {
@@ -81,12 +87,18 @@ export const LessonModal = () => {
   const initExercise = (ex) => {
     setSelectedOption(null);
     setSpeechResult(null);
+    setInterimSpeechText('');
     setEvalState(null);
     setHanziDone(false);
     setSelectedPairLeft(null);
     setMatchedPairs({});
     setMicError(null);
     setFallbackText('');
+
+    if (isSpeakingListening) {
+      speech.stopListening();
+      setIsSpeakingListening(false);
+    }
 
     if (ex.type === 'speaking') {
       if (!speech.isRecognitionSupported()) {
@@ -121,6 +133,7 @@ export const LessonModal = () => {
   // Speech input trigger
   const handleToggleMic = () => {
     if (isSpeakingListening) {
+      sounds.playTap();
       speech.stopListening();
       setIsSpeakingListening(false);
       return;
@@ -132,14 +145,22 @@ export const LessonModal = () => {
       return;
     }
 
+    sounds.playTap();
     setIsSpeakingListening(true);
     setSpeechResult(null);
     setMicError(null);
+    setInterimSpeechText('');
 
     speech.startListening({
       lang: currentLang,
+      maxDuration: 25000,
+      silenceTimeout: 3500,
+      onInterim: (liveText) => {
+        setInterimSpeechText(liveText);
+      },
       onResult: (transcript, confidence, alternatives) => {
         setIsSpeakingListening(false);
+        setInterimSpeechText('');
         setMicError(null);
         const evalScore = speech.evaluatePronunciation(
           transcript,
@@ -153,6 +174,7 @@ export const LessonModal = () => {
       },
       onError: (err) => {
         setIsSpeakingListening(false);
+        setInterimSpeechText('');
         console.warn('Speech error:', err);
         if (err === 'not-allowed' || err === 'permission-denied') {
           setMicError('Quyền truy cập Microphone bị từ chối hoặc bị chặn trên trình duyệt. Vui lòng cấp quyền Micro hoặc nhập văn bản thay thế.');
@@ -621,26 +643,56 @@ export const LessonModal = () => {
                     </form>
                   ) : (
                     /* Standard Mic Button Mode */
-                    <div className="py-2">
-                      <button
-                        onClick={handleToggleMic}
-                        className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto shadow-xl transition-all ${
-                          isSpeakingListening
-                            ? 'bg-rose-500 text-white animate-pulse border-4 border-rose-300 scale-110'
-                            : 'duo-btn duo-btn-blue text-white'
-                        }`}
-                        title="Bấm mic để phát âm"
-                      >
-                        {isSpeakingListening ? (
-                          <MicOff className="w-10 h-10 animate-bounce" />
-                        ) : (
-                          <Mic className="w-10 h-10" />
+                    <div className="py-2 space-y-4">
+                      {/* Live Interim Caption Box when user is actively speaking */}
+                      {isSpeakingListening && (
+                        <div className="duo-card p-4 bg-sky-50 dark:bg-sky-950/40 border-2 border-sky-300 dark:border-sky-700 animate-in fade-in max-w-lg mx-auto">
+                          <div className="flex items-center justify-center gap-2 text-sky-600 dark:text-sky-400 font-extrabold text-xs uppercase tracking-wider mb-1">
+                            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping inline-block" />
+                            <span>Đang thu âm liên tục...</span>
+                          </div>
+                          <p className="text-base font-black text-slate-800 dark:text-white min-h-[1.75rem] px-2 py-1 bg-white/70 dark:bg-slate-900/70 rounded-xl border border-sky-200 dark:border-sky-800">
+                            {interimSpeechText ? `"${interimSpeechText}"` : 'Hãy bắt đầu đọc to toàn bộ câu...'}
+                          </p>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2">
+                            💡 Đọc chậm rãi, rõ từng chữ. Khi đọc xong, bấm <strong>"Dừng &amp; Chấm Điểm"</strong> hoặc ngừng 3.5 giây máy sẽ tự chấm.
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <button
+                          onClick={handleToggleMic}
+                          className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto sm:mx-0 shadow-xl transition-all ${
+                            isSpeakingListening
+                              ? 'bg-rose-500 text-white animate-pulse border-4 border-rose-300 scale-105'
+                              : 'duo-btn duo-btn-blue text-white'
+                          }`}
+                          title={isSpeakingListening ? "Bấm để dừng và chấm điểm ngay" : "Bấm mic để phát âm"}
+                        >
+                          {isSpeakingListening ? (
+                            <Square className="w-9 h-9 fill-white" />
+                          ) : (
+                            <Mic className="w-10 h-10" />
+                          )}
+                        </button>
+
+                        {/* Quick Stop & Submit Button when mic is active */}
+                        {isSpeakingListening && (
+                          <button
+                            onClick={handleToggleMic}
+                            className="duo-btn duo-btn-green py-3 px-5 rounded-2xl font-black text-sm flex items-center gap-2 shadow-lg animate-in zoom-in-95"
+                          >
+                            <CheckCircle2 className="w-5 h-5" />
+                            <span>Dừng &amp; Chấm Điểm Ngay</span>
+                          </button>
                         )}
-                      </button>
-                      <p className="text-xs font-bold text-slate-400 mt-3">
+                      </div>
+
+                      <p className="text-xs font-bold text-slate-400 mt-1">
                         {isSpeakingListening
-                          ? 'Đang lắng nghe bạn nói... (Hãy nói to rõ ràng)'
-                          : 'Bấm mic để bắt đầu phát âm'}
+                          ? 'Đang lắng nghe... Đọc thoải mái cả câu, không bị giới hạn thời gian gấp.'
+                          : 'Bấm mic để bắt đầu phát âm (Thu âm liên tục, không tắt sớm)'}
                       </p>
 
                       <div className="flex items-center justify-center gap-3 mt-3">

@@ -117,6 +117,11 @@ export const FloatingAITutor = () => {
     setIsRecording(true);
     speech.startListening({
       lang: currentLang,
+      maxDuration: 25000,
+      silenceTimeout: 3500,
+      onInterim: (text) => {
+        setInputQuery(text);
+      },
       onResult: (transcript) => {
         setIsRecording(false);
         setInputQuery(transcript);
