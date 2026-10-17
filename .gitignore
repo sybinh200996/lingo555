@@ -22,6 +22,9 @@ client/.env.local
 *.db-shm
 server/data/uploads/*
 !server/data/uploads/.gitkeep
+server/data/raw/
+server/data/*.db
+deploy-vps.cjs
 
 # System files
 .DS_Store

@@ -57,22 +57,55 @@ router.get('/search', (req, res) => {
     const totalRow = db.prepare(countSql).get(...params);
     const total = totalRow.total;
 
+    const cleanQ = q.trim().toLowerCase();
+    let orderClause = 'id ASC';
+    let orderParams = [];
+
+    if (cleanQ !== '') {
+      const isYeu = cleanQ === 'yêu';
+
+      orderClause = `
+        CASE 
+          WHEN LOWER(word) = ? THEN 1
+          WHEN LOWER(meaning) = ? THEN 2
+          ${isYeu ? "WHEN LOWER(word) = 'love' OR LOWER(word) = '爱' OR LOWER(meaning) LIKE '%tình yêu%' OR LOWER(meaning) LIKE '%lòng yêu%' OR LOWER(meaning) LIKE '%yêu thương%' OR LOWER(meaning) LIKE 'yêu;%' OR LOWER(meaning) LIKE 'yêu,%' THEN 3" : ""}
+          WHEN LOWER(meaning) LIKE ? OR LOWER(meaning) LIKE ? THEN 4
+          WHEN LOWER(word) LIKE ? THEN 5
+          WHEN (level IN ('HSK1', 'A1')) AND (LOWER(meaning) LIKE ? OR LOWER(word) LIKE ?) THEN 6
+          WHEN (level IN ('HSK2', 'A2')) AND (LOWER(meaning) LIKE ? OR LOWER(word) LIKE ?) THEN 7
+          WHEN LOWER(meaning) LIKE ? THEN 8
+          ELSE 9
+        END ASC,
+        ${isYeu ? "CASE WHEN LOWER(meaning) LIKE '%yêu tinh%' OR LOWER(meaning) LIKE '%yêu quái%' OR LOWER(meaning) LIKE '%yêu cầu%' THEN 2 ELSE 1 END ASC," : ""}
+        CASE 
+          WHEN level IN ('HSK1', 'A1') THEN 1 
+          WHEN level IN ('HSK2', 'A2') THEN 2 
+          WHEN level IN ('HSK3', 'B1') THEN 3
+          ELSE 4 
+        END ASC,
+        LENGTH(word) ASC,
+        id ASC
+      `;
+      orderParams = [
+        cleanQ,                                               // 1. exact word
+        cleanQ,                                               // 2. exact meaning
+        `${cleanQ};%`, `${cleanQ},%`,                         // 4. meaning starts with query + delimiter
+        `${cleanQ}%`,                                         // 5. word prefix
+        `%${cleanQ}%`, `%${cleanQ}%`,                         // 6. A1 / HSK1 bonus
+        `%${cleanQ}%`, `%${cleanQ}%`,                         // 7. A2 / HSK2 bonus
+        `%${cleanQ}%`                                         // 8. general meaning match
+      ];
+    }
+
     // Fast indexed query with limit and offset
     const querySql = `
       SELECT * FROM vocabularies 
       WHERE ${whereClause}
-      ORDER BY 
-        CASE 
-          WHEN word = ? THEN 1
-          WHEN word LIKE ? THEN 2
-          ELSE 3
-        END,
-        id ASC
+      ORDER BY ${orderClause}
       LIMIT ? OFFSET ?
     `;
 
-    const cleanQ = q.trim();
-    const queryParams = [...params, cleanQ, `${cleanQ}%`, limitNum, offset];
+    const queryParams = [...params, ...orderParams, limitNum, offset];
     const items = db.prepare(querySql).all(...queryParams);
 
     res.json({

@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node src/index.js",
+    "import-dict": "node src/db/downloadDatasets.js && node src/db/importFullDictionary.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
