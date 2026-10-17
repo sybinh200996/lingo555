@@ -5,6 +5,8 @@ import { api } from '../../services/api';
 import { speech, normalizeSpeechText } from '../../services/speechService';
 import { sounds } from '../../services/soundEffects';
 import { HanziCanvas } from './HanziCanvas';
+import { TonePitchCanvas } from './TonePitchCanvas';
+import { questTracker } from '../../utils/questTracker';
 import { 
   X, 
   Heart, 
@@ -195,6 +197,9 @@ export const LessonModal = () => {
           alternatives
         );
         setSpeechResult(evalScore);
+        if (evalScore && evalScore.score >= 85) {
+          questTracker.increment('speaking', 1);
+        }
       },
       onError: (err) => {
         setIsSpeakingListening(false);
@@ -232,6 +237,9 @@ export const LessonModal = () => {
       []
     );
     setSpeechResult(evalScore);
+    if (evalScore && evalScore.score >= 85) {
+      questTracker.increment('speaking', 1);
+    }
   };
 
   // Safe skip button for speaking exercise so user is never stuck
@@ -320,6 +328,7 @@ export const LessonModal = () => {
           stars,
           xpGained: totalXP
         });
+        questTracker.increment('lessons', 1);
       } catch (e) {
         console.warn('Failed to complete lesson on backend:', e);
       }
@@ -594,6 +603,15 @@ export const LessonModal = () => {
                       Nghĩa: {currentExercise.vietnamese_meaning}
                     </p>
                   </div>
+
+                  {/* Real-time Chinese Tone Pitch Visualizer */}
+                  {currentLang === 'zh' && (
+                    <TonePitchCanvas 
+                      targetText={currentExercise.target_text} 
+                      phonetic={currentExercise.phonetic}
+                      isListening={isSpeakingListening}
+                    />
+                  )}
 
                   {/* Browser Compatibility & Microphone Access Notification */}
                   {micError && (

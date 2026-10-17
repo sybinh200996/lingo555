@@ -4,7 +4,7 @@ import { api } from '../../services/api';
 import { Flame, Heart, Gem, Zap, Trophy, ShieldAlert, Plus, Sparkles } from 'lucide-react';
 
 export const DesktopRightPanel = () => {
-  const { userProfile, refillHearts } = useApp();
+  const { userProfile, refillHearts, openGemShop, openQuests } = useApp();
   const [leaderboard, setLeaderboard] = useState([]);
   const [isRefilling, setIsRefilling] = useState(false);
 
@@ -27,33 +27,79 @@ export const DesktopRightPanel = () => {
     setIsRefilling(false);
   };
 
+  const isDoubleXp = userProfile?.double_xp_until && new Date(userProfile.double_xp_until) > new Date();
+
   return (
     <aside className="hidden xl:flex flex-col w-80 2xl:w-96 sticky top-0 h-[100dvh] overflow-y-auto border-l-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 z-20 space-y-6">
       {/* Top Header Gamification Stats Bar */}
       <div className="grid grid-cols-3 gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
         {/* Streak */}
-        <div className="flex items-center justify-center gap-1.5 py-1.5">
+        <button 
+          onClick={openQuests}
+          className="flex items-center justify-center gap-1.5 py-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all"
+          title="Nhiệm vụ hôm nay"
+        >
           <Flame className="w-5 h-5 text-amber-500 fill-amber-500 animate-bounce-short" />
           <span className="font-extrabold text-amber-600 dark:text-amber-400 text-sm">
             {userProfile.streak || 1}
           </span>
-        </div>
+          {userProfile.streak_freezes > 0 && (
+            <span className="text-[11px]" title={`${userProfile.streak_freezes} khiên đóng băng`}>❄️</span>
+          )}
+        </button>
 
         {/* Gems */}
-        <div className="flex items-center justify-center gap-1.5 py-1.5">
+        <button 
+          onClick={openGemShop}
+          className="flex items-center justify-center gap-1.5 py-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all"
+          title="Cửa hàng Đá Quý"
+        >
           <Gem className="w-5 h-5 text-sky-500 fill-sky-500" />
           <span className="font-extrabold text-sky-600 dark:text-sky-400 text-sm">
             {userProfile.gems || 0}
           </span>
-        </div>
+        </button>
 
         {/* Hearts */}
-        <div className="flex items-center justify-center gap-1.5 py-1.5">
+        <button
+          onClick={handleRefill}
+          className="flex items-center justify-center gap-1.5 py-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all"
+          title="Nạp lại tim"
+        >
           <Heart className="w-5 h-5 text-rose-500 fill-rose-500" />
           <span className="font-extrabold text-rose-600 dark:text-rose-400 text-sm">
             {userProfile.hearts}/{userProfile.max_hearts || 5}
           </span>
+        </button>
+      </div>
+
+      {/* Double XP Potion Active Banner */}
+      {isDoubleXp && (
+        <div className="p-3 rounded-2xl bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border-2 border-purple-500/40 flex items-center justify-between text-xs font-black text-purple-700 dark:text-purple-300 animate-pulse">
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 fill-current text-purple-500" />
+            <span>Đang kích hoạt x2 XP!</span>
+          </div>
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500 text-white">15p</span>
         </div>
+      )}
+
+      {/* Quick Action Gamification Buttons */}
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          onClick={openGemShop}
+          className="p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 font-extrabold text-xs flex items-center justify-center gap-1.5 hover:scale-[1.02] transition-all"
+        >
+          <Gem className="w-4 h-4 fill-sky-500 text-sky-500" />
+          <span>Cửa Hàng</span>
+        </button>
+        <button
+          onClick={openQuests}
+          className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 font-extrabold text-xs flex items-center justify-center gap-1.5 hover:scale-[1.02] transition-all"
+        >
+          <Trophy className="w-4 h-4 text-amber-500" />
+          <span>Nhiệm Vụ</span>
+        </button>
       </div>
 
       {/* Hearts Recovery Card */}

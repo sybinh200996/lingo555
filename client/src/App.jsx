@@ -9,11 +9,28 @@ import { ProfileHub } from './components/profile/ProfileHub';
 import { LessonModal } from './components/lesson/LessonModal';
 import { FloatingAITutor } from './components/ai/FloatingAITutor';
 import { AISettingsModal } from './components/ai/AISettingsModal';
+import { GemShopModal } from './components/gamification/GemShopModal';
+import { DailyQuestsModal } from './components/gamification/DailyQuestsModal';
+import { PodcastPlayerModal } from './components/podcast/PodcastPlayerModal';
+import { PlacementTestModal } from './components/placement/PlacementTestModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Bot } from 'lucide-react';
 
 function MainContent() {
-  const { activeTab, isAiTutorOpen, openAiTutor, activeLessonId } = useApp();
+  const { 
+    activeTab, 
+    isAiTutorOpen, 
+    openAiTutor, 
+    activeLessonId,
+    isGemShopOpen,
+    closeGemShop,
+    isQuestsOpen,
+    closeQuests,
+    isPodcastOpen,
+    closePodcast,
+    isPlacementOpen,
+    closePlacement
+  } = useApp();
 
   // Hide global floating button when in a lesson or in the AI Speak tab
   const showFab = !isAiTutorOpen && !activeLessonId && activeTab !== 'speak';
@@ -37,6 +54,18 @@ function MainContent() {
       </ErrorBoundary>
       <ErrorBoundary title="Lỗi Gia Sư AI">
         <FloatingAITutor />
+      </ErrorBoundary>
+      <ErrorBoundary title="Lỗi Cửa Hàng Đá Quý">
+        <GemShopModal isOpen={isGemShopOpen} onClose={closeGemShop} />
+      </ErrorBoundary>
+      <ErrorBoundary title="Lỗi Nhiệm Vụ Hàng Ngày">
+        <DailyQuestsModal isOpen={isQuestsOpen} onClose={closeQuests} />
+      </ErrorBoundary>
+      <ErrorBoundary title="Lỗi Podcast Thụ Động">
+        <PodcastPlayerModal isOpen={isPodcastOpen} onClose={closePodcast} />
+      </ErrorBoundary>
+      <ErrorBoundary title="Lỗi Bài Test Xếp Lớp">
+        <PlacementTestModal isOpen={isPlacementOpen} onClose={closePlacement} />
       </ErrorBoundary>
 
       {/* Global Sleek Floating AI Tutor Trigger (Neatly pinned at bottom-right) */}

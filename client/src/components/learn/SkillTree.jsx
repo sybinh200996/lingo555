@@ -31,7 +31,16 @@ const ICON_MAP = {
 };
 
 export const SkillTree = () => {
-  const { currentLang, levels, currentLevel, setCurrentLevel, startLesson, userProfile } = useApp();
+  const { 
+    currentLang, 
+    levels, 
+    currentLevel, 
+    setCurrentLevel, 
+    startLesson, 
+    userProfile,
+    openPlacement,
+    openPodcast
+  } = useApp();
   const [units, setUnits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTooltip, setActiveTooltip] = useState(null);
@@ -61,7 +70,7 @@ export const SkillTree = () => {
   };
 
   return (
-    <div className="space-y-8 max-w-xl mx-auto overflow-x-hidden max-w-full">
+    <div className="space-y-6 max-w-xl mx-auto overflow-x-hidden max-w-full">
       {/* Transparent click-outside backdrop when any tooltip is open */}
       {activeTooltip && (
         <div
@@ -70,7 +79,31 @@ export const SkillTree = () => {
         />
       )}
 
-      {/* Level Selector Dropdown Bar */}
+      {/* Adaptive Placement Test Banner (AI Placement Test) */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border-2 border-amber-400/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm animate-in fade-in">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-black shrink-0 shadow-md text-lg">
+            ⚡
+          </div>
+          <div>
+            <h4 className="text-sm font-black text-slate-900 dark:text-white">
+              Bạn đã có nền tảng ngoại ngữ từ trước?
+            </h4>
+            <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+              Làm test 8 câu thích ứng để mở khóa nhảy cóc ngay tới cấp độ phù hợp!
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={openPlacement}
+          className="duo-btn duo-btn-green text-xs py-2.5 px-4 rounded-xl shrink-0 font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md hover:scale-105 transition-all"
+        >
+          <Sparkles className="w-4 h-4 fill-current" />
+          <span>Test Xếp Lớp</span>
+        </button>
+      </div>
+
+      {/* Level Selector Dropdown Bar & Podcast Trigger */}
       <div className="duo-card p-4 flex items-center justify-between shadow-sm">
         <div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
@@ -92,23 +125,34 @@ export const SkillTree = () => {
           </p>
         </div>
 
-        {/* Level Switcher Dropdown */}
-        <div className="relative">
-          <select
-            value={currentLevel?.id || ''}
-            onChange={(e) => {
-              const selected = levels.find((l) => l.id === e.target.value);
-              if (selected) setCurrentLevel(selected);
-            }}
-            className="appearance-none bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-extrabold text-xs py-2.5 pl-3 pr-8 rounded-xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none"
+        {/* Level Switcher Dropdown & Podcast Mode Button */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={openPodcast}
+            className="duo-btn duo-btn-blue text-xs py-2 px-3 rounded-xl font-black uppercase flex items-center gap-1.5 shadow-xs"
+            title="Nghe thụ động podcast khi tắt màn hình"
           >
-            {levels.map((lvl) => (
-              <option key={lvl.id} value={lvl.id}>
-                {lvl.code} - {lvl.title}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Headphones className="w-4 h-4" />
+            <span className="hidden sm:inline">Podcast</span>
+          </button>
+
+          <div className="relative">
+            <select
+              value={currentLevel?.id || ''}
+              onChange={(e) => {
+                const selected = levels.find((l) => l.id === e.target.value);
+                if (selected) setCurrentLevel(selected);
+              }}
+              className="appearance-none bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-extrabold text-xs py-2.5 pl-3 pr-8 rounded-xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none"
+            >
+              {levels.map((lvl) => (
+                <option key={lvl.id} value={lvl.id}>
+                  {lvl.code} - {lvl.title}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
         </div>
       </div>
 

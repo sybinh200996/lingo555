@@ -3,7 +3,18 @@ import { useApp } from '../../context/AppContext';
 import { Flame, Heart, Gem, Sun, Moon, Sparkles } from 'lucide-react';
 
 export const MobileHeader = () => {
-  const { currentLang, switchLanguage, userProfile, refillHearts, isDarkMode, toggleTheme, openAiSettings, hasAiKey } = useApp();
+  const { 
+    currentLang, 
+    switchLanguage, 
+    userProfile, 
+    refillHearts, 
+    isDarkMode, 
+    toggleTheme, 
+    openAiSettings, 
+    hasAiKey,
+    openGemShop,
+    openQuests
+  } = useApp();
 
   return (
     <header className="lg:hidden sticky top-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-2.5 flex items-center justify-between">
@@ -35,17 +46,28 @@ export const MobileHeader = () => {
 
       {/* Gamification Stats: Streak, Gems, Hearts */}
       <div className="flex items-center gap-3">
-        {/* Streak */}
-        <div className="flex items-center gap-1 text-xs font-extrabold text-amber-500">
+        {/* Streak & Quests */}
+        <button 
+          onClick={openQuests}
+          className="flex items-center gap-1 text-xs font-extrabold text-amber-500 hover:scale-105 transition-all"
+          title="Nhiệm vụ hàng ngày"
+        >
           <Flame className="w-4 h-4 fill-amber-500" />
           <span>{userProfile.streak || 1}</span>
-        </div>
+          {userProfile.streak_freezes > 0 && (
+            <span className="text-[10px] text-sky-400" title={`${userProfile.streak_freezes} khiên đóng băng`}>❄️</span>
+          )}
+        </button>
 
-        {/* Gems */}
-        <div className="flex items-center gap-1 text-xs font-extrabold text-sky-500">
+        {/* Gems & Shop */}
+        <button
+          onClick={openGemShop}
+          className="flex items-center gap-1 text-xs font-extrabold text-sky-500 bg-sky-50 dark:bg-sky-950/40 px-2 py-1 rounded-lg border border-sky-200 dark:border-sky-900/40 hover:scale-105 transition-all"
+          title="Cửa hàng Đá Quý"
+        >
           <Gem className="w-4 h-4 fill-sky-500" />
           <span>{userProfile.gems || 0}</span>
-        </div>
+        </button>
 
         {/* Hearts with tap to refill */}
         <button

@@ -133,4 +133,143 @@ router.get('/leaderboard', (req, res) => {
   }
 });
 
+// POST /api/user/buy-item (Gem Shop)
+router.post('/buy-item', (req, res) => {
+  try {
+    const userId = req.body.userId || 'default_user';
+    const { itemType } = req.body;
+    const user = db.prepare('SELECT * FROM user_profiles WHERE id = ?').get(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const prices = {
+      streak_freeze: 50,
+      heart_refill: 30,
+      double_xp: 40
+    };
+
+    const cost = prices[itemType];
+    if (cost === undefined) {
+      return res.status(400).json({ error: 'Vật phẩm không hợp lệ' });
+    }
+
+    if (user.gems < cost) {
+      return res.status(400).json({ error: 'Không đủ Đá Quý (Gems)' });
+    }
+
+    if (itemType === 'streak_freeze') {
+      const currentFreezes = user.streak_freezes || 0;
+      if (currentFreezes >= 2) {
+        return res.status(400).json({ error: 'Bạn đã đạt giới hạn tối đa 2 Khiên Đóng Băng!' });
+      }
+      db.prepare(`
+        UPDATE user_profiles 
+        SET gems = gems - ?, streak_freezes = streak_freezes + 1
+        WHERE id = ?
+      `).run(cost, userId);
+    } else if (itemType === 'heart_refill') {
+      db.prepare(`
+        UPDATE user_profiles 
+        SET gems = gems - ?, hearts = max_hearts
+        WHERE id = ?
+      `).run(cost, userId);
+    } else if (itemType === 'double_xp') {
+      const fifteenMinutesLater = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      db.prepare(`
+        UPDATE user_profiles 
+        SET gems = gems - ?, double_xp_until = ?
+        WHERE id = ?
+      `).run(cost, fifteenMinutesLater, userId);
+    }
+
+    const updated = db.prepare('SELECT * FROM user_profiles WHERE id = ?').get(userId);
+    res.json({ success: true, profile: updated, message: 'Mua vật phẩm thành công!' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/user/batch-unlock (Adaptive Placement Test)
+router.post('/batch-unlock', (req, res) => {
+  try {
+    const userId = req.body.userId || 'default_user';
+    const { targetLevelId, xpReward = 100, gemsReward = 50 } = req.body;
+
+    const targetLevel = db.prepare('SELECT * FROM levels WHERE id = ?').get(targetLevelId);
+    if (!targetLevel) {
+      return res.status(404).json({ error: 'Không tìm thấy cấp độ mục tiêu' });
+    }
+
+    // Find all earlier levels in the same language with order_index <= targetLevel.order_index
+    const earlierLevels = db.prepare(`
+      SELECT id FROM levels 
+      WHERE language_id = ? AND order_index <= ?
+    `).all(targetLevel.language_id, targetLevel.order_index);
+
+    const levelIds = earlierLevels.map(l => l.id);
+
+    // Get all lessons in these levels
+    const lessonsToUnlock = db.prepare(`
+      SELECT l.id FROM lessons l
+      JOIN units u ON l.unit_id = u.id
+      WHERE u.level_id IN (${levelIds.map(() => '?').join(',')})
+    `).all(...levelIds);
+
+    const unlockTx = db.transaction(() => {
+      const insertLesson = db.prepare(`
+        INSERT INTO user_completed_lessons (user_id, lesson_id, stars, score)
+        VALUES (?, ?, 3, 100)
+        ON CONFLICT(user_id, lesson_id) DO NOTHING
+      `);
+
+      for (const lesson of lessonsToUnlock) {
+        insertLesson.run(userId, lesson.id);
+      }
+
+      db.prepare(`
+        UPDATE user_profiles
+        SET xp = xp + ?,
+            gems = gems + ?,
+            placement_level = ?
+        WHERE id = ?
+      `).run(xpReward, gemsReward, targetLevel.code, userId);
+
+      return db.prepare('SELECT * FROM user_profiles WHERE id = ?').get(userId);
+    });
+
+    const updated = unlockTx();
+    res.json({ 
+      success: true, 
+      unlockedCount: lessonsToUnlock.length, 
+      targetLevel, 
+      profile: updated 
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/user/sync-quests (Daily Quests progress sync)
+router.post('/sync-quests', (req, res) => {
+  try {
+    const userId = req.body.userId || 'default_user';
+    const { quests, rewardXp = 0, rewardGems = 0 } = req.body;
+
+    db.prepare(`
+      UPDATE user_profiles
+      SET quests_json = ?,
+          xp = xp + ?,
+          gems = gems + ?
+      WHERE id = ?
+    `).run(JSON.stringify(quests), rewardXp, rewardGems, userId);
+
+    const updated = db.prepare('SELECT * FROM user_profiles WHERE id = ?').get(userId);
+    res.json({ success: true, profile: updated });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

@@ -115,6 +115,33 @@ export const api = {
     return res.json();
   },
 
+  buyShopItem: async (itemType, userId = 'default_user') => {
+    const res = await fetch(`${API_BASE}/user/buy-item`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemType, userId })
+    });
+    return res.json();
+  },
+
+  batchUnlockLevel: async (targetLevelId, xpReward = 100, gemsReward = 50, userId = 'default_user') => {
+    const res = await fetch(`${API_BASE}/user/batch-unlock`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ targetLevelId, xpReward, gemsReward, userId })
+    });
+    return res.json();
+  },
+
+  syncDailyQuests: async (quests, rewardXp = 0, rewardGems = 0, userId = 'default_user') => {
+    const res = await fetch(`${API_BASE}/user/sync-quests`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ quests, rewardXp, rewardGems, userId })
+    });
+    return res.json();
+  },
+
   // Dialogues
   getDialogues: async (lang = 'zh') => {
     const res = await fetch(`${API_BASE}/dialogues?lang=${lang}`);

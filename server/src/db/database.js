@@ -39,4 +39,23 @@ if (!initUser) {
   `).run('default_user', 'Học viên Polyglot', '🐼', 'zh', 5, 5, 350, 120, 3, today);
 }
 
+// Safe column migrations for Version 2.0
+try {
+  const userCols = db.prepare('PRAGMA table_info(user_profiles)').all().map(c => c.name);
+  if (!userCols.includes('streak_freezes')) {
+    db.exec('ALTER TABLE user_profiles ADD COLUMN streak_freezes INTEGER DEFAULT 0');
+  }
+  if (!userCols.includes('double_xp_until')) {
+    db.exec('ALTER TABLE user_profiles ADD COLUMN double_xp_until TEXT');
+  }
+  if (!userCols.includes('placement_level')) {
+    db.exec('ALTER TABLE user_profiles ADD COLUMN placement_level TEXT');
+  }
+  if (!userCols.includes('quests_json')) {
+    db.exec('ALTER TABLE user_profiles ADD COLUMN quests_json TEXT');
+  }
+} catch (e) {
+  console.warn('Migration warning:', e.message);
+}
+
 module.exports = db;

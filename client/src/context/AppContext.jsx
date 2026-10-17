@@ -33,6 +33,12 @@ export const AppProvider = ({ children }) => {
   const [aiTutorPayload, setAiTutorPayload] = useState(null);
   const [hasAiKey, setHasAiKey] = useState(false);
 
+  // Version 2.0 Features Modals
+  const [isGemShopOpen, setIsGemShopOpen] = useState(false);
+  const [isQuestsOpen, setIsQuestsOpen] = useState(false);
+  const [isPodcastOpen, setIsPodcastOpen] = useState(false);
+  const [isPlacementOpen, setIsPlacementOpen] = useState(false);
+
   const [userProfile, setUserProfile] = useState(() => {
     try {
       const saved = localStorage.getItem('lingo555_user_profile');
@@ -259,6 +265,46 @@ export const AppProvider = ({ children }) => {
     setAiTutorPayload(null);
   };
 
+  const openGemShop = () => {
+    sounds.playTap();
+    setIsGemShopOpen(true);
+  };
+
+  const closeGemShop = () => {
+    sounds.playTap();
+    setIsGemShopOpen(false);
+  };
+
+  const openQuests = () => {
+    sounds.playTap();
+    setIsQuestsOpen(true);
+  };
+
+  const closeQuests = () => {
+    sounds.playTap();
+    setIsQuestsOpen(false);
+  };
+
+  const openPodcast = () => {
+    sounds.playTap();
+    setIsPodcastOpen(true);
+  };
+
+  const closePodcast = () => {
+    sounds.playTap();
+    setIsPodcastOpen(false);
+  };
+
+  const openPlacement = () => {
+    sounds.playTap();
+    setIsPlacementOpen(true);
+  };
+
+  const closePlacement = () => {
+    sounds.playTap();
+    setIsPlacementOpen(false);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -288,7 +334,19 @@ export const AppProvider = ({ children }) => {
         aiTutorPayload,
         openAiTutor,
         closeAiTutor,
-        hasAiKey
+        hasAiKey,
+        isGemShopOpen,
+        openGemShop,
+        closeGemShop,
+        isQuestsOpen,
+        openQuests,
+        closeQuests,
+        isPodcastOpen,
+        openPodcast,
+        closePodcast,
+        isPlacementOpen,
+        openPlacement,
+        closePlacement
       }}
     >
       {children}

@@ -4,6 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
 import { speech } from '../../services/speechService';
 import { sounds } from '../../services/soundEffects';
+import { questTracker } from '../../utils/questTracker';
 import { AIWritingLab } from './AIWritingLab';
 import { AIDynamicReading } from './AIDynamicReading';
 import { 
@@ -19,11 +20,12 @@ import {
   Layers,
   BookMarked,
   PenTool,
-  BookOpen
+  BookOpen,
+  Headphones
 } from 'lucide-react';
 
 export const PracticeHub = () => {
-  const { currentLang, userProfile, refreshProfile } = useApp();
+  const { currentLang, userProfile, refreshProfile, openPodcast } = useApp();
 
   const [activeSubTab, setActiveSubTab] = useState('srs'); // 'srs' | 'notebook' | 'writing' | 'reading' | 'game'
   const [srsItems, setSrsItems] = useState([]);
@@ -82,6 +84,8 @@ export const PracticeHub = () => {
         vocabId: currentItem.vocab_id || currentItem.id,
         quality
       });
+      // Progress daily quest
+      questTracker.increment('srs', 1);
     } catch (e) {
       console.warn('Error saving review:', e);
     }
@@ -139,6 +143,33 @@ export const PracticeHub = () => {
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
+      {/* Podcast Hands-free Listening Banner */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-500/15 via-indigo-500/10 to-purple-500/15 border-2 border-purple-400/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm animate-in fade-in">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center font-black shrink-0 shadow-md">
+            <Headphones className="w-5 h-5 animate-pulse" />
+          </div>
+          <div>
+            <h4 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <span>Podcast Luyện Nghe Thụ Động</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-300 font-extrabold border border-purple-500/30">
+                Tắt màn hình vẫn nghe
+              </span>
+            </h4>
+            <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+              Hệ thống tự động phát tuần tự: Từ vựng &rarr; Nghĩa &rarr; Ví dụ &rarr; 3s nhẩm đọc theo.
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={openPodcast}
+          className="duo-btn duo-btn-purple text-xs py-2.5 px-4 rounded-xl shrink-0 font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md hover:scale-105 transition-all text-white"
+        >
+          <Headphones className="w-4 h-4" />
+          <span>Bật Podcast</span>
+        </button>
+      </div>
+
       {/* Sub Tabs Bar */}
       <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-x-auto scrollbar-none">
         <button

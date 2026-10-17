@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { speech } from '../../services/speechService';
 import { sounds } from '../../services/soundEffects';
 import { HanziCanvas } from '../lesson/HanziCanvas';
+import { analyzeHanziRadicals } from '../../data/radicals';
 import { 
   X, 
   Volume2, 
@@ -123,21 +124,72 @@ export const WordModal = ({ word, onClose, onToggleNotebook, isDifficult }) => {
           </div>
         )}
 
-        {/* Chinese Stroke Order Section */}
+        {/* Chinese Stroke Order & Radical Etymology Section */}
         {currentLang === 'zh' && (
-          <div className="space-y-3 pt-2">
-            <span className="text-xs font-bold text-slate-400 uppercase">
-              Tập viết thứ tự nét bút:
-            </span>
-            <div className="flex flex-col items-center">
-              <HanziCanvas character={word.word.charAt(0)} size={180} />
+          <div className="space-y-4 pt-2 border-t border-slate-200 dark:border-slate-800">
+            {/* Radical & Etymology Breakdown */}
+            {(() => {
+              const etymology = analyzeHanziRadicals(word.word);
+              if (!etymology) return null;
+              return (
+                <div className="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border-2 border-amber-200/80 dark:border-amber-900/40 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-700 dark:text-amber-400">
+                      <Sparkles className="w-4 h-4" />
+                      <span>Tách Bộ Thủ & Chiết Tự Nhớ Nhanh</span>
+                    </div>
+                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300">
+                      {etymology.type}
+                    </span>
+                  </div>
+
+                  {/* Components chips */}
+                  <div className="flex flex-wrap gap-2">
+                    {etymology.components.map((c, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-amber-200 dark:border-amber-800/60 shadow-xs"
+                      >
+                        <span className="text-xl font-black text-amber-600 dark:text-amber-400 font-serif">
+                          {c.char}
+                        </span>
+                        <div className="text-left">
+                          <div className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
+                            {c.name} {c.pinyin && `[${c.pinyin}]`}
+                          </div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+                            {c.meaning}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Mnemonic Story */}
+                  {etymology.mnemonic && (
+                    <div className="text-xs font-medium text-amber-900 dark:text-amber-200/90 bg-amber-100/50 dark:bg-amber-900/20 p-2.5 rounded-xl border border-amber-200/50 dark:border-amber-800/30 leading-relaxed">
+                      <span className="font-bold text-amber-800 dark:text-amber-300">💡 Câu chuyện ghi nhớ: </span>
+                      {etymology.mnemonic}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            <div className="space-y-3">
+              <span className="text-xs font-bold text-slate-400 uppercase">
+                Tập viết thứ tự nét bút:
+              </span>
+              <div className="flex flex-col items-center">
+                <HanziCanvas character={word.word.charAt(0)} size={180} />
+              </div>
             </div>
           </div>
         )}
 
         {/* Meta badges: Radical, Stroke count */}
         <div className="flex flex-wrap gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800">
-          {word.radical && <span>Bộ thủ: <strong className="text-slate-700 dark:text-slate-200">{word.radical}</strong></span>}
+          {word.radical && <span>Bộ thủ chính: <strong className="text-slate-700 dark:text-slate-200">{word.radical}</strong></span>}
           {word.stroke_count > 0 && <span>• {word.stroke_count} nét</span>}
           {word.category && <span>• Chủ đề: {word.category}</span>}
         </div>

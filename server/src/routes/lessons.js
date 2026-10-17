@@ -127,11 +127,22 @@ router.post('/lessons/:id/complete', (req, res) => {
       const today = new Date().toISOString().split('T')[0];
       const user = db.prepare('SELECT * FROM user_profiles WHERE id = ?').get(userId);
 
+      // Check if Double XP potion is active
+      let effectiveXp = xpGained;
+      if (user && user.double_xp_until && new Date(user.double_xp_until) > new Date()) {
+        effectiveXp = xpGained * 2;
+      }
+
       let newStreak = user ? user.streak : 1;
+      let newFreezes = user ? (user.streak_freezes || 0) : 0;
+
       if (user && user.last_streak_date !== today) {
-        // If last active was yesterday, increment streak
         const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
         if (user.last_streak_date === yesterday) {
+          newStreak += 1;
+        } else if (newFreezes > 0) {
+          // Protected by Streak Freeze! Consume 1 freeze
+          newFreezes = Math.max(0, newFreezes - 1);
           newStreak += 1;
         } else {
           newStreak = 1;
@@ -142,10 +153,11 @@ router.post('/lessons/:id/complete', (req, res) => {
         UPDATE user_profiles
         SET xp = xp + ?,
             streak = ?,
+            streak_freezes = ?,
             last_streak_date = ?,
             gems = gems + 5
         WHERE id = ?
-      `).run(xpGained, newStreak, today, userId);
+      `).run(effectiveXp, newStreak, newFreezes, today, userId);
 
       return db.prepare('SELECT * FROM user_profiles WHERE id = ?').get(userId);
     });
