@@ -1,7 +1,8 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import { sounds } from '../../services/soundEffects';
-import { Flame, Heart, Gem, Sparkles, Bot, Moon, Sun, Settings } from 'lucide-react';
+import { Flame, Heart, Gem, Sparkles, Bot, Moon, Sun, Settings, User } from 'lucide-react';
 
 export const AppHeader = () => {
   const { 
@@ -19,8 +20,11 @@ export const AppHeader = () => {
     openAiTutor,
     activeLessonId,
     isDarkMode,
-    toggleTheme
+    toggleTheme,
+    setActiveTab
   } = useApp();
+
+  const { isAuthenticated, user, isSyncing, openAuthModal } = useAuth();
 
   // Hide header when in active lesson to preserve 100% full screen
   if (activeLessonId) {
@@ -143,6 +147,42 @@ export const AppHeader = () => {
         >
           <Settings className="w-4 h-4" />
         </button>
+
+        {/* User Account / Login Button */}
+        {!isAuthenticated ? (
+          <button
+            onClick={() => {
+              sounds.playTap?.();
+              openAuthModal('login');
+            }}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#58CC02] hover:bg-[#46A302] border-b-2 border-[#3D8C02] text-white font-black text-xs transition-all cursor-pointer shadow-xs active:translate-y-0.5"
+            title="Đăng nhập để đồng bộ tiến trình học tập"
+          >
+            <User className="w-3.5 h-3.5" />
+            <span>Đăng Nhập</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              sounds.playTap?.();
+              setActiveTab('profile');
+            }}
+            className="flex items-center gap-1.5 p-1 sm:px-2 sm:py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer relative"
+            title="Hồ sơ tài khoản - Đã đồng bộ Cloud"
+          >
+            <span className="text-base sm:text-lg leading-none">{user?.avatar_url || '🐼'}</span>
+            <span className="hidden sm:inline font-bold text-xs text-slate-800 dark:text-slate-200 max-w-[80px] truncate">
+              {user?.full_name?.split(' ')[0] || 'Tôi'}
+            </span>
+            {/* Pulsing Synced Cloud Dot */}
+            <span 
+              className={`w-2 h-2 rounded-full absolute -top-0.5 -right-0.5 ${
+                isSyncing ? 'bg-amber-400 animate-spin' : 'bg-emerald-500 ring-2 ring-white dark:ring-slate-900'
+              }`}
+              title={isSyncing ? "Đang đồng bộ đám mây..." : "Đã đồng bộ đám mây"}
+            />
+          </button>
+        )}
 
         {/* Theme Toggle (Visible on Mobile Header) */}
         <button

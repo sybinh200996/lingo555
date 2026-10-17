@@ -78,10 +78,11 @@ export const AppProvider = ({ children }) => {
     };
   });
 
-  // Sync userProfile to localStorage whenever updated
+  // Sync userProfile to localStorage whenever updated and notify Cloud Sync
   useEffect(() => {
     try {
       localStorage.setItem('lingo555_user_profile', JSON.stringify(userProfile));
+      window.dispatchEvent(new CustomEvent('lingo555:profile-updated', { detail: userProfile }));
     } catch (e) {}
   }, [userProfile]);
 
@@ -94,8 +95,43 @@ export const AppProvider = ({ children }) => {
     };
     window.addEventListener('lingo555:open-ai-settings', handleOpenAiModal);
 
+    const handleAuthSuccess = (e) => {
+      if (!e.detail) return;
+      const { user, progress } = e.detail;
+      setUserProfile(prev => ({
+        ...prev,
+        id: user.id,
+        username: user.full_name || prev.username,
+        avatar: user.avatar_url || prev.avatar,
+        email: user.email,
+        auth_provider: user.auth_provider,
+        xp: Math.max(prev.xp || 0, progress?.xp || 0),
+        streak: Math.max(prev.streak || 1, progress?.streak || 1),
+        gems: Math.max(prev.gems || 200, progress?.gems || 200),
+        hearts: Math.min(5, Math.max(prev.hearts || 5, progress?.hearts || 5)),
+        max_hearts: 5,
+        current_language: progress?.current_language || prev.current_language || 'zh'
+      }));
+    };
+
+    const handleLogout = () => {
+      setUserProfile(prev => ({
+        ...prev,
+        id: 'default_user',
+        username: 'Học viên Polyglot',
+        avatar: '🐼',
+        email: undefined,
+        auth_provider: 'local'
+      }));
+    };
+
+    window.addEventListener('lingo555:auth-success', handleAuthSuccess);
+    window.addEventListener('lingo555:logout', handleLogout);
+
     return () => {
       window.removeEventListener('lingo555:open-ai-settings', handleOpenAiModal);
+      window.removeEventListener('lingo555:auth-success', handleAuthSuccess);
+      window.removeEventListener('lingo555:logout', handleLogout);
     };
   }, []);
 

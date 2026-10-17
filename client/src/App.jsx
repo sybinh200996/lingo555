@@ -1,5 +1,7 @@
 import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import { AuthProvider } from './context/AuthContext';
+import { AuthModal } from './components/auth/AuthModal';
 import { AppLayout } from './components/layout/AppLayout';
 import { SkillTree } from './components/learn/SkillTree';
 import { SmartDictionary } from './components/dictionary/SmartDictionary';
@@ -91,16 +93,21 @@ function MainContent() {
           onClose={closeWritingModal}
         />
       </ErrorBoundary>
+      <ErrorBoundary title="Lỗi Xác Thực Tài Khoản">
+        <AuthModal />
+      </ErrorBoundary>
     </>
   );
 }
 
 export default function App() {
   return (
-    <AppProvider>
-      <AppLayout>
-        <MainContent />
-      </AppLayout>
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        <AppLayout>
+          <MainContent />
+        </AppLayout>
+      </AppProvider>
+    </AuthProvider>
   );
 }

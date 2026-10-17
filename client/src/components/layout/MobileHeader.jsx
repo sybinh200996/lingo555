@@ -1,7 +1,8 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import { sounds } from '../../services/soundEffects';
-import { Flame, Heart, Gem, Sparkles } from 'lucide-react';
+import { Flame, Heart, Gem, Sparkles, User } from 'lucide-react';
 
 export const MobileHeader = () => {
   const { 
@@ -15,8 +16,11 @@ export const MobileHeader = () => {
     openQuests,
     activeLessonId,
     currentLevel,
-    openLevelModal
+    openLevelModal,
+    setActiveTab
   } = useApp();
+
+  const { isAuthenticated, user, isSyncing, openAuthModal } = useAuth();
 
   // Hide mobile header when lesson is active to preserve 100% full screen
   if (activeLessonId) {
@@ -123,6 +127,36 @@ export const MobileHeader = () => {
             <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#58CC02] ring-1 ring-white" />
           )}
         </button>
+
+        {/* User Account / Login Button */}
+        {!isAuthenticated ? (
+          <button
+            onClick={() => {
+              sounds.playTap?.();
+              openAuthModal('login');
+            }}
+            className="px-2 py-1 rounded-lg bg-[#58CC02] text-white font-black text-[11px] active:scale-95 cursor-pointer shadow-xs"
+            title="Đăng nhập"
+          >
+            Đăng Nhập
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              sounds.playTap?.();
+              setActiveTab('profile');
+            }}
+            className="p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative cursor-pointer"
+            title="Hồ sơ tài khoản"
+          >
+            <span className="text-base leading-none">{user?.avatar_url || '🐼'}</span>
+            <span 
+              className={`w-2 h-2 rounded-full absolute -top-0.5 -right-0.5 ${
+                isSyncing ? 'bg-amber-400 animate-spin' : 'bg-emerald-500 ring-2 ring-white dark:ring-slate-900'
+              }`} 
+            />
+          </button>
+        )}
       </div>
     </header>
   );
