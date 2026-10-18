@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { sounds } from '../services/soundEffects';
 import { ai } from '../services/aiClient';
+import { sanitizeLocalStorageLessonCache } from '../utils/cacheSanitizer';
 
 const AppContext = createContext();
 
@@ -86,8 +87,9 @@ export const AppProvider = ({ children }) => {
     } catch (e) {}
   }, [userProfile]);
 
-  // Load languages and user profile on mount
+  // Load languages and user profile on mount & sanitize any outdated cache
   useEffect(() => {
+    sanitizeLocalStorageLessonCache();
     loadInitialData();
 
     const handleOpenAiModal = () => {

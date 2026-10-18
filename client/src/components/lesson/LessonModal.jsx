@@ -11,6 +11,7 @@ import { TonePitchCanvas } from './TonePitchCanvas';
 import { StrokeOrderWriter } from '../writing/StrokeOrderWriter';
 import { EnglishSpellingWriter } from '../writing/EnglishSpellingWriter';
 import { questTracker } from '../../utils/questTracker';
+import { cleanLessonCacheIfOutdated } from '../../utils/cacheSanitizer';
 import { 
   X, 
   Heart, 
@@ -117,6 +118,7 @@ export const LessonModal = () => {
   const loadLessonData = async () => {
     setLoading(true);
     try {
+      cleanLessonCacheIfOutdated(activeLessonId);
       const data = await api.getLesson(activeLessonId);
       const isEnglish = currentLang === 'en' || currentLang === 'english' || (data?.id && data.id.startsWith('en_'));
       const activeLang = isEnglish ? 'en' : 'zh';
