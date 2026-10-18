@@ -4,6 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
 import { ai } from '../../services/aiClient';
 import { speech } from '../../services/speechService';
+import { proSpeech } from '../../utils/proSpeechRecognizer';
 import { sounds } from '../../services/soundEffects';
 import { 
   MessageSquare, 
@@ -170,16 +171,16 @@ export const SpeakHub = () => {
 
   const handleMicVoice = () => {
     if (isRecording) {
-      speech.stopListening();
+      proSpeech.stop();
       setIsRecording(false);
       return;
     }
 
     setIsRecording(true);
-    speech.startListening({
+    proSpeech.start({
       lang: currentLang,
       maxDuration: 25000,
-      silenceTimeout: 3500,
+      silenceTimeout: 2500,
       onInterim: (text) => {
         setUserInput(text);
       },

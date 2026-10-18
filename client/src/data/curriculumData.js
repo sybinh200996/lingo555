@@ -6,6 +6,7 @@
 
 import { getCurriculumUnitsForLevel, getCurriculumLessonById } from './fullCurriculumGenerator.js';
 import { AUTHENTIC_ZH_DATA, AUTHENTIC_EN_DATA, getAuthenticLesson } from './authenticCurriculumData.js';
+import { getAdvancedUnitsForLevel, getAdvancedLesson } from './advancedCurriculumData.js';
 import { buildScaffoldedLessonFlow } from '../utils/smartLessonBuilder.js';
 
 export const CURRICULUM_LEVELS = [
@@ -9625,20 +9626,42 @@ export const getAuthenticUnitsForLevel = (levelId) => {
 };
 
 export const getCurriculumUnits = (levelId) => {
-  const base = CURRICULUM_UNITS_BY_LEVEL[levelId] || [];
   try {
+    const advUnits = getAdvancedUnitsForLevel(levelId);
+    if (advUnits && advUnits.length > 0) {
+      return advUnits;
+    }
     const authUnits = getAuthenticUnitsForLevel(levelId);
+    if (authUnits && authUnits.length > 0) {
+      const base = CURRICULUM_UNITS_BY_LEVEL[levelId] || [];
+      const extras = getCurriculumUnitsForLevel(levelId) || [];
+      const baseIds = new Set(base.map(u => u.id));
+      const uniqueExtras = extras.filter(u => !baseIds.has(u.id));
+      return [...authUnits, ...base, ...uniqueExtras].sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
+    }
+    const base = CURRICULUM_UNITS_BY_LEVEL[levelId] || [];
     const extras = getCurriculumUnitsForLevel(levelId) || [];
     const baseIds = new Set(base.map(u => u.id));
     const uniqueExtras = extras.filter(u => !baseIds.has(u.id));
-    return [...authUnits, ...base, ...uniqueExtras].sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
+    return [...base, ...uniqueExtras].sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
   } catch (_) {
-    return base;
+    return CURRICULUM_UNITS_BY_LEVEL[levelId] || [];
   }
 };
 
 export const getCurriculumLesson = (lessonId) => {
-  // Check authentic dataset first (with 5-phase scaffolded flow)
+  // Check advanced dataset first (with 5-phase scaffolded flow)
+  const advLesson = getAdvancedLesson(lessonId);
+  if (advLesson) {
+    const exercises = buildScaffoldedLessonFlow(advLesson, [], { lang: advLesson.language });
+    return {
+      ...advLesson,
+      xp_reward: 35,
+      exercises
+    };
+  }
+
+  // Check authentic dataset next (with 5-phase scaffolded flow)
   const authLesson = getAuthenticLesson(lessonId);
   if (authLesson) {
     const exercises = buildScaffoldedLessonFlow(authLesson, [], { lang: authLesson.language });

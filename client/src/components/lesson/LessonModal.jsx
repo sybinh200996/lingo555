@@ -4,6 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
 import { ai } from '../../services/aiClient';
 import { speech, normalizeSpeechText } from '../../services/speechService';
+import { proSpeech } from '../../utils/proSpeechRecognizer';
 import { sounds } from '../../services/soundEffects';
 import { HanziCanvas } from './HanziCanvas';
 import { TonePitchCanvas } from './TonePitchCanvas';
@@ -47,6 +48,7 @@ export const LessonModal = () => {
   const [isSpeakingListening, setIsSpeakingListening] = useState(false);
   const [speechResult, setSpeechResult] = useState(null);
   const [interimSpeechText, setInterimSpeechText] = useState('');
+  const [micVolume, setMicVolume] = useState(0);
   const [hanziDone, setHanziDone] = useState(false);
 
   // Microphone compatibility & text fallback states
@@ -89,6 +91,7 @@ export const LessonModal = () => {
       loadLessonData();
     }
     return () => {
+      proSpeech.stop();
       speech.stopListening();
       speech.stopSpeaking();
     };
@@ -160,16 +163,17 @@ export const LessonModal = () => {
   const currentExercise = exercises[currentIndex];
   const progressPercent = exercises.length > 0 ? ((currentIndex) / exercises.length) * 100 : 0;
 
-  // Speech input trigger
+  // Speech input trigger with proSpeech engine
   const handleToggleMic = () => {
     if (isSpeakingListening) {
       sounds.playTap();
-      speech.stopListening();
+      proSpeech.stop();
       setIsSpeakingListening(false);
+      setMicVolume(0);
       return;
     }
 
-    if (!speech.isRecognitionSupported()) {
+    if (!proSpeech.isSupported()) {
       setMicError('Trình duyệt hiện tại chưa hỗ trợ Web Speech API nhận diện giọng nói. Vui lòng nhập văn bản thay thế hoặc bỏ qua câu nói.');
       setUseTextFallback(true);
       return;
@@ -180,34 +184,33 @@ export const LessonModal = () => {
     setSpeechResult(null);
     setMicError(null);
     setInterimSpeechText('');
+    setMicVolume(0);
 
-    speech.startListening({
+    proSpeech.start({
       lang: currentLang,
+      targetText: currentExercise.target_text,
       maxDuration: 25000,
-      silenceTimeout: 3500,
+      silenceTimeout: 2500,
+      onVolumeChange: (vol) => {
+        setMicVolume(vol);
+      },
       onInterim: (liveText) => {
         setInterimSpeechText(liveText);
       },
-      onResult: (transcript, confidence, alternatives) => {
+      onResult: (transcript, evaluation) => {
         setIsSpeakingListening(false);
         setInterimSpeechText('');
+        setMicVolume(0);
         setMicError(null);
-        const evalScore = speech.evaluatePronunciation(
-          transcript,
-          currentExercise.target_text,
-          currentLang,
-          confidence,
-          currentExercise.phonetic,
-          alternatives
-        );
-        setSpeechResult(evalScore);
-        if (evalScore && evalScore.score >= 85) {
+        setSpeechResult(evaluation);
+        if (evaluation && evaluation.score >= 85) {
           questTracker.increment('speaking', 1);
         }
       },
       onError: (err) => {
         setIsSpeakingListening(false);
         setInterimSpeechText('');
+        setMicVolume(0);
         console.warn('Speech error:', err);
         if (err === 'not-allowed' || err === 'permission-denied') {
           setMicError('Quyền truy cập Microphone bị từ chối hoặc bị chặn trên trình duyệt. Vui lòng cấp quyền Micro hoặc nhập văn bản thay thế.');
@@ -223,6 +226,7 @@ export const LessonModal = () => {
       },
       onEnd: () => {
         setIsSpeakingListening(false);
+        setMicVolume(0);
       }
     });
   };
@@ -232,13 +236,10 @@ export const LessonModal = () => {
     if (e) e.preventDefault();
     if (!fallbackText.trim()) return;
     sounds.playTap();
-    const evalScore = speech.evaluatePronunciation(
+    const evalScore = proSpeech.evaluatePronunciation(
       fallbackText.trim(),
       currentExercise.target_text,
-      currentLang,
-      1.0,
-      currentExercise.phonetic,
-      []
+      currentLang
     );
     setSpeechResult(evalScore);
     if (evalScore && evalScore.score >= 85) {
@@ -949,15 +950,33 @@ export const LessonModal = () => {
                         )}
                       </div>
 
-                      {/* Dynamic Audio Waveform Animation while listening */}
+                      {/* Dynamic Audio Waveform Animation tied to real-time mic volume */}
                       {isSpeakingListening && (
-                        <div className="flex items-center justify-center gap-1.5 py-1">
-                          <span className="w-1.5 h-4 bg-rose-500 rounded-full animate-bounce" style={{ animationDelay: '0ms', animationDuration: '600ms' }} />
-                          <span className="w-1.5 h-8 bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '150ms', animationDuration: '600ms' }} />
-                          <span className="w-1.5 h-10 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '300ms', animationDuration: '600ms' }} />
-                          <span className="w-1.5 h-6 bg-sky-500 rounded-full animate-bounce" style={{ animationDelay: '200ms', animationDuration: '600ms' }} />
-                          <span className="w-1.5 h-9 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '400ms', animationDuration: '600ms' }} />
-                          <span className="w-1.5 h-5 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '100ms', animationDuration: '600ms' }} />
+                        <div className="flex items-center justify-center gap-1.5 py-2">
+                          <span 
+                            className="w-1.5 bg-rose-500 rounded-full transition-all duration-75"
+                            style={{ height: `${Math.max(8, Math.min(36, 8 + micVolume * 0.4))}px` }} 
+                          />
+                          <span 
+                            className="w-1.5 bg-amber-500 rounded-full transition-all duration-75"
+                            style={{ height: `${Math.max(12, Math.min(48, 12 + micVolume * 0.6))}px` }} 
+                          />
+                          <span 
+                            className="w-1.5 bg-emerald-500 rounded-full transition-all duration-75"
+                            style={{ height: `${Math.max(16, Math.min(60, 16 + micVolume * 0.8))}px` }} 
+                          />
+                          <span 
+                            className="w-1.5 bg-sky-500 rounded-full transition-all duration-75"
+                            style={{ height: `${Math.max(14, Math.min(52, 14 + micVolume * 0.7))}px` }} 
+                          />
+                          <span 
+                            className="w-1.5 bg-indigo-500 rounded-full transition-all duration-75"
+                            style={{ height: `${Math.max(10, Math.min(44, 10 + micVolume * 0.5))}px` }} 
+                          />
+                          <span 
+                            className="w-1.5 bg-purple-500 rounded-full transition-all duration-75"
+                            style={{ height: `${Math.max(8, Math.min(32, 8 + micVolume * 0.3))}px` }} 
+                          />
                         </div>
                       )}
 
