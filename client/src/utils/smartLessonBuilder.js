@@ -225,8 +225,8 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
       hanViet: vocab.hanViet || null,
       partOfSpeech: vocab.partOfSpeech || 'Từ vựng',
       vietnamese_meaning: vocab.meaningVi,
-      radicals: vocab.radicals || 'Bộ thủ chuẩn mực',
-      grammarNote: vocab.grammarNote || 'Từ vựng cốt lõi theo cấp độ',
+      radicals: vocab.radicals || (lang === 'zh' ? 'Bộ thủ chuẩn mực' : 'Gốc từ & Cấu trúc (Etymology)'),
+      grammarNote: vocab.grammarNote || (lang === 'zh' ? 'Từ vựng cốt lõi theo cấp độ' : 'Ngữ pháp & cấu trúc cốt lõi'),
       exampleSentence: vocab.exampleSentence || {
         target: vocab.word,
         pronunciation: vocab.pronunciation,
@@ -234,7 +234,7 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
       },
       prompt: lang === 'zh'
         ? `Khởi động: Nhận diện từ vựng & Chiết tự chữ Hán:`
-        : `Khởi động: Nhận diện từ vựng & Phiên âm IPA:`,
+        : `Khởi động: Nhận diện từ vựng & Phiên âm Quốc tế (IPA):`,
       order_index: orderIndex++
     });
 
@@ -246,14 +246,18 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
       id: `${lessonData.id}_p2_list_${vocabId}`,
       lesson_id: lessonData.id,
       type: 'listening',
-      prompt: 'Nghe phát âm và chọn nghĩa tiếng Việt chính xác nhất:',
+      prompt: lang === 'zh'
+        ? 'Nghe phát âm và chọn nghĩa tiếng Việt chính xác nhất:'
+        : 'Nghe và chọn đáp án Tiếng Anh đúng:',
       target_text: vocab.word,
       target_audio_text: vocab.word,
       phonetic: vocab.pronunciation,
       vietnamese_meaning: vocab.meaningVi,
       options: meaningOptions,
       correct_answer: vocab.meaningVi,
-      hint: vocab.hanViet ? `Âm Hán Việt: ${vocab.hanViet}` : `Phiên âm: ${vocab.pronunciation}`,
+      hint: lang === 'zh'
+        ? (vocab.hanViet ? `Âm Hán Việt: ${vocab.hanViet}` : `Pinyin: ${vocab.pronunciation}`)
+        : `Phiên âm Quốc tế (IPA): ${vocab.pronunciation}`,
       order_index: orderIndex++
     });
 
@@ -265,14 +269,16 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
       id: `${lessonData.id}_p2_recog_${vocabId}`,
       lesson_id: lessonData.id,
       type: 'listening',
-      prompt: `Chọn ${lang === 'zh' ? 'chữ Hán' : 'từ vựng'} tương ứng với nghĩa: "${vocab.meaningVi}"`,
+      prompt: lang === 'zh'
+        ? `Chọn chữ Hán tương ứng với nghĩa: "${vocab.meaningVi}"`
+        : `Chọn từ Tiếng Anh tương ứng với nghĩa: "${vocab.meaningVi}"`,
       target_text: vocab.word,
       target_audio_text: vocab.word,
       phonetic: vocab.pronunciation,
       vietnamese_meaning: vocab.meaningVi,
       options: wordOptions,
       correct_answer: vocab.word,
-      hint: `Phiên âm: ${vocab.pronunciation}`,
+      hint: lang === 'zh' ? `Pinyin: ${vocab.pronunciation}` : `Phiên âm Quốc tế (IPA): ${vocab.pronunciation}`,
       order_index: orderIndex++
     });
 
@@ -283,7 +289,7 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
       type: 'writing',
       prompt: lang === 'zh'
         ? `Tập viết chữ "${vocab.word}" (${vocab.pronunciation}) theo đúng thứ tự nét:`
-        : `Luyện viết và đánh vần từ "${vocab.word}" theo phiên âm:`,
+        : `Luyện viết và đánh vần từ Tiếng Anh "${vocab.word}" (${vocab.pronunciation}):`,
       target_text: vocab.word,
       target_audio_text: vocab.word,
       stroke_char: vocab.word.charAt(0),
@@ -316,7 +322,9 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
         id: `${lessonData.id}_p4_asm_${vocabId}`,
         lesson_id: lessonData.id,
         type: 'translation',
-        prompt: `Sắp xếp các từ thành câu hoàn chỉnh theo nghĩa: "${vocab.exampleSentence.meaningVi}"`,
+        prompt: lang === 'zh'
+          ? `Sắp xếp các từ thành câu Tiếng Trung hoàn chỉnh theo nghĩa: "${vocab.exampleSentence.meaningVi}"`
+          : `Dịch câu sau sang Tiếng Anh: "${vocab.exampleSentence.meaningVi}"`,
         target_text: targetSentence,
         target_audio_text: targetSentence,
         phonetic: vocab.exampleSentence.pronunciation,
@@ -343,7 +351,9 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
       id: `${lessonData.id}_p5_spk_${vocabId}`,
       lesson_id: lessonData.id,
       type: 'speaking',
-      prompt: `Luyện phát âm mẫu câu thực tế (Bấm Micro và nói to, rõ ràng):`,
+      prompt: lang === 'zh'
+        ? `Luyện phát âm mẫu câu Tiếng Trung thực tế (Bấm Micro và nói to, rõ ràng):`
+        : `Luyện phát âm mẫu câu Tiếng Anh thực tế (Bấm Micro và nói to, rõ ràng):`,
       target_text: speechTarget,
       target_audio_text: speechTarget,
       phonetic: speechPhonetic,

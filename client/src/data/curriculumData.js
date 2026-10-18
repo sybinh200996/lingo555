@@ -9674,9 +9674,26 @@ export const getCurriculumLesson = (lessonId) => {
 
   const baseLesson = CURRICULUM_LESSONS_BY_ID[lessonId] || getCurriculumLessonById(lessonId);
   if (baseLesson) {
+    const isZh = lessonId.startsWith('zh_') || baseLesson.level_id?.startsWith('zh') || baseLesson.unit_id?.startsWith('zh');
     if (baseLesson.vocabularies && baseLesson.vocabularies.length > 0) {
-      const exercises = buildScaffoldedLessonFlow(baseLesson);
+      const exercises = buildScaffoldedLessonFlow(baseLesson, [], { lang: isZh ? 'zh' : 'en' });
       return { ...baseLesson, exercises };
+    }
+    if (!isZh && baseLesson.exercises) {
+      const sanitizedExercises = baseLesson.exercises.map(ex => ({
+        ...ex,
+        prompt: (ex.prompt || '')
+          .replace(/Tiếng Trung/gi, 'Tiếng Anh')
+          .replace(/chữ Hán/gi, 'từ Tiếng Anh')
+          .replace(/Hán tự/gi, 'Từ vựng')
+          .replace(/Pinyin/gi, 'Phiên âm IPA'),
+        hint: (ex.hint || '')
+          .replace(/Tiếng Trung/gi, 'Tiếng Anh')
+          .replace(/chữ Hán/gi, 'từ Tiếng Anh')
+          .replace(/Hán tự/gi, 'Từ vựng')
+          .replace(/Pinyin/gi, 'Phiên âm IPA')
+      }));
+      return { ...baseLesson, exercises: sanitizedExercises };
     }
     return baseLesson;
   }

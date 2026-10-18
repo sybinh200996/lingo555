@@ -30,6 +30,23 @@ import {
   SkipForward,
   Square
 } from 'lucide-react';
+/**
+ * Automatic prompt normalizer to ensure proper language terminology:
+ * For English: replaces 'Tiếng Trung' -> 'Tiếng Anh', 'chữ Hán' -> 'từ Tiếng Anh', 'Pinyin' -> 'Phiên âm IPA', etc.
+ */
+export const formatPromptByLanguage = (text, currentLang) => {
+  if (!text || typeof text !== 'string') return text || '';
+  if (currentLang === 'en' || currentLang === 'english') {
+    return text
+      .replace(/Tiếng Trung/gi, 'Tiếng Anh')
+      .replace(/chữ Hán/gi, 'từ Tiếng Anh')
+      .replace(/Hán tự/gi, 'Từ vựng Tiếng Anh')
+      .replace(/Pinyin/gi, 'Phiên âm IPA')
+      .replace(/Chiết tự & Bộ thủ/gi, 'Gốc từ & Cấu trúc (Etymology)')
+      .replace(/Bộ thủ/gi, 'Gốc từ & Cấu trúc');
+  }
+  return text;
+};
 
 export const LessonModal = () => {
   const { activeLessonId, closeLesson, currentLang, userProfile, loseHeart, openAiTutor } = useApp();
@@ -101,14 +118,24 @@ export const LessonModal = () => {
     setLoading(true);
     try {
       const data = await api.getLesson(activeLessonId);
+      const isEnglish = currentLang === 'en' || currentLang === 'english' || (data?.id && data.id.startsWith('en_'));
+      const activeLang = isEnglish ? 'en' : 'zh';
+
+      const sanitizedExercises = (data?.exercises || []).map(ex => ({
+        ...ex,
+        prompt: formatPromptByLanguage(ex.prompt, activeLang),
+        hint: formatPromptByLanguage(ex.hint, activeLang),
+        radicals: formatPromptByLanguage(ex.radicals, activeLang)
+      }));
+
       setLesson(data);
-      setExercises(data.exercises || []);
-      setTotalXP(data.xp_reward || 15);
+      setExercises(sanitizedExercises);
+      setTotalXP(data?.xp_reward || 15);
       setCurrentIndex(0);
       setEvalState(null);
       setCorrectCount(0);
-      if (data.exercises && data.exercises.length > 0) {
-        initExercise(data.exercises[0]);
+      if (sanitizedExercises.length > 0) {
+        initExercise(sanitizedExercises[0]);
       }
     } catch (e) {
       console.warn('Failed to load lesson:', e);
@@ -591,7 +618,7 @@ export const LessonModal = () => {
               {/* Prompt Title */}
               <div>
                 <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight">
-                  {currentExercise.prompt}
+                  {formatPromptByLanguage(currentExercise.prompt, currentLang)}
                 </h3>
               </div>
 
@@ -599,12 +626,12 @@ export const LessonModal = () => {
               {currentExercise.type === 'preview' && (
                 <div className="space-y-5 animate-in fade-in zoom-in-95">
                   <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 sm:p-7 border-2 border-slate-200 dark:border-slate-700 shadow-md text-center space-y-4">
-                    {/* Badge Chips: Part of speech & Han Viet */}
+                    {/* Badge Chips: Part of speech & Han Viet (only for Chinese) */}
                     <div className="flex flex-wrap items-center justify-center gap-2">
                       <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">
                         {currentExercise.partOfSpeech || 'Từ vựng'}
                       </span>
-                      {currentExercise.hanViet && (
+                      {currentExercise.hanViet && currentLang === 'zh' && (
                         <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300">
                           Hán Việt: {currentExercise.hanViet}
                         </span>
@@ -652,15 +679,15 @@ export const LessonModal = () => {
                       </button>
                     </div>
 
-                    {/* Chiết tự / Bộ thủ */}
+                    {/* Chiết tự / Bộ thủ (ZH) hoặc Gốc từ & Cấu trúc Etymology (EN) */}
                     {currentExercise.radicals && (
                       <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-left text-xs space-y-1">
                         <div className="flex items-center gap-1.5 font-black text-amber-800 dark:text-amber-300 uppercase tracking-wider">
                           <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                          <span>Chiết tự & Bộ thủ:</span>
+                          <span>{currentLang === 'zh' ? 'Chiết tự & Bộ thủ:' : 'Gốc từ & Cấu trúc (Etymology):'}</span>
                         </div>
                         <p className="text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
-                          {currentExercise.radicals}
+                          {formatPromptByLanguage(currentExercise.radicals, currentLang)}
                         </p>
                       </div>
                     )}
@@ -670,10 +697,10 @@ export const LessonModal = () => {
                       <div className="p-3.5 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800/60 text-left text-xs space-y-1">
                         <div className="flex items-center gap-1.5 font-black text-sky-800 dark:text-sky-300 uppercase tracking-wider">
                           <span>💡</span>
-                          <span>Ghi chú sư phạm:</span>
+                          <span>{currentLang === 'zh' ? 'Ghi chú sư phạm:' : 'Ghi chú ngữ pháp & cách dùng:'}</span>
                         </div>
                         <p className="text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
-                          {currentExercise.grammarNote}
+                          {formatPromptByLanguage(currentExercise.grammarNote, currentLang)}
                         </p>
                       </div>
                     )}
@@ -1357,10 +1384,10 @@ export const LessonModal = () => {
                   </p>
                   <button
                     onClick={() => openAiTutor({
-                      question: currentExercise?.prompt || currentExercise?.vietnamese_meaning,
+                      question: formatPromptByLanguage(currentExercise?.prompt || currentExercise?.vietnamese_meaning, currentLang),
                       userAnswer: selectedOption || assembledWords.join(' ') || speechResult?.spoken,
                       correctAnswer: currentExercise?.correct_answer,
-                      hint: currentExercise?.hint
+                      hint: formatPromptByLanguage(currentExercise?.hint, currentLang)
                     })}
                     className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/90 dark:bg-slate-800 text-rose-700 dark:text-rose-300 font-extrabold text-[11px] hover:bg-white shadow-xs border border-rose-300 dark:border-rose-700 transition-all cursor-pointer"
                   >
