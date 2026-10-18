@@ -12,6 +12,7 @@ import { StrokeOrderWriter } from '../writing/StrokeOrderWriter';
 import { EnglishSpellingWriter } from '../writing/EnglishSpellingWriter';
 import { questTracker } from '../../utils/questTracker';
 import { cleanLessonCacheIfOutdated } from '../../utils/cacheSanitizer';
+import { shuffleArray, shuffleRightColumn, shuffleWordBank } from '../../utils/shuffleUtils';
 import { 
   X, 
   Heart, 
@@ -63,6 +64,8 @@ export const LessonModal = () => {
   const [availableBank, setAvailableBank] = useState([]);
   const [matchedPairs, setMatchedPairs] = useState({}); // for matching pairs
   const [selectedPairLeft, setSelectedPairLeft] = useState(null);
+  const [matchingPairsLeft, setMatchingPairsLeft] = useState([]);
+  const [matchingPairsRight, setMatchingPairsRight] = useState([]);
   const [isSpeakingListening, setIsSpeakingListening] = useState(false);
   const [speechResult, setSpeechResult] = useState(null);
   const [interimSpeechText, setInterimSpeechText] = useState('');
@@ -123,12 +126,33 @@ export const LessonModal = () => {
       const isEnglish = currentLang === 'en' || currentLang === 'english' || (data?.id && data.id.startsWith('en_'));
       const activeLang = isEnglish ? 'en' : 'zh';
 
-      const sanitizedExercises = (data?.exercises || []).map(ex => ({
-        ...ex,
-        prompt: formatPromptByLanguage(ex.prompt, activeLang),
-        hint: formatPromptByLanguage(ex.hint, activeLang),
-        radicals: formatPromptByLanguage(ex.radicals, activeLang)
-      }));
+      const sanitizedExercises = (data?.exercises || []).map(ex => {
+        const item = {
+          ...ex,
+          prompt: formatPromptByLanguage(ex.prompt, activeLang),
+          hint: formatPromptByLanguage(ex.hint, activeLang),
+          radicals: formatPromptByLanguage(ex.radicals, activeLang)
+        };
+
+        // 1. Shuffling Multiple Choice options for static / listening exercises
+        if (item.type === 'listening' && Array.isArray(item.options) && item.options.length > 1) {
+          item.options = shuffleArray(item.options);
+          item.isOptionsShuffled = true;
+        }
+
+        // 2. Pre-shuffling matching pairs with anti-aligned right column
+        if (item.type === 'matching') {
+          const pairs = Array.isArray(item.options?.pairs) ? item.options.pairs : [];
+          if (pairs.length > 0) {
+            const leftList = shuffleArray(pairs);
+            const rightList = shuffleRightColumn(leftList);
+            item.shuffledPairsLeft = leftList;
+            item.shuffledPairsRight = rightList;
+          }
+        }
+
+        return item;
+      });
 
       setLesson(data);
       setExercises(sanitizedExercises);
@@ -173,12 +197,39 @@ export const LessonModal = () => {
       setUseTextFallback(false);
     }
 
+    // 1. Matching Pairs: strict anti-aligned right column
+    if (ex.type === 'matching') {
+      const pairs = Array.isArray(ex.options?.pairs) ? ex.options.pairs : [];
+      let left = ex.shuffledPairsLeft;
+      let right = ex.shuffledPairsRight;
+      if (!left || !right || left.length === 0) {
+        left = shuffleArray(pairs);
+        right = shuffleRightColumn(left);
+        ex.shuffledPairsLeft = left;
+        ex.shuffledPairsRight = right;
+      }
+      setMatchingPairsLeft(left);
+      setMatchingPairsRight(right);
+    } else {
+      setMatchingPairsLeft([]);
+      setMatchingPairsRight([]);
+    }
+
+    // 2. Dictation / Translation Word Bank: Fisher-Yates + Anti-Order shuffle
     if (ex.type === 'dictation' || ex.type === 'translation') {
       const words = Array.isArray(ex.options) ? [...ex.options] : [];
-      // shuffle
-      words.sort(() => Math.random() - 0.5);
-      setAvailableBank(words);
+      const targetTokens = (ex.correct_answer || '').split(/\s+/).filter(Boolean);
+      const shuffledWords = shuffleWordBank(words, targetTokens);
+      setAvailableBank(shuffledWords);
       setAssembledWords([]);
+    }
+
+    // 3. Listening / Multiple Choice: ensure options are shuffled
+    if (ex.type === 'listening' && Array.isArray(ex.options) && ex.options.length > 1) {
+      if (!ex.isOptionsShuffled) {
+        ex.options = shuffleArray(ex.options);
+        ex.isOptionsShuffled = true;
+      }
     }
 
     // Auto-play audio for listening & preview exercises
@@ -1210,12 +1261,12 @@ export const LessonModal = () => {
                   <div className="grid grid-cols-2 gap-3">
                     {/* Left Items */}
                     <div className="space-y-2">
-                      {currentExercise.options?.pairs?.map((pair, idx) => {
+                      {((matchingPairsLeft.length > 0 ? matchingPairsLeft : currentExercise.options?.pairs) || []).map((pair, idx) => {
                         const isMatched = !!matchedPairs[pair.left];
                         const isSelected = selectedPairLeft === pair.left;
                         return (
                           <button
-                            key={idx}
+                            key={`left_${idx}_${pair.left}`}
                             disabled={isMatched}
                             onClick={() => {
                               sounds.playTap();
@@ -1237,11 +1288,11 @@ export const LessonModal = () => {
 
                     {/* Right Items */}
                     <div className="space-y-2">
-                      {currentExercise.options?.pairs?.map((pair, idx) => {
+                      {((matchingPairsRight.length > 0 ? matchingPairsRight : currentExercise.options?.pairs) || []).map((pair, idx) => {
                         const isMatched = Object.values(matchedPairs).includes(pair.right);
                         return (
                           <button
-                            key={idx}
+                            key={`right_${idx}_${pair.right}`}
                             disabled={isMatched}
                             onClick={() => {
                               if (!selectedPairLeft) return;

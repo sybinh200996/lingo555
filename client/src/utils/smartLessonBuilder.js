@@ -11,6 +11,7 @@
  */
 
 import { AUTHENTIC_ZH_DATA, AUTHENTIC_EN_DATA, getVocabulariesForLevel } from '../data/authenticCurriculumData.js';
+import { shuffleArray, shuffleRightColumn, shuffleWordBank } from './shuffleUtils.js';
 
 /**
  * Get all available vocabulary across the authentic dataset
@@ -240,7 +241,7 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
 
     // --- PHASE 2A: SMART DISTRACTOR LISTENING (HEAR AUDIO -> PICK VIETNAMESE MEANING) ---
     const meaningDistractors = getSmartDistractors(vocab, pool, 3, 'meaning');
-    const meaningOptions = [vocab.meaningVi, ...meaningDistractors].sort(() => Math.random() - 0.5);
+    const meaningOptions = shuffleArray([vocab.meaningVi, ...meaningDistractors]);
 
     generatedExercises.push({
       id: `${lessonData.id}_p2_list_${vocabId}`,
@@ -263,7 +264,7 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
 
     // --- PHASE 2B: TARGET WORD RECOGNITION (SEE MEANING -> PICK TARGET WORD) ---
     const wordDistractors = getSmartDistractors(vocab, pool, 3, 'word');
-    const wordOptions = [vocab.word, ...wordDistractors].sort(() => Math.random() - 0.5);
+    const wordOptions = shuffleArray([vocab.word, ...wordDistractors]);
 
     generatedExercises.push({
       id: `${lessonData.id}_p2_recog_${vocabId}`,
@@ -316,7 +317,8 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
         distractorTokens.push(...extraDist.slice(0, 2 - distractorTokens.length));
       }
 
-      const allTokens = [...sentenceTokens, ...distractorTokens].sort(() => Math.random() - 0.5);
+      const allTokens = [...sentenceTokens, ...distractorTokens];
+      const shuffledTokens = shuffleWordBank(allTokens, sentenceTokens);
 
       generatedExercises.push({
         id: `${lessonData.id}_p4_asm_${vocabId}`,
@@ -329,7 +331,7 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
         target_audio_text: targetSentence,
         phonetic: vocab.exampleSentence.pronunciation,
         vietnamese_meaning: vocab.exampleSentence.meaningVi,
-        options: allTokens,
+        options: shuffledTokens,
         correct_answer: targetSentence,
         hint: `Gợi ý ngữ pháp: ${vocab.grammarNote || 'Chú ý trật tự từ trong câu'}`,
         order_index: orderIndex++
@@ -365,9 +367,18 @@ export const buildScaffoldedLessonFlow = (lessonData, vocabPool = [], options = 
   return generatedExercises;
 };
 
+export {
+  shuffleArray,
+  shuffleRightColumn,
+  shuffleWordBank
+};
+
 export default {
   getAllAuthenticVocabularies,
   getSmartDistractors,
   tokenizeSentence,
-  buildScaffoldedLessonFlow
+  buildScaffoldedLessonFlow,
+  shuffleArray,
+  shuffleRightColumn,
+  shuffleWordBank
 };

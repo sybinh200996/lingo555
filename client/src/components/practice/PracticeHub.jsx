@@ -5,6 +5,7 @@ import { api } from '../../services/api';
 import { speech } from '../../services/speechService';
 import { sounds } from '../../services/soundEffects';
 import { questTracker } from '../../utils/questTracker';
+import { shuffleArray, shuffleRightColumn } from '../../utils/shuffleUtils';
 import { AIWritingLab } from './AIWritingLab';
 import { AIDynamicReading } from './AIDynamicReading';
 import { 
@@ -41,6 +42,7 @@ export const PracticeHub = () => {
   const [gameTimeLeft, setGameTimeLeft] = useState(30);
   const [gameActive, setGameActive] = useState(false);
   const [gamePairs, setGamePairs] = useState([]);
+  const [gameRightPairs, setGameRightPairs] = useState([]);
   const [selectedGameLeft, setSelectedGameLeft] = useState(null);
   const [gameMatched, setGameMatched] = useState({});
 
@@ -114,12 +116,16 @@ export const PracticeHub = () => {
     const sampleWords = srsItems.slice(0, 5);
     if (sampleWords.length === 0) return;
 
-    const pairs = sampleWords.map(w => ({
+    const rawPairs = sampleWords.map(w => ({
       left: w.word,
       right: w.meaning
     }));
 
-    setGamePairs(pairs);
+    const leftPairs = shuffleArray(rawPairs);
+    const rightPairs = shuffleRightColumn(leftPairs);
+
+    setGamePairs(leftPairs);
+    setGameRightPairs(rightPairs);
     setGameMatched({});
     setSelectedGameLeft(null);
     setGameScore(0);
@@ -494,11 +500,11 @@ export const PracticeHub = () => {
                 </div>
 
                 <div className="space-y-2">
-                  {gamePairs.map((pair, idx) => {
+                  {(gameRightPairs.length > 0 ? gameRightPairs : gamePairs).map((pair, idx) => {
                     const isMatched = Object.values(gameMatched).includes(pair.right);
                     return (
                       <button
-                        key={idx}
+                        key={`game_right_${idx}_${pair.right}`}
                         disabled={isMatched}
                         onClick={() => {
                           if (!selectedGameLeft) return;
