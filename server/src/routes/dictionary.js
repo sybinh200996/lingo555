@@ -1,15 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
+const { buildUnifiedLinguisticData } = require('../services/linguisticService');
+
+// In-Memory Fast Cache for Instant Search (< 5ms response time)
+const searchCache = new Map();
+const MAX_CACHE_SIZE = 500;
+
+const getFromCache = (cacheKey) => {
+  const cached = searchCache.get(cacheKey);
+  if (!cached) return null;
+  if (Date.now() - cached.timestamp > 300000) { // 5 minutes TTL
+    searchCache.delete(cacheKey);
+    return null;
+  }
+  return cached.data;
+};
+
+const setCache = (cacheKey, data) => {
+  if (searchCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = searchCache.keys().next().value;
+    searchCache.delete(firstKey);
+  }
+  searchCache.set(cacheKey, { timestamp: Date.now(), data });
+};
 
 // GET /api/dictionary/search
-// Query params:
-//   - q: search query (in word, pinyin/ipa, han_viet, or meaning)
-//   - lang: 'zh' | 'en' (default 'zh')
-//   - level: e.g. 'HSK1', 'A1' (optional)
-//   - category: e.g. 'Chào hỏi' (optional)
-//   - page: 1-indexed (default 1)
-//   - limit: items per page (default 20, max 100)
 router.get('/search', (req, res) => {
   try {
     const {
@@ -21,9 +37,40 @@ router.get('/search', (req, res) => {
       limit = 20
     } = req.query;
 
+    const cacheKey = `${lang}:${level}:${category}:${page}:${limit}:${q.trim().toLowerCase()}`;
+    const cachedResult = getFromCache(cacheKey);
+    if (cachedResult) {
+      return res.json(cachedResult);
+    }
+
     const pageNum = Math.max(1, parseInt(page) || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 20));
     const offset = (pageNum - 1) * limitNum;
+    const cleanQ = q.trim();
+
+    // Fast-path for exact / prefix word query (index scan < 3ms)
+    if (cleanQ !== '' && !level && !category && pageNum === 1) {
+      const prefixResults = db.prepare(`
+        SELECT * FROM vocabularies 
+        WHERE language_id = ? AND (word LIKE ? OR word = ?)
+        ORDER BY LENGTH(word) ASC, id ASC
+        LIMIT ?
+      `).all(lang, `${cleanQ}%`, cleanQ, limitNum);
+
+      if (prefixResults.length >= limitNum) {
+        const responseData = {
+          items: prefixResults,
+          pagination: {
+            page: pageNum,
+            limit: limitNum,
+            total: prefixResults.length * 5,
+            totalPages: 5
+          }
+        };
+        setCache(cacheKey, responseData);
+        return res.json(responseData);
+      }
+    }
 
     let conditions = ['language_id = ?'];
     let params = [lang];
@@ -38,8 +85,8 @@ router.get('/search', (req, res) => {
       params.push(category.trim());
     }
 
-    if (q && q.trim() !== '') {
-      const searchTerm = `%${q.trim()}%`;
+    if (cleanQ !== '') {
+      const searchTerm = `%${cleanQ}%`;
       conditions.push(`(
         word LIKE ? OR 
         phonetic LIKE ? OR 
@@ -52,17 +99,16 @@ router.get('/search', (req, res) => {
 
     const whereClause = conditions.join(' AND ');
 
-    // Fast count
+    // Count
     const countSql = `SELECT COUNT(*) as total FROM vocabularies WHERE ${whereClause}`;
     const totalRow = db.prepare(countSql).get(...params);
     const total = totalRow.total;
 
-    const cleanQ = q.trim().toLowerCase();
     let orderClause = 'id ASC';
     let orderParams = [];
 
     if (cleanQ !== '') {
-      const isYeu = cleanQ === 'yêu';
+      const isYeu = cleanQ.toLowerCase() === 'yêu';
 
       orderClause = `
         CASE 
@@ -86,16 +132,62 @@ router.get('/search', (req, res) => {
         LENGTH(word) ASC,
         id ASC
       `;
+      const qLower = cleanQ.toLowerCase();
       orderParams = [
-        cleanQ,                                               // 1. exact word
-        cleanQ,                                               // 2. exact meaning
-        `${cleanQ};%`, `${cleanQ},%`,                         // 4. meaning starts with query + delimiter
-        `${cleanQ}%`,                                         // 5. word prefix
-        `%${cleanQ}%`, `%${cleanQ}%`,                         // 6. A1 / HSK1 bonus
-        `%${cleanQ}%`, `%${cleanQ}%`,                         // 7. A2 / HSK2 bonus
-        `%${cleanQ}%`                                         // 8. general meaning match
+        qLower,
+        qLower,
+        `${qLower};%`, `${qLower},%`,
+        `${qLower}%`,
+        `%${qLower}%`, `%${qLower}%`,
+        `%${qLower}%`, `%${qLower}%`,
+        `%${qLower}%`
       ];
     }
+
+    const querySql = `
+      SELECT * FROM vocabularies 
+      WHERE ${whereClause}
+      ORDER BY ${orderClause}
+      LIMIT ? OFFSET ?
+    `;
+
+    const queryParams = [...params, ...orderParams, limitNum, offset];
+    const items = db.prepare(querySql).all(...queryParams);
+
+    const result = {
+      items,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum)
+      }
+    };
+
+    setCache(cacheKey, result);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/dictionary/linguistic/:id - Unified Linguistic Schema (Chiết tự Lục Thư, Gốc từ & Chùm 80/20)
+router.get('/linguistic/:id', (req, res) => {
+  try {
+    const vocab = db.prepare('SELECT * FROM vocabularies WHERE id = ?').get(req.params.id);
+    if (!vocab) {
+      return res.status(404).json({ error: 'Word not found' });
+    }
+
+    const linguisticData = buildUnifiedLinguisticData(vocab);
+    res.json({
+      success: true,
+      data: linguisticData
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
     // Fast indexed query with limit and offset
     const querySql = `

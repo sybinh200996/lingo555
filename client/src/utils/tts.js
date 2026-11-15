@@ -33,10 +33,33 @@ class TTSManager {
       window.speechSynthesis.onvoiceschanged = () => {
         loadVoices();
       };
-      // Backup poll for mobile WebKit
       setTimeout(loadVoices, 300);
       setTimeout(loadVoices, 1000);
     }
+
+    // Unlock AudioContext for Mobile Safari, Chrome Android & Facebook/Zalo WebView on first user gesture
+    this.unlockAudioContext();
+  }
+
+  unlockAudioContext() {
+    if (typeof window === 'undefined') return;
+    const unlock = () => {
+      try {
+        if (window.AudioContext || window.webkitAudioContext) {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          if (ctx.state === 'suspended') {
+            ctx.resume();
+          }
+        }
+        if (this.synth && this.synth.paused) {
+          this.synth.resume();
+        }
+      } catch (e) {}
+      window.removeEventListener('click', unlock);
+      window.removeEventListener('touchstart', unlock);
+    };
+    window.addEventListener('click', unlock, { once: true });
+    window.addEventListener('touchstart', unlock, { once: true });
   }
 
   /**

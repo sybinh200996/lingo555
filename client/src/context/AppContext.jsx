@@ -63,14 +63,14 @@ export const AppProvider = ({ children }) => {
     } catch (e) {}
     return {
       id: 'default_user',
-      username: 'Học viên Polyglot',
+      username: 'Học viên Mới',
       avatar: '🐼',
       current_language: 'zh',
       hearts: 5,
       max_hearts: 5,
-      gems: 350,
-      xp: 120,
-      streak: 3,
+      gems: 0,
+      xp: 0,
+      streak: 0,
       stats: {
         completedLessons: 0,
         wordsMastered: 0,
@@ -136,6 +136,36 @@ export const AppProvider = ({ children }) => {
       window.removeEventListener('lingo555:logout', handleLogout);
     };
   }, []);
+
+  const resetProgress = () => {
+    sounds.playTap?.();
+    const cleanProfile = {
+      id: 'default_user',
+      username: 'Học viên Mới',
+      avatar: '🐼',
+      current_language: currentLang,
+      hearts: 5,
+      max_hearts: 5,
+      gems: 0,
+      xp: 0,
+      streak: 0,
+      stats: {
+        completedLessons: 0,
+        wordsMastered: 0,
+        difficultWords: 0
+      }
+    };
+    setUserProfile(cleanProfile);
+    try {
+      localStorage.setItem('lingo555_user_profile', JSON.stringify(cleanProfile));
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('lingo555_lesson_') || k.startsWith('cached_lesson_') || k.startsWith('lesson_'))) {
+          localStorage.removeItem(k);
+        }
+      }
+    } catch (e) {}
+  };
 
   // Sync Dark mode with document class and localStorage
   useEffect(() => {
@@ -462,7 +492,8 @@ export const AppProvider = ({ children }) => {
         closeWritingModal,
         activeModal,
         setActiveModal,
-        closeAllModals
+        closeAllModals,
+        resetProgress
       }}
     >
       {children}

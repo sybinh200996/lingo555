@@ -1,15 +1,100 @@
 const { GoogleGenAI } = require('@google/genai');
 
+/**
+ * GeminiKeyPool: Hệ thống xoay vòng 3 API Key Gemini (Round-Robin & Auto-Failover)
+ * Tự động chuyển key khi gặp lỗi 429 Rate Limit, QuotaExceeded hoặc 403.
+ */
+class GeminiKeyPool {
+  constructor() {
+    this.keys = [];
+    this.currentIndex = 0;
+    this.cooldowns = new Map();
+    this.initKeys();
+  }
+
+  initKeys() {
+    const rawKeys = [];
+    if (process.env.GEMINI_API_KEYS) {
+      process.env.GEMINI_API_KEYS.split(',').map(k => k.trim()).filter(Boolean).forEach(k => rawKeys.push(k));
+    }
+    ['GEMINI_API_KEY_1', 'GEMINI_API_KEY_2', 'GEMINI_API_KEY_3'].forEach(envName => {
+      if (process.env[envName]) {
+        rawKeys.push(process.env[envName].trim());
+      }
+    });
+    if (process.env.GEMINI_API_KEY) {
+      rawKeys.push(process.env.GEMINI_API_KEY.trim());
+    }
+    this.keys = Array.from(new Set(rawKeys.filter(Boolean)));
+    console.log(`[GeminiKeyPool] Khởi tạo thành công ${this.keys.length} API keys xoay vòng.`);
+  }
+
+  isKeyCoolingDown(key) {
+    const expiry = this.cooldowns.get(key);
+    if (!expiry) return false;
+    if (Date.now() > expiry) {
+      this.cooldowns.delete(key);
+      return false;
+    }
+    return true;
+  }
+
+  markCooldown(key, durationSeconds = 60) {
+    this.cooldowns.set(key, Date.now() + durationSeconds * 1000);
+    console.warn(`[GeminiKeyPool] Key ...${key.slice(-6)} tạm nghỉ trong ${durationSeconds}s do giới hạn hạn mức.`);
+  }
+
+  getNextClient(apiKey = null) {
+    if (apiKey) {
+      return { client: new GoogleGenAI({ apiKey: apiKey.trim() }), key: apiKey.trim(), isCustom: true };
+    }
+    if (this.keys.length === 0) return null;
+
+    for (let i = 0; i < this.keys.length; i++) {
+      const idx = (this.currentIndex + i) % this.keys.length;
+      const key = this.keys[idx];
+      if (!this.isKeyCoolingDown(key)) {
+        this.currentIndex = (idx + 1) % this.keys.length;
+        return { client: new GoogleGenAI({ apiKey: key }), key, isCustom: false };
+      }
+    }
+
+    const fallbackKey = this.keys[this.currentIndex];
+    this.currentIndex = (this.currentIndex + 1) % this.keys.length;
+    return { client: new GoogleGenAI({ apiKey: fallbackKey }), key: fallbackKey, isCustom: false };
+  }
+
+  getStatus() {
+    const activeHealthy = this.keys.filter(k => !this.isKeyCoolingDown(k)).length;
+    return {
+      active: this.keys.length > 0,
+      hasServerKey: this.keys.length > 0,
+      totalKeys: this.keys.length,
+      healthyKeys: activeHealthy,
+      inCooldown: this.keys.length - activeHealthy,
+      rotationEnabled: true
+    };
+  }
+}
+
 class AIService {
   constructor() {
     this.defaultModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
     this.candidateModels = ['gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+    this.keyPool = new GeminiKeyPool();
   }
 
   getClient(apiKey) {
-    const key = apiKey || process.env.GEMINI_API_KEY;
-    if (!key) return null;
-    return new GoogleGenAI({ apiKey: key });
+    const info = this.keyPool.getNextClient(apiKey);
+    return info ? info.client : null;
+  }
+
+  getStatus() {
+    return {
+      ...this.keyPool.getStatus(),
+      defaultModel: this.defaultModel,
+      candidateModels: this.candidateModels
+    };
   }
 
   /**

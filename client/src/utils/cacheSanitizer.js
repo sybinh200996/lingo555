@@ -21,7 +21,21 @@ export const sanitizeLocalStorageLessonCache = () => {
         const rawValue = localStorage.getItem(key);
         if (!rawValue || typeof rawValue !== 'string') continue;
 
-        // Kiểm tra xem key hoặc nội dung có liên quan đến bài học Tiếng Anh không
+        // Dọn dẹp mock test data cũ (xp: 120, streak: 3, gems: 350)
+        if (key === 'lingo555_user_profile') {
+          try {
+            const profileObj = JSON.parse(rawValue);
+            if (profileObj.xp === 120 && profileObj.streak === 3 && profileObj.gems === 350) {
+              profileObj.xp = 0;
+              profileObj.streak = 0;
+              profileObj.gems = 0;
+              profileObj.hearts = 5;
+              localStorage.setItem(key, JSON.stringify(profileObj));
+              modifiedCount++;
+              console.log('[CacheSanitizer] Đã reset mock test profile cũ về số 0 sạch sẽ.');
+            }
+          } catch (e) {}
+        }
         const isEnglishRelated = 
           key.includes('en_') || 
           key.includes('english') || 

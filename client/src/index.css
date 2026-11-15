@@ -23,6 +23,15 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Linguistics & Typography Optimizations: Chống lỗi Han Unification & Lệch ký tự IPA */
+  [lang="zh-CN"], .font-hanzi {
+    font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif !important;
+  }
+
+  .font-phonetic {
+    font-family: 'Charis SIL', 'Inter', system-ui, sans-serif !important;
+  }
+
   .dark body {
     @apply bg-[#131F24] text-slate-100 selection:bg-emerald-800;
   }

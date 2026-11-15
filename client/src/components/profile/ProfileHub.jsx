@@ -32,13 +32,15 @@ import {
   ShieldCheck,
   Calendar,
   Mail,
-  Camera
+  Camera,
+  RotateCcw,
+  AlertTriangle
 } from 'lucide-react';
 
 const AVATAR_OPTIONS = ['🐼', '🦊', '🐯', '🐰', '🦉', '🦁', '🐸', '🦄', '🐱', '🐶'];
 
 export const ProfileHub = () => {
-  const { userProfile, refreshProfile, currentLang, openAiSettings, hasAiKey } = useApp();
+  const { userProfile, refreshProfile, currentLang, openAiSettings, hasAiKey, resetProgress } = useApp();
   const { 
     user, 
     isAuthenticated, 
@@ -55,6 +57,10 @@ export const ProfileHub = () => {
   const [dbStats, setDbStats] = useState({ total: 0, breakdown: [] });
   const [isGenerating, setIsGenerating] = useState(false);
   const [importStatus, setImportStatus] = useState(null);
+
+  // Reset confirmation & notification
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [resetMessage, setResetMessage] = useState(null);
 
   // Avatar picker popover state
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
@@ -459,23 +465,41 @@ export const ProfileHub = () => {
             </div>
           </div>
 
-          {/* Account Management & Security Options (if logged in) */}
-          {isAuthenticated && (
-            <div className="duo-card p-4 sm:p-5 space-y-3">
-              <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider">
-                Quản Trị Tài Khoản & Bảo Mật
-              </h4>
-              <div className="flex flex-wrap gap-2.5">
-                {user?.auth_provider === 'local' && (
-                  <button
-                    onClick={() => setShowPasswordModal(true)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs flex items-center gap-2 transition-all cursor-pointer"
-                  >
-                    <Key className="w-4 h-4 text-slate-500" />
-                    <span>Đổi Mật Khẩu</span>
-                  </button>
-                )}
+          {/* Account Management & Data Reset Options */}
+          <div className="duo-card p-4 sm:p-5 space-y-3">
+            <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider">
+              Quản Trị Dữ Liệu & Tài Khoản
+            </h4>
 
+            {resetMessage && (
+              <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 text-xs font-bold flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span>{resetMessage}</span>
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-2.5">
+              {isAuthenticated && user?.auth_provider === 'local' && (
+                <button
+                  onClick={() => setShowPasswordModal(true)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs flex items-center gap-2 transition-all cursor-pointer"
+                >
+                  <Key className="w-4 h-4 text-slate-500" />
+                  <span>Đổi Mật Khẩu</span>
+                </button>
+              )}
+
+              {/* Reset Progress Button */}
+              <button
+                onClick={() => setShowResetConfirm(true)}
+                className="px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300 font-extrabold text-xs flex items-center gap-2 transition-all cursor-pointer border border-amber-200 dark:border-amber-800"
+                title="Xoá lịch sử học, trả lại điểm XP, streak và bài học về số 0 sạch sẽ"
+              >
+                <RotateCcw className="w-4 h-4 text-amber-600" />
+                <span>Làm Sạch & Đặt Lại Tiến Trình (Về 0)</span>
+              </button>
+
+              {isAuthenticated && (
                 <button
                   onClick={logout}
                   className="px-4 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 font-extrabold text-xs flex items-center gap-2 transition-all cursor-pointer border border-rose-200 dark:border-rose-800"
@@ -483,6 +507,47 @@ export const ProfileHub = () => {
                   <LogOut className="w-4 h-4 text-rose-500" />
                   <span>Đăng Xuất Khỏi Thiết Bị</span>
                 </button>
+              )}
+            </div>
+          </div>
+
+          {/* Reset Confirmation Modal */}
+          {showResetConfirm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+              <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-3xl p-5 border-2 border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+                <div className="flex items-center gap-3 text-amber-600 dark:text-amber-400">
+                  <div className="p-2.5 rounded-2xl bg-amber-100 dark:bg-amber-950/80 border border-amber-200">
+                    <AlertTriangle className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-black text-slate-800 dark:text-white">
+                      Xác Nhận Đặt Lại?
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Toàn bộ điểm XP, chuỗi ngày và bộ nhớ đệm bài học trên thiết bị này sẽ được dọn sạch về 0.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    onClick={() => setShowResetConfirm(false)}
+                    className="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs cursor-pointer"
+                  >
+                    Hủy Bỏ
+                  </button>
+                  <button
+                    onClick={() => {
+                      resetProgress();
+                      setShowResetConfirm(false);
+                      setResetMessage('Đã làm sạch lịch sử và đặt lại toàn bộ tiến trình học về 0 thành công!');
+                      setTimeout(() => setResetMessage(null), 5000);
+                    }}
+                    className="flex-1 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black text-xs cursor-pointer shadow-xs"
+                  >
+                    Xác Nhận Xóa
+                  </button>
+                </div>
               </div>
             </div>
           )}

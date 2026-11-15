@@ -20,6 +20,7 @@ export const AISettingsModal = () => {
   const [apiKey, setApiKey] = useState('');
   const [model, setModel] = useState('gemini-3.5-flash-lite');
   const [hasServerKey, setHasServerKey] = useState(false);
+  const [rotationStatus, setRotationStatus] = useState(null);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -34,6 +35,7 @@ export const AISettingsModal = () => {
       ai.getStatus().then(status => {
         if (status?.hasServerKey) {
           setHasServerKey(true);
+          setRotationStatus(status);
         }
       }).catch(() => {});
     }
@@ -138,13 +140,17 @@ export const AISettingsModal = () => {
           </div>
         </div>
 
-        {/* Server Key Detected Banner */}
+        {/* Server Key Detected Banner with 3-Key Rotation */}
         {hasServerKey && !apiKey && (
           <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-xs flex items-center gap-2.5 text-emerald-800 dark:text-emerald-300 font-semibold">
             <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
             <div>
-              <span className="font-black uppercase block text-[10px] text-emerald-600 dark:text-emerald-400">Đã kích hoạt tự động</span>
-              <span>Gemini API Key đã được nạp thành công từ tệp cấu hình hệ thống (.env). Bạn có thể dùng ngay!</span>
+              <span className="font-black uppercase block text-[10px] text-emerald-600 dark:text-emerald-400">
+                ⚡ Đã kích hoạt cụm 3 API Keys Gemini Xoay Vòng
+              </span>
+              <span>
+                Máy chủ đã nạp sẵn 3 API keys tự động luân phiên (Round-Robin & Auto-Failover chống giới hạn hạn mức). Bạn có thể học ngay mà không cần nhập key cá nhân!
+              </span>
             </div>
           </div>
         )}

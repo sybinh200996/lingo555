@@ -4,21 +4,19 @@ const aiService = require('../services/aiService');
 
 // Middleware to extract API key & model from headers or body
 const extractAiParams = (req, res, next) => {
-  req.apiKey = req.headers['x-gemini-api-key'] || (req.body && req.body.apiKey) || process.env.GEMINI_API_KEY;
+  req.apiKey = req.headers['x-gemini-api-key'] || (req.body && req.body.apiKey) || null;
   req.model = req.headers['x-gemini-model'] || (req.body && req.body.model) || process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
   next();
 };
 
 router.use(extractAiParams);
 
-// GET /api/ai/status - Returns configuration and model status
+// GET /api/ai/status - Returns configuration, rotation pool status and models
 router.get('/status', (req, res) => {
-  const hasServerKey = !!process.env.GEMINI_API_KEY;
-  const currentModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  const status = aiService.getStatus();
   res.json({
-    active: hasServerKey,
-    hasServerKey,
-    currentModel,
+    ...status,
+    currentModel: status.defaultModel || 'gemini-3.5-flash-lite',
     defaultProvider: process.env.DEFAULT_AI_PROVIDER || 'auto',
     availableModels: [
       { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite', desc: 'Siêu tốc, độ trễ thấp nhất (Khuyên Dùng)' },
