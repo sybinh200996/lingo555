@@ -114,41 +114,54 @@ class AIService {
   }
 
   /**
-   * Safe JSON Parser: strips markdown code fences (```json and ```)
-   * and falls back to fallbackData without crashing.
+   * Safe JSON Parser: strips markdown code fences, auto-repairs trailing commas
+   * and unescaped newlines, extracts outermost JSON object/array.
    */
+  cleanAndRepairJson(rawText) {
+    if (!rawText) return '';
+    let text = String(rawText)
+      .replace(/```json\s*/gi, '')
+      .replace(/```\s*/g, '')
+      .trim();
+
+    const firstBrace = text.indexOf('{');
+    const firstBracket = text.indexOf('[');
+    let startIdx = -1;
+    let endIdx = -1;
+
+    if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+      startIdx = firstBrace;
+      endIdx = text.lastIndexOf('}');
+    } else if (firstBracket !== -1) {
+      startIdx = firstBracket;
+      endIdx = text.lastIndexOf(']');
+    }
+
+    if (startIdx !== -1 && endIdx > startIdx) {
+      text = text.substring(startIdx, endIdx + 1);
+    }
+
+    // Auto-repair: remove trailing commas before } or ]
+    text = text.replace(/,\s*([}\]])/g, '$1');
+    return text;
+  }
+
   safeParseAIJson(rawText, fallbackData = null) {
     if (!rawText) return fallbackData;
     if (typeof rawText === 'object') return rawText;
+
+    const cleaned = this.cleanAndRepairJson(rawText);
     try {
-      const cleaned = String(rawText)
-        .replace(/```json\s*/gi, '')
-        .replace(/```\s*/g, '')
-        .trim();
       return JSON.parse(cleaned);
     } catch (err) {
-      console.error('AI JSON Parse Error:', err.message);
-      // Secondary attempt: extract JSON substring from first '{' or '[' to last '}' or ']'
       try {
-        const firstBrace = rawText.indexOf('{');
-        const firstBracket = rawText.indexOf('[');
-        let startIdx = -1;
-        let endIdx = -1;
-
-        if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
-          startIdx = firstBrace;
-          endIdx = rawText.lastIndexOf('}');
-        } else if (firstBracket !== -1) {
-          startIdx = firstBracket;
-          endIdx = rawText.lastIndexOf(']');
-        }
-
-        if (startIdx !== -1 && endIdx > startIdx) {
-          const sub = rawText.substring(startIdx, endIdx + 1);
-          return JSON.parse(sub);
-        }
+        // Attempt secondary repair: replace unescaped control characters
+        const repaired = cleaned
+          .replace(/[\u0000-\u001F]+/g, ' ')
+          .replace(/,\s*([}\]])/g, '$1');
+        return JSON.parse(repaired);
       } catch (subErr) {
-        console.error('AI JSON Substring Parse Error:', subErr.message);
+        console.warn('AI JSON Parse Error even after repair:', subErr.message);
       }
       return fallbackData;
     }
@@ -456,59 +469,63 @@ TRẢ VỀ KẾT QUẢ DẠNG JSON SCHEMA:
    * 5. DYNAMIC READING PASSAGE GENERATION & QUIZ
    */
   async generateReading({ words = [], topic = 'Đời sống hàng ngày', level = 'HSK2', language = 'zh', apiKey, model = this.defaultModel }) {
-    const client = this.getClient(apiKey);
-    const langName = language === 'zh' ? 'Tiếng Trung' : 'Tiếng Anh';
+    const clientInfo = this.getClientInfo(apiKey);
+    const langName = language === 'zh' ? 'Tiếng Trung (HSK)' : 'Tiếng Anh (CEFR)';
+    const wordList = Array.isArray(words) && words.length > 0 ? words : (language === 'zh' ? ['朋友', '学校', '学习'] : ['friend', 'school', 'study']);
+    const wordListStr = wordList.join(', ');
 
-    const systemPrompt = `Bạn là Tác giả sách giáo khoa ngôn ngữ ${langName}.
-Nhiệm vụ: Sáng tác một đoạn văn / câu chuyện ngắn hấp dẫn theo chủ đề "${topic}" ở cấp độ ${level}, lồng ghép chính xác các từ vựng chỉ định: ${words.join(', ')}.
-Kèm theo 3 câu hỏi trắc nghiệm đọc hiểu (Comprehension Questions) để kiểm tra người học.
-
-TRẢ VỀ JSON THEO SCHEMA CHUẨN:
+    const systemPrompt = `Bạn là Tác giả sách giáo trình và khảo thí ngôn ngữ ${langName} xuất sắc.
+Nhiệm vụ: Sáng tác một bài đọc ngắn, câu chuyện thực tế hấp dẫn theo đúng chủ đề "${topic}" ở trình độ ${level}.
+YÊU CẦU QUAN TRỌNG:
+1. BẮT BUỘC lồng ghép tự nhiên tất cả các từ vựng chỉ định sau vào bài đọc: ${wordListStr}.
+2. Độ dài bài đọc: khoảng 80 - 150 từ, hành văn tự nhiên, đúng ngữ pháp.
+3. Kèm theo 3 câu hỏi trắc nghiệm đọc hiểu (Comprehension Questions) với 4 phương án lựa chọn và giải thích dẫn chứng chi tiết.
+4. LƯU Ý KỸ THUẬT: Trong câu trích dẫn hoặc đối thoại, TUYỆT ĐỐI KHÔNG dùng dấu nháy kép ASCII " trần (dễ làm hỏng JSON). Hãy dùng dấu ngoặc kép phương Đông “ ” hoặc dấu ngoặc đơn ' '.
+5. BẮT BUỘC trả về đúng định dạng JSON hợp lệ theo cấu trúc sau (không kèm văn bản nào khác ngoài JSON):
 {
-  "title": "Tiêu đề bài đọc",
+  "title": "Tiêu đề bài đọc (kèm nghĩa tiếng Việt trong ngoặc)",
   "level": "${level}",
   "topic": "${topic}",
-  "targetWords": ${JSON.stringify(words)},
-  "content": "Đoạn văn hoàn chỉnh (khoảng 80-150 từ)",
-  "pinyin": "${language === 'zh' ? 'Toàn bộ phiên âm Pinyin của đoạn văn có dấu cách chuẩn' : ''}",
-  "vietnameseTranslation": "Bản dịch nghĩa trọn vẹn của bài đọc sang tiếng Việt",
+  "targetWords": ${JSON.stringify(wordList)},
+  "content": "Nội dung bài đọc tiếng ${language === 'zh' ? 'Trung' : 'Anh'}",
+  "pinyin": "${language === 'zh' ? 'Phiên âm Pinyin toàn bài đọc có thanh điệu' : ''}",
+  "vietnameseTranslation": "Bản dịch nghĩa tiếng Việt trọn vẹn và tự nhiên",
   "vocabularyList": [
     {
       "word": "Từ vựng",
-      "phonetic": "Pinyin/IPA",
-      "meaning": "Nghĩa tiếng Việt"
+      "phonetic": "Pinyin hoặc IPA",
+      "meaning": "Nghĩa tiếng Việt chuẩn"
     }
   ],
   "quiz": [
     {
-      "question": "Câu hỏi đọc hiểu bằng tiếng Việt",
-      "options": ["Lựa chọn A", "Lựa chọn B", "Lựa chọn C", "Lựa chọn D"],
+      "question": "Câu hỏi đọc hiểu bằng tiếng Việt?",
+      "options": ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"],
       "correctIndex": 0,
-      "explanation": "Giải thích chi tiết dẫn chứng trong bài đọc"
+      "explanation": "Dẫn chứng giải thích từ bài đọc"
     }
   ]
 }`;
 
-    const prompt = `Hãy tạo một bài đọc ${langName} cấp độ ${level} chủ đề "${topic}", tích hợp các từ vựng: ${words.join(', ')}.`;
+    const prompt = `Hãy sáng tác bài đọc ${langName} mới hoàn toàn ở trình độ ${level} theo chủ đề "${topic}". Các từ vựng bắt buộc xuất hiện trong bài: ${wordListStr}.`;
 
-    const fallback = this.getLocalReadingPassage(words, topic, level, language);
-
-    if (client) {
+    if (clientInfo) {
       try {
-        const result = await this.generateContentWithFallback(client, {
+        const result = await this.generateContentWithFallback(clientInfo, {
           model,
           contents: prompt,
           systemInstruction: systemPrompt,
-          responseMimeType: 'application/json',
-          fallbackData: fallback
+          responseMimeType: 'application/json'
         });
-        if (result && result.content) return result;
+        if (result && result.title && result.content) {
+          return result;
+        }
       } catch (err) {
-        console.warn('Gemini reading generator failed, using local reading sample:', err.message);
+        console.warn('Gemini reading generator error:', err.message);
       }
     }
 
-    return fallback;
+    return this.getLocalReadingPassage(words, topic, level, language);
   }
 
   // ----------------------------------------------------------------------
@@ -645,68 +662,68 @@ Hello! Regarding your question **"${query}"**:
     };
   }
 
-  getLocalReadingPassage(words, topic, level, language) {
+  getLocalReadingPassage(words, topic = 'Đời sống', level = 'HSK2', language = 'zh') {
+    const vocabList = Array.isArray(words) && words.length > 0 ? words : (language === 'zh' ? ['朋友', '学校', '学习'] : ['friend', 'school', 'study']);
+    
     if (language === 'zh') {
-      const vocabList = words.length > 0 ? words : ['你好', '朋友', '学校', '学习'];
+      const w0 = vocabList[0] || '朋友';
+      const w1 = vocabList[1] || '生活';
+      const w2 = vocabList[2] || '体验';
       return {
-        title: `周末的一天 (Một ngày cuối tuần)`,
+        title: `${topic} - Cùng khám phá với ${w0}`,
         level: level,
         topic: topic,
         targetWords: vocabList,
-        content: `今天是星期六。阳光明媚，小明去学校看望他的老朋友。他们一起在图书馆里学习汉语，还喝了中国绿茶。小明说：“学习虽然很辛苦，但是和朋友在一起非常快乐。” 他们度过了充实美好的一天。`,
-        pinyin: `Jīntiān shì xīngqīliù. Yángguāng míngmèi, Xiǎomíng qù xuéxiào kànwàng tā de lǎo péngyou. Tāmen yìqǐ zài túshūguǎn lǐ xuéxí Hànyǔ, hái hē le Zhōngguó lǜchá. Xiǎomíng shuō: “Xuéxí suīrán hěn xīnkǔ, dànshì hé péngyou zài yìqǐ fēicháng kuàilè.” Tāmen dùguò le chōngshí měihǎo de yì tiān.`,
-        vietnameseTranslation: `Hôm nay là thứ bảy. Ánh nắng rực rỡ, Tiểu Minh đến trường thăm người bạn cũ của mình. Họ cùng nhau học tiếng Trung trong thư viện và còn uống trà xanh Trung Quốc. Tiểu Minh nói: "Học tập tuy vất vả nhưng được ở cùng bạn bè thì vô cùng vui vẻ." Họ đã trải qua một ngày thật trọn vẹn và tốt đẹp.`,
-        vocabularyList: vocabList.map(w => ({ word: w, phonetic: 'Pinyin', meaning: 'Từ vựng trọng tâm trong bài' })),
+        content: `今天是一个非常特别的日子。我和我的${w0}一起参与了“${topic}”的活动。在活动中，我们认真观察，互相交流${w1}中的各种趣事。经过这次经历，我们不仅更好地掌握了${w2}的意义，而且增进了彼此的友谊。大家都觉得这次活动非常有收获。`,
+        pinyin: `Jīntiān shì yí gè fēicháng tèbié de rìzi. Wǒ hé wǒ de ${w0} yìqǐ cānyù le “${topic}” de huódòng. Zài huódòng zhōng, wǒmen rènzhēn guānchá, hùxiāng jiāoliú ${w1} zhōng de gèzhǒng qùshì. Jīngguò zhè cì jīnglì, wǒmen bùjǐn gèng hǎo de zhǎngwò le ${w2} de yìyì, érqiě zēngjìn le bǐcǐ de yǒuyì. Dàjiā dōu juéde zhè cì huódòng fēicháng yǒu shōuhuò.`,
+        vietnameseTranslation: `Hôm nay là một ngày vô cùng đặc biệt. Tôi và ${w0} của tôi đã cùng tham gia hoạt động "${topic}". Trong suốt hoạt động, chúng tôi đã chăm chú quan sát và trao đổi về những điều thú vị trong ${w1}. Qua trải nghiệm lần này, chúng tôi không chỉ hiểu rõ hơn về ý nghĩa của ${w2}, mà còn làm sâu sắc thêm tình bạn. Mọi người đều cảm thấy chuyến đi thật bổ ích.`,
+        vocabularyList: vocabList.map(w => ({ word: w, phonetic: 'Pinyin', meaning: `Từ vựng trọng tâm trong chủ đề ${topic}` })),
         quiz: [
           {
-            question: 'Tiểu Minh đã đến đâu để gặp bạn của mình?',
-            options: ['Đến trường học (学校)', 'Đến sân bay (机场)', 'Đến bệnh viện (医院)', 'Đến công viên (公园)'],
+            question: `Chủ đề trải nghiệm của các nhân vật trong bài đọc là gì?`,
+            options: [`Trải nghiệm hoạt động "${topic}"`, 'Đi máy bay sang nước ngoài', 'Đi siêu thị một mình', 'Nghỉ ngơi ở nhà'],
             correctIndex: 0,
-            explanation: 'Dẫn chứng trong câu: "小明去学校看望他的老朋友" (Tiểu Minh đến trường thăm người bạn cũ).'
+            explanation: `Dẫn chứng trong bài đọc: "参与了“${topic}”的活动" (Tham gia hoạt động ${topic}).`
           },
           {
-            question: 'Họ đã uống thức uống gì trong thư viện?',
-            options: ['Trà xanh Trung Quốc (中国绿茶)', 'Cà phê đen (黑咖啡)', 'Nước ép hoa quả (果汁)', 'Trà sữa (奶茶)'],
+            question: `Nhân vật chính đã tham gia hoạt động cùng ai?`,
+            options: [`Cùng với ${w0}`, 'Đi một mình không có ai', 'Cùng một người lạ mặt', 'Cùng với giáo viên'],
             correctIndex: 0,
-            explanation: 'Dẫn chứng trong bài: "还喝了中国绿茶" (còn uống trà xanh Trung Quốc).'
+            explanation: `Dẫn chứng: "我和我的${w0}一起" (Tôi và ${w0} cùng tham gia).`
           },
           {
-            question: 'Tiểu Minh cảm thấy thế nào khi học tập cùng bạn bè?',
-            options: ['Rất vui vẻ (非常快乐)', 'Rất buồn chán (很无聊)', 'Rất tức giận (很生气)', 'Rất mệt mỏi (很累)'],
+            question: `Cảm xúc của các nhân vật sau chuyến trải nghiệm thế nào?`,
+            options: ['Cảm thấy rất bổ ích và vui vẻ', 'Cảm thấy rất mệt và chán nản', 'Rất buồn bã và tức giận', 'Không có cảm xúc gì'],
             correctIndex: 0,
-            explanation: 'Dẫn chứng: "但是和朋友在一起非常快乐" (nhưng ở cùng bạn bè thì rất vui vẻ).'
+            explanation: 'Dẫn chứng câu cuối: "大家都觉得这次活动非常有收获" (Mọi người đều cảm thấy chuyến đi rất bổ ích).'
           }
         ]
       };
     } else {
-      const vocabList = words.length > 0 ? words : ['friend', 'student', 'coffee', 'opportunity'];
+      const w0 = vocabList[0] || 'friend';
+      const w1 = vocabList[1] || 'learning';
+      const w2 = vocabList[2] || 'journey';
       return {
-        title: 'A Productive Weekend at the Central Cafe',
+        title: `${topic}: An Inspiring Journey with ${w0}`,
         level: level,
         topic: topic,
         targetWords: vocabList,
-        content: `Saturday morning was bright and crisp. Alex, an enthusiastic medical student, met his childhood friend at a bustling local cafe. While sipping freshly brewed coffee, they discussed an exciting internship opportunity coming up next semester. "Consistent practice always opens doors," Alex remarked with a warm smile.`,
+        content: `Today was a memorable occasion. I joined hands with my ${w0} to explore "${topic}". Throughout this vibrant experience, we exchanged insightful thoughts about ${w1} and everyday life. Engaging deeply in this event allowed us to appreciate ${w2} from a whole new perspective. It was truly an enriching and delightful day.`,
         pinyin: '',
-        vietnameseTranslation: `Sáng thứ bảy trời trong lành và se lạnh. Alex, một sinh viên y khoa nhiệt huyết, đã gặp người bạn thời thơ ấu tại một quán cà phê địa phương nhộn nhịp. Trong lúc nhâm nhi tách cà phê mới pha, họ thảo luận về một cơ hội thực tập thú vị sắp diễn ra vào học kỳ tới. "Luyện tập kiên trì luôn mở ra những cánh cửa," Alex nhận xét với một nụ cười ấm áp.`,
-        vocabularyList: vocabList.map(w => ({ word: w, phonetic: '/.../', meaning: 'Key vocabulary word' })),
+        vietnameseTranslation: `Hôm nay là một dịp đáng nhớ. Tôi đã cùng ${w0} của mình khám phá chủ đề "${topic}". Trong suốt trải nghiệm sống động này, chúng tôi đã trao đổi những góc nhìn sâu sắc về ${w1} và cuộc sống thường nhật. Trải nghiệm ý nghĩa này đã giúp chúng tôi trân trọng ${w2} từ một góc nhìn hoàn toàn mới. Đó thực sự là một ngày tràn đầy năng lượng và bổ ích.`,
+        vocabularyList: vocabList.map(w => ({ word: w, phonetic: '/.../', meaning: `Key vocabulary in topic ${topic}` })),
         quiz: [
           {
-            question: 'What is Alex\'s occupation in the passage?',
-            options: ['A medical student', 'A coffee barista', 'A hotel manager', 'An English pilot'],
+            question: `What was the primary focus of their day?`,
+            options: [`Exploring the theme of "${topic}"`, 'Staying indoors all day', 'Taking an exam', 'Going to sleep early'],
             correctIndex: 0,
-            explanation: 'Evidence: "Alex, an enthusiastic medical student..."'
+            explanation: `Evidence: "joined hands with my ${w0} to explore ${topic}."`
           },
           {
-            question: 'What were they discussing at the cafe?',
-            options: ['An internship opportunity', 'Buying a new car', 'Booking a flight ticket', 'A soccer match'],
+            question: `Who accompanied the narrator?`,
+            options: [`Their ${w0}`, 'Nobody, went alone', 'A taxi driver', 'A stranger'],
             correctIndex: 0,
-            explanation: 'Evidence: "...they discussed an exciting internship opportunity coming up next semester."'
-          },
-          {
-            question: 'Where did the two friends meet?',
-            options: ['At a bustling local cafe', 'At a hospital', 'At the airport', 'At the library'],
-            correctIndex: 0,
-            explanation: 'Evidence: "...met his childhood friend at a bustling local cafe."'
+            explanation: `Evidence: "I joined hands with my ${w0}..."`
           }
         ]
       };

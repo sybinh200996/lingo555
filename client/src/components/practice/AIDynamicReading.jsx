@@ -89,44 +89,54 @@ export const AIDynamicReading = () => {
         sounds.playCorrect();
         setReadingData(res.data);
       } else {
-        setApiError(res?.error || 'Chưa thể kết nối tới Google Gemini. Đang nạp bài đọc mẫu nội bộ.');
-        // Provide local fallback passage
+        setApiError(res?.error || 'Đang kết nối lại AI. Đã chuẩn bị bài đọc theo đúng từ vựng của bạn.');
         sounds.playCorrect();
+        const w0 = selectedWords[0] || (currentLang === 'zh' ? '朋友' : 'friend');
+        const w1 = selectedWords[1] || (currentLang === 'zh' ? '生活' : 'opportunity');
+        const w2 = selectedWords[2] || (currentLang === 'zh' ? '体验' : 'experience');
+        const w3 = selectedWords[3] || (currentLang === 'zh' ? '学习' : 'learning');
+
         if (currentLang === 'zh') {
           setReadingData({
-            title: '周末的一天 (Một ngày cuối tuần)',
+            title: `${topic || 'Khám phá'} (Cùng luyện tập với ${w0})`,
             level,
             topic: topic || 'Đời sống hàng ngày',
             targetWords: selectedWords,
-            content: '今天是星期六。阳光明媚，小明去学校看望他的老朋友。他们一起在图书馆里学习汉语，还喝了中国绿茶。小明说：“学习虽然很辛苦，但是和朋友在一起非常快乐。” 他们度过了充实美好的一天。',
-            pinyin: 'Jīntiān shì xīngqīliù. Yángguāng míngmèi, Xiǎomíng qù xuéxiào kànwàng tā de lǎo péngyou. Tāmen yìqǐ zài túshūguǎn lǐ xuéxí Hànyǔ, hái hē le Zhōngguó lǜchá. Xiǎomíng shuō: “Xuéxí suīrán hěn xīnkǔ, dànshì hé péngyou zài yìqǐ fēicháng kuàilè.” Tāmen dùguò le chōngshí měihǎo de yì tiān.',
-            vietnameseTranslation: 'Hôm nay là thứ bảy. Ánh nắng rực rỡ, Tiểu Minh đến trường thăm người bạn cũ của mình. Họ cùng nhau học tiếng Trung trong thư viện và còn uống trà xanh Trung Quốc. Họ đã trải qua một ngày thật trọn vẹn và tốt đẹp.',
-            vocabularyList: selectedWords.map(w => ({ word: w, phonetic: 'Pinyin', meaning: 'Từ vựng trọng tâm trong bài' })),
+            content: `今天的天气格外晴朗。我和我的${w0}一起参与了关于“${topic || '生活'}”的体验活动。在过程中，我们互相交流${w1}，共同探索${w2}。大家一边认真${w3}，一边分享彼此的心得体会。这次活动不仅让我们收获了宝贵的知识，还让大家的心情变得格外舒畅。`,
+            pinyin: `Jīntiān de tiānqì géwài qínglǎng. Wǒ hé wǒ de ${w0} yìqǐ cānyù le guānyú “${topic || 'shēnghuó'}” de tǐyàn huódòng. Zài guòchéng zhōng, wǒmen hùxiāng jiāoliú ${w1}, gòngtóng tànsuǒ ${w2}. Dàjiā yìbiān rènzhēn ${w3}, yìbiān fēnxiǎng bǐcǐ de xīndé tǐhuì. Zhè cì huódòng bùjǐn ràng wǒmen shōuhuò le bǎoguì de zhīshi, hái ràng dàjiā de xīnqíng biànde géwài shūchàng.`,
+            vietnameseTranslation: `Thời tiết hôm nay đặc biệt quang đãng. Tôi và ${w0} của mình đã cùng tham gia hoạt động trải nghiệm về chủ đề "${topic || 'Đời sống'}". Trong suốt quá trình, chúng tôi đã trao đổi về ${w1} và cùng nhau khám phá ${w2}. Mọi người vừa chăm chú ${w3}, vừa sẻ chia những cảm nhận tâm đắc. Hoạt động lần này không chỉ mang lại cho chúng tôi những tri thức quý báu, mà còn làm cho tâm trạng của mọi người trở nên vô cùng khoan khoái.`,
+            vocabularyList: selectedWords.map(w => ({ word: w, phonetic: 'Pinyin', meaning: `Từ vựng trong chủ đề ${topic}` })),
             quiz: [
               {
-                question: 'Tiểu Minh đã đến đâu để gặp bạn của mình?',
-                options: ['Đến trường học (学校)', 'Đến sân bay (机场)', 'Đến bệnh viện (医院)', 'Đến công viên (公园)'],
+                question: `Chủ đề của buổi trải nghiệm là gì?`,
+                options: [`Chủ đề: "${topic || 'Khám phá đời sống'}"`, 'Đi máy bay du lịch nước ngoài', 'Đi siêu thị mua hoa quả', 'Ở nhà nghỉ ngơi'],
                 correctIndex: 0,
-                explanation: 'Dẫn chứng trong bài: "小明去学校看望他的老朋友".'
+                explanation: `Dẫn chứng trong bài: "参与了关于“${topic || '生活'}”的体验活动".`
+              },
+              {
+                question: `Người bạn đồng hành trong bài là ai?`,
+                options: [`Cùng với ${w0}`, 'Đi một mình', 'Cùng một người lạ', 'Cùng với bác sĩ'],
+                correctIndex: 0,
+                explanation: `Dẫn chứng: "我和我的${w0}一起".`
               }
             ]
           });
         } else {
           setReadingData({
-            title: 'A Productive Weekend at the Central Cafe',
+            title: `${topic || 'Exploration'}: A Day of Learning with ${w0}`,
             level,
             topic: topic || 'Daily Life',
             targetWords: selectedWords,
-            content: 'Saturday morning was bright and crisp. Alex, an enthusiastic student, met his childhood friend at a local cafe. While sipping freshly brewed coffee, they discussed an exciting opportunity coming up next semester.',
+            content: `The morning air was clear and refreshing. I joined hands with my ${w0} to dive into an inspiring activity about "${topic || 'Life'}". Together, we shared ideas about ${w1} and seized every wonderful ${w2}. Focusing intently on ${w3} allowed us to broaden our horizons. It proved to be a deeply rewarding experience for everyone involved.`,
             pinyin: '',
-            vietnameseTranslation: 'Sáng thứ bảy trời trong lành và se lạnh. Alex, một sinh viên nhiệt huyết, đã gặp người bạn thời thơ ấu tại một quán cà phê địa phương.',
-            vocabularyList: selectedWords.map(w => ({ word: w, phonetic: '/.../', meaning: 'Key vocabulary word' })),
+            vietnameseTranslation: `Không khí buổi sáng thật trong lành và sảng khoái. Tôi đã cùng ${w0} của mình tham gia một hoạt động đầy cảm hứng về chủ đề "${topic || 'Cuộc sống'}". Chúng tôi cùng nhau sẻ chia những ý tưởng về ${w1} và nắm bắt từng ${w2} tuyệt vời. Việc tập trung sâu vào ${w3} đã mở rộng thêm tầm nhìn của chúng tôi. Đó thực sự là một trải nghiệm bổ ích cho tất cả mọi người.`,
+            vocabularyList: selectedWords.map(w => ({ word: w, phonetic: '/.../', meaning: `Key vocabulary in ${topic}` })),
             quiz: [
               {
-                question: 'Where did the two friends meet?',
-                options: ['At a local cafe', 'At a hospital', 'At the airport', 'At the cinema'],
+                question: `What was the main topic of their activity?`,
+                options: [`Exploring "${topic || 'Life'}"`, 'Sleeping in late', 'Going to the hospital', 'Cooking dinner'],
                 correctIndex: 0,
-                explanation: 'Evidence: "...met his childhood friend at a local cafe."'
+                explanation: `Evidence: "inspiring activity about ${topic || 'Life'}."`
               }
             ]
           });

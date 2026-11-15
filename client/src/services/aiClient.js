@@ -214,6 +214,14 @@ class AIClient {
         headers: this.getHeaders(),
         body: JSON.stringify({ prompt, text, level, language })
       });
+      if (!res.ok) {
+        let msg = `Máy chủ phản hồi ${res.status}`;
+        try {
+          const errData = await res.json();
+          msg = errData.error || errData.message || msg;
+        } catch (_) {}
+        return { success: false, error: msg };
+      }
       return await res.json();
     } catch (err) {
       console.warn('reviewWriting fetch error:', err);
@@ -228,6 +236,14 @@ class AIClient {
         headers: this.getHeaders(),
         body: JSON.stringify({ words, topic, level, language })
       });
+      if (!res.ok) {
+        let msg = `Máy chủ phản hồi ${res.status}`;
+        try {
+          const errData = await res.json();
+          msg = errData.error || errData.message || msg;
+        } catch (_) {}
+        return { success: false, error: msg };
+      }
       return await res.json();
     } catch (err) {
       console.warn('generateReading fetch error:', err);
@@ -242,6 +258,14 @@ class AIClient {
         headers: this.getHeaders(),
         body: JSON.stringify({ words, level, language, currentExercises })
       });
+      if (!res.ok) {
+        let msg = `Máy chủ phản hồi ${res.status}`;
+        try {
+          const errData = await res.json();
+          msg = errData.error || errData.message || msg;
+        } catch (_) {}
+        return { success: false, error: msg };
+      }
       return await res.json();
     } catch (err) {
       console.warn('generateLessonVariation fetch error:', err);

@@ -1,0 +1,1283 @@
+const fs = require('fs');
+const path = require('path');
+
+const zhHsk5 = {
+  levelId: 'zh_hsk5',
+  code: 'HSK 5',
+  title: 'HSK 5 - Cao Cấp 1: Đàm Phán Thương Mại, Pháp Lý & Thư Diện Ngữ Chuyên Sâu',
+  lessons: [
+    {
+      id: 'zh_hsk5_l1',
+      title: 'Bài 1: Đàm Phán Thương Mại Quốc Tế & Thư Diện Ngữ 以, 从而',
+      grammarFocus: 'Ngữ pháp văn viết thư diện ngữ: 以 (Để/Bằng cách: 以诚待人, 以促进合作) & 从而 (Từ đó/Qua đó: 优化流程，从而提高生产效率).',
+      vocabularies: [
+        {
+          id: 'zh_h5_1_1',
+          word: '谈判',
+          pronunciation: 'tánpàn',
+          hanViet: 'ĐÀM PHÁN',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Đàm phán thương lượng, cuộc thương lượng',
+          radicals: '谈 (Đàm - nói chuyện) + 判 (Phán - phán xét đánh giá)',
+          grammarNote: 'Bàn đàm phán: 谈判桌. Đàm phán thương mại: 商务谈判.',
+          exampleSentence: {
+            target: '双方代表经过艰苦的商务谈判，最终就关键条款达成了共识。',
+            pronunciation: 'Shuāngfāng dàibiǎo jīngguò jiānkǔ de shāngwù tánpàn, zuìzhōng jiù guānjiàn tiáokuǎn dáchéng le gòngshí.',
+            meaningVi: 'Đại diện hai bên trải qua cuộc đàm phán thương mại gian khổ, cuối cùng đã đạt được sự đồng thuận về các điều khoản then chốt.'
+          }
+        },
+        {
+          id: 'zh_h5_1_2',
+          word: '从而',
+          pronunciation: 'cóng\'ér',
+          hanViet: 'TÙNG NHI',
+          partOfSpeech: 'conjunction',
+          meaningVi: 'Từ đó, qua đó dẫn đến kết quả',
+          radicals: '从 (Tùng - theo đó) + 而 (Nhi - mà)',
+          grammarNote: 'Liên từ thư diện ngữ biểu thị kết quả tự nhiên hoặc mục đích đạt được.',
+          exampleSentence: {
+            target: '企业通过引入先进管理系统降低了运营成本，从而显著增强了核心竞争力。',
+            pronunciation: 'Qǐyè tōngguò yǐnrù xiānjìn guǎnlǐ xìtǒng jiàngdī le yùnyíng chéngběn, cóng\'ér xiǎnzhù zēngqiáng le héxīn jìngzhēnglì.',
+            meaningVi: 'Doanh nghiệp thông qua đưa vào hệ thống quản lý tiên tiến đã hạ thấp chi phí vận hành, từ đó gia tăng rõ rệt sức cạnh tranh cốt lõi.'
+          }
+        },
+        {
+          id: 'zh_h5_1_3',
+          word: '互利共赢',
+          pronunciation: 'hù lì gòng yíng',
+          hanViet: 'HỖ LỢI CỘNG DOANH',
+          partOfSpeech: 'idiom',
+          meaningVi: 'Đôi bên cùng có lợi (Win-Win)',
+          radicals: '互利 (Cùng có lợi cho nhau) + 共赢 (Cùng nhau chiến thắng)',
+          grammarNote: 'Nguyên tắc vàng trong thương mại quốc tế.',
+          exampleSentence: {
+            target: '我们秉持互利共赢的原则，愿与全球合作伙伴共同开拓广阔的市场空间。',
+            pronunciation: 'Wǒmen bǐngchí hùlì gòngyíng de yuánzé, yuàn yǔ quánqiú hézuò huǒbàn gòngtóng kāituò guǎngkuò de shìchǎng kōngjiān.',
+            meaningVi: 'Chúng tôi giữ vững nguyên tắc đôi bên cùng có lợi, sẵn sàng cùng các đối tác toàn cầu mở rộng không gian thị trường rộng lớn.'
+          }
+        },
+        {
+          id: 'zh_h5_1_4',
+          word: '让步',
+          pronunciation: 'ràngbù',
+          hanViet: 'NHƯỢNG BỘ',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Nhượng bộ, lùi một bước để đạt thỏa hiệp',
+          radicals: '让 (Nhượng - nhường lại) + 步 (Bộ - bước chân)',
+          grammarNote: 'Đưa ra sự nhượng bộ: 做出让步.',
+          exampleSentence: {
+            target: '为了促成这项长远战略合作，我方在价格上做出了合理的让步。',
+            pronunciation: 'Wèile cùchéng zhè xiàng chángyuǎn zhànlüè hézuò, wǒfāng zài jiàgé shang zuòchū le hélǐ de ràngbù.',
+            meaningVi: 'Để thúc đẩy hợp tác chiến lược lâu dài này, phía chúng tôi đã đưa ra sự nhượng bộ hợp lý về mặt giá cả.'
+          }
+        },
+        {
+          id: 'zh_h5_1_5',
+          word: '意向',
+          pronunciation: 'yìxiàng',
+          hanViet: 'Ý HƯỚNG',
+          partOfSpeech: 'noun',
+          meaningVi: 'Ý định, ý hướng hợp tác',
+          radicals: '意 (Ý - ý nghĩ) + 向 (Hướng - xu hướng)',
+          grammarNote: 'Thư ngỏ ý định hợp tác: 合作意向书 (Letter of Intent - LOI).',
+          exampleSentence: {
+            target: '双方在博览会开幕当天便签署了总金额达五千万美元的合作意向书。',
+            pronunciation: 'Shuāngfāng zài bólǎnhuì kāimù dāngtiān biàn qiānshǔ le zǒng jīné dá wǔ qiān wàn Měiyuán de hézuò yìxiàngshū.',
+            meaningVi: 'Hai bên ngay ngày khai mạc hội chợ triển lãm đã ký kết bản ghi nhớ ý hướng hợp tác với tổng trị giá lên đến 50 triệu USD.'
+          }
+        },
+        {
+          id: 'zh_h5_1_6',
+          word: '妥协',
+          pronunciation: 'tuǒxié',
+          hanViet: 'THỎA HIỆP',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Thỏa hiệp, cùng nhân nhượng để đạt hòa giải',
+          radicals: '妥 (Thỏa - êm đẹp, ổn thỏa) + 协 (Hiệp - cùng hòa thuận)',
+          grammarNote: 'Không chịu thỏa hiệp: 绝不妥协.',
+          exampleSentence: {
+            target: '成熟的商务谈判往往是在坚持核心底线的前提下寻求务实的妥协。',
+            pronunciation: 'Chéngshú de shāngwù tánpàn wǎngwǎng shì zài jiānchí héxīn dǐxiàn de qiántí xià xúnqiú wùshí de tuǒxié.',
+            meaningVi: 'Cuộc đàm phán thương mại chín chắn thường là tìm kiếm sự thỏa hiệp thực tế trên tiền đề giữ vững lằn ranh đỏ cốt lõi.'
+          }
+        },
+        {
+          id: 'zh_h5_1_7',
+          word: '原则',
+          pronunciation: 'yuánzé',
+          hanViet: 'NGUYÊN TẮC',
+          partOfSpeech: 'noun',
+          meaningVi: 'Nguyên tắc bất di bất dịch',
+          radicals: '原 (Nguyên - nguồn gốc ban đầu) + 则 (Tắc - phép tắc chuẩn mực)',
+          grammarNote: 'Giữ vững nguyên tắc: 坚持原则.',
+          exampleSentence: {
+            target: '在产品质量安全问题上，我们没有任何可以退让的原则空间。',
+            pronunciation: 'Zài chǎnpǐn zhìliàng ānquán wèntí shang, wǒmen méiyǒu rènhé kěyǐ tuìràng de yuánzé kōngjiān.',
+            meaningVi: 'Trên vấn đề chất lượng an toàn sản phẩm, chúng tôi không có bất kỳ không gian nguyên tắc nào có thể lùi bước.'
+          }
+        },
+        {
+          id: 'zh_h5_1_8',
+          word: '以',
+          pronunciation: 'yǐ',
+          hanViet: 'DĨ',
+          partOfSpeech: 'preposition/conjunction',
+          meaningVi: 'Dùng, lấy... để... (thư diện ngữ biểu thị mục đích, phương thức)',
+          radicals: 'Chữ đơn giản cổ tượng hình người dùng đồ vật',
+          grammarNote: 'Văn thư ngoại giao kinh tế rất chuộng dùng: 以期 (để mong), 以便 (để tiện cho).',
+          exampleSentence: {
+            target: '我们必须加快技术研发进度，以满足海内外客户对高性能产品的迫切需求。',
+            pronunciation: 'Wǒmen bìxū jiākuài jìshù yánfā jìndù, yǐ mǎnzú hǎinèiwài kèhù duì gāo xìngnéng chǎnpǐn de pòqiè xūqiú.',
+            meaningVi: 'Chúng ta bắt buộc phải đẩy nhanh tiến độ nghiên cứu kỹ thuật để đáp ứng nhu cầu cấp thiết của khách hàng trong và ngoài nước đối với sản phẩm tính năng cao.'
+          }
+        }
+      ]
+    },
+    {
+      id: 'zh_hsk5_l2',
+      title: 'Bài 2: Ký Kết Hợp Đồng & Điều Khoản Pháp Lý (Thư Diện Ngữ 为, 由)',
+      grammarFocus: 'Thư diện ngữ 为 (wéi - được coi là / trở thành) & 由 (yóu - do ai chịu trách nhiệm: 费用由违约方承担).',
+      vocabularies: [
+        {
+          id: 'zh_h5_2_1',
+          word: '条款',
+          pronunciation: 'tiáokuǎn',
+          hanViet: 'ĐIỀU KHOẢN',
+          partOfSpeech: 'noun',
+          meaningVi: 'Điều khoản trong hợp đồng/văn bản pháp luật',
+          radicals: '条 (Điều - từng mục) + 款 (Khoản - tiết mục chi tiết)',
+          grammarNote: 'Điều khoản bồi thường: 违约责任条款. Điều khoản bảo mật: 保密条款.',
+          exampleSentence: {
+            target: '在签字盖章之前，请法务人员再次逐字审核合同中的每一项条款。',
+            pronunciation: 'Zài qiānzì gàizhāng zhīqián, qǐng fǎwù rényuán zàicì zhúzì shěnhé hétong zhōng de měi yì xiàng tiáokuǎn.',
+            meaningVi: 'Trước khi ký tên đóng dấu, xin mời nhân viên pháp chế một lần nữa rà soát từng chữ từng mục trong các điều khoản hợp đồng.'
+          }
+        },
+        {
+          id: 'zh_h5_2_2',
+          word: '违约',
+          pronunciation: 'wéiyuē',
+          hanViet: 'VI ƯỚC',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Vi phạm hợp đồng, bội ước',
+          radicals: '违 (Vi - làm trái) + 约 (Ước - lời ước hẹn, giao kèo)',
+          grammarNote: 'Tiền phạt vi phạm hợp đồng: 违约金. Bên vi phạm: 违约方.',
+          exampleSentence: {
+            target: '若任何一方单方面中止履行合同，需向守约方支付巨额违约金。',
+            pronunciation: 'Ruò rènhé yì fāng dānfāngmiàn zhōngzhǐ lǚxíng hétong, xū xiàng shǒuyuēfāng zhīfù jù\'é wéiyuējīn.',
+            meaningVi: 'Nếu bất kỳ bên nào đơn phương chấm dứt thực hiện hợp đồng, phải chi trả khoản tiền phạt vi ước khổng lồ cho bên thực hiện đúng hợp đồng.'
+          }
+        },
+        {
+          id: 'zh_h5_2_3',
+          word: '履行',
+          pronunciation: 'lǚxíng',
+          hanViet: 'LÝ HÀNH',
+          partOfSpeech: 'verb',
+          meaningVi: 'Thực thi, thi hành nghĩa vụ hợp đồng',
+          radicals: '履 (Lý - bước chân, thực hiện) + 行 (Hành - tiến hành)',
+          grammarNote: 'Thực hiện nghĩa vụ: 履行义务. Thực hiện hợp đồng: 履行合同.',
+          exampleSentence: {
+            target: '信守承诺、严格履行合同是企业立足商界的立身之本。',
+            pronunciation: 'Xìnshǒu chéngnuò, yángé lǚxíng hétong shì qǐyè lìzú shāngjiè de lìshēn zhī běn.',
+            meaningVi: 'Giữ trọn lời hứa, thực thi nghiêm ngặt hợp đồng là cái gốc đứng vững của doanh nghiệp trên thương trường.'
+          }
+        },
+        {
+          id: 'zh_h5_2_4',
+          word: '生效',
+          pronunciation: 'shēngxiào',
+          hanViet: 'SINH HIỆU',
+          partOfSpeech: 'verb',
+          meaningVi: 'Có hiệu lực pháp lý',
+          radicals: '生 (Sinh - phát sinh) + 效 (Hiệu - hiệu lực)',
+          grammarNote: 'Bắt đầu có hiệu lực: 正式生效. Hết hiệu lực: 失效.',
+          exampleSentence: {
+            target: '本协议自甲乙双方法定代表人签字并加盖公章之日起正式生效。',
+            pronunciation: 'Běn xiéyì zì Jiǎ-Yǐ shuāngfāng fǎdìng dàibiǎorén qiānzì bìng jiāgài gōngzhāng zhī rì qǐ zhèngshì shēngxiào.',
+            meaningVi: 'Thỏa thuận này chính thức có hiệu lực kể từ ngày người đại diện theo pháp luật của hai bên Bên A và Bên B ký tên và đóng dấu pháp nhân.'
+          }
+        },
+        {
+          id: 'zh_h5_2_5',
+          word: '甲方',
+          pronunciation: 'jiǎfāng',
+          hanViet: 'GIÁP PHƯƠNG',
+          partOfSpeech: 'noun',
+          meaningVi: 'Bên A (trong hợp đồng pháp lý)',
+          radicals: '甲 (Giáp - vị trí thứ nhất trong Thập can) + 方 (Bên)',
+          grammarNote: 'Bên B: 乙方. Bên C (bên thứ ba): 丙方.',
+          exampleSentence: {
+            target: '甲方承诺在收到合格货物后的五个工作日内向乙方支付全部尾款。',
+            pronunciation: 'Jiǎfāng chéngnuò zài shōudào hégé huòwù hòu de wǔ ge gōngzuòrì nèi xiàng Yǐfāng zhīfù quánbù wěikuǎn.',
+            meaningVi: 'Bên A cam kết trong vòng 5 ngày làm việc sau khi nhận được hàng đạt chuẩn sẽ thanh toán toàn bộ số tiền còn lại cho Bên B.'
+          }
+        },
+        {
+          id: 'zh_h5_2_6',
+          word: '争议',
+          pronunciation: 'zhēngyì',
+          hanViet: 'TRANH NGHỊ',
+          partOfSpeech: 'noun/verb',
+          meaningVi: 'Tranh chấp, bất đồng quan điểm pháp lý',
+          radicals: '争 (Tranh - tranh giành) + 议 (Nghị - tranh luận)',
+          grammarNote: 'Giải quyết tranh chấp: 争议解决. Trọng tài thương mại: 仲裁 (zhòngcái).',
+          exampleSentence: {
+            target: '因本合同引起的或与本合同有关的任何争议，双方应首先通过友好协商解决。',
+            pronunciation: 'Yīn běn hétong yǐnqǐ de huò yǔ běn hétong yǒuguān de rènhé zhēngyì, shuāngfāng yīng shǒuxiān tōngguò yǒuhǎo xiéshāng jiějué.',
+            meaningVi: 'Bất kỳ tranh chấp nào phát sinh do hoặc liên quan đến hợp đồng này, hai bên trước tiên cần giải quyết thông qua hiệp thương hữu nghị.'
+          }
+        },
+        {
+          id: 'zh_h5_2_7',
+          word: '由',
+          pronunciation: 'yóu',
+          hanViet: 'DO',
+          partOfSpeech: 'preposition',
+          meaningVi: 'Do... đảm nhận, bởi... phụ trách (thư diện ngữ)',
+          radicals: 'Tự nhiên từ nguồn gốc',
+          grammarNote: 'Cấu trúc thư diện ngữ trang trọng: 由+Chủ thể+Động từ: 该项费用由承运人承担.',
+          exampleSentence: {
+            target: '因不可抗力导致货物受损的一切责任，由承保的保险公司负责赔偿。',
+            pronunciation: 'Yīn bùkěkànglì dǎozhì huòwù shòusǔn de yíqiè zérèn, yóu chéngbǎo de bǎoxiǎn gōngsī fùzé péicháng.',
+            meaningVi: 'Mọi trách nhiệm hàng hóa hư hại do trường hợp bất khả kháng, do công ty bảo hiểm nhận bảo hiểm chịu trách nhiệm bồi thường.'
+          }
+        },
+        {
+          id: 'zh_h5_2_8',
+          word: '为',
+          pronunciation: 'wéi',
+          hanViet: 'VI / VỊ',
+          partOfSpeech: 'verb/preposition',
+          meaningVi: 'Làm, coi như, trở thành (thư diện ngữ)',
+          radicals: 'Chữ Hán phồn thể 為',
+          grammarNote: 'Văn phong văn bản: 以...为准 (Lấy... làm chuẩn).',
+          exampleSentence: {
+            target: '若中英文两个版本产生歧义，一律以中文正本的内容为准。',
+            pronunciation: 'Ruò Zhōng-Yīng liǎng ge bǎnběn chǎnshēng qíyì, yílǜ yǐ Zhōngwén zhèngběn de nèiróng wéizhǔn.',
+            meaningVi: 'Nếu giữa hai phiên bản tiếng Trung và tiếng Anh nảy sinh cách hiểu khác nhau, hoàn toàn lấy nội dung bản gốc tiếng Trung làm chuẩn.'
+          }
+        }
+      ]
+    },
+    {
+      id: 'zh_hsk5_l3',
+      title: 'Bài 3: Phân Tích Thị Trường Chứng Khoán & Thư Diện Ngữ 在于, 进而',
+      grammarFocus: 'Thư diện ngữ 在于 (Zàiyú - Nằm ở chỗ: 成功的关键在于细节) & 进而 (Jìn\'ér - Hơn nữa/Tiến thêm một bước: 深入调研，进而制定长远策略).',
+      vocabularies: [
+        {
+          id: 'zh_h5_3_1',
+          word: '股票',
+          pronunciation: 'gǔpiào',
+          hanViet: 'CỔ PHIẾU',
+          partOfSpeech: 'noun',
+          meaningVi: 'Cổ phiếu trên thị trường chứng khoán',
+          radicals: '股 (Cổ - phần chia) + 票 (Phiếu - chứng thư)',
+          grammarNote: 'Thị trường chứng khoán: 股市. Mua bán cổ phiếu: 炒股.',
+          exampleSentence: {
+            target: '股市投资具有较高的收益潜力，但同时也伴随着不可忽视的市场风险。',
+            pronunciation: 'Gǔshì tóuzī jùyǒu gāodāng de shōuyì qiánlì, dàn tóngshí yě bànsuízhe bù kě hūshì de shìchǎng fēngxiǎn.',
+            meaningVi: 'Đầu tư chứng khoán có tiềm năng thu lợi nhuận cao, nhưng đồng thời cũng kèm theo rủi ro thị trường không thể xem nhẹ.'
+          }
+        },
+        {
+          id: 'zh_h5_3_2',
+          word: '波动',
+          pronunciation: 'bōdòng',
+          hanViet: 'BA ĐỘNG',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Biến động, dao động lên xuống',
+          radicals: '波 (Ba - làn sóng nước) + 动 (Động - chuyển động)',
+          grammarNote: 'Biến động giá: 价格剧烈波动.',
+          exampleSentence: {
+            target: '受国际大宗商品价格波动的影响，原油进口成本大幅攀升。',
+            pronunciation: 'Shòu guójì dàzōng shāngpǐn jiàgé bōdòng de yǐngxiǎng, yuányóu jìnkǒu chéngběn dàfú pānshēng.',
+            meaningVi: 'Chịu ảnh hưởng bởi biến động giá hàng hóa cơ bản quốc tế, chi phí nhập khẩu dầu thô đã tăng mạnh.'
+          }
+        },
+        {
+          id: 'zh_h5_3_3',
+          word: '指数',
+          pronunciation: 'zhǐshù',
+          hanViet: 'CHỈ SỐ',
+          partOfSpeech: 'noun',
+          meaningVi: 'Chỉ số đo lường kinh tế/thị trường',
+          radicals: '指 (Chỉ - chỉ tay, biểu thị) + 数 (Số - số liệu)',
+          grammarNote: 'Chỉ số giá tiêu dùng: 居民消费价格指数 (CPI). Chỉ số chứng khoán: 上证指数.',
+          exampleSentence: {
+            target: '上证综合指数在利好政策的推动下连续突破多个关键阻力位。',
+            pronunciation: 'Shàngzhèng zōnghé zhǐshù zài lìhǎo zhèngcè de tuīdòng xià liánxù tūpò duō ge guānjiàn zǔlìwèi.',
+            meaningVi: 'Chỉ số tổng hợp Thượng Hải dưới sự thúc đẩy của chính sách có lợi đã liên tục bứt phá qua nhiều ngưỡng kháng cự then chốt.'
+          }
+        },
+        {
+          id: 'zh_h5_3_4',
+          word: '在于',
+          pronunciation: 'zàiyú',
+          hanViet: 'TẠI Ư',
+          partOfSpeech: 'verb',
+          meaningVi: 'Cốt lõi nằm ở chỗ, do... quyết định (thư diện ngữ)',
+          radicals: '在 (Tại - ở) + 于 (Ư - tại)',
+          grammarNote: 'Cụm từ kinh điển: 问题的核心在于...',
+          exampleSentence: {
+            target: '价值投资的精髓不仅在于发现被低估的企业，更在于能够耐得住寂寞长期持有。',
+            pronunciation: 'Jiàzhí tóuzī de jīngsuǐ bùjǐn zàiyú fāxiàn bèi dīgū de qǐyè, gèng zàiyú nénggòu nài de zhù jìmò chángqī chíyǒu.',
+            meaningVi: 'Tinh hoa của đầu tư giá trị không chỉ nằm ở việc phát hiện doanh nghiệp bị định giá thấp, mà hơn thế còn nằm ở việc có thể chịu đựng được sự cô đơn để nắm giữ dài hạn.'
+          }
+        },
+        {
+          id: 'zh_h5_3_5',
+          word: '进而',
+          pronunciation: 'jìn\'ér',
+          hanViet: 'TIẾN NHI',
+          partOfSpeech: 'conjunction',
+          meaningVi: 'Tiến thêm một bước, sau đó hơn nữa (thư diện ngữ)',
+          radicals: '进 (Tiến - tiến lên) + 而 (Nhi - mà)',
+          grammarNote: 'Biểu thị sự phát triển nâng cao lên nấc thang tiếp theo.',
+          exampleSentence: {
+            target: '央行下调存款准备金率以释放流动性，进而刺激实体经济的信贷增长。',
+            pronunciation: 'Yāngháng xiàtiáo cúnkuǎn zhǔnbèijīn lǜ yǐ shìfàng liúdòngxìng, jìn\'ér cìjī shítǐ jīngjì de xìndài zēngzhǎng.',
+            meaningVi: 'Ngân hàng trung ương hạ tỷ lệ dự trữ bắt buộc để giải phóng thanh khoản, tiến thêm một bước kích thích tăng trưởng tín dụng cho nền kinh tế thực.'
+          }
+        },
+        {
+          id: 'zh_h5_3_6',
+          word: '牛市',
+          pronunciation: 'niúshì',
+          hanViet: 'NGƯU THỊ',
+          partOfSpeech: 'noun',
+          meaningVi: 'Thị trường giá lên, thị trường bò tót (Bull market)',
+          radicals: '牛 (Ngưu - con bò húc sừng lên) + 市 (Thị - thị trường)',
+          grammarNote: 'Trái nghĩa: 熊市 (xióngshì - thị trường gấu đập xuống, Bear market).',
+          exampleSentence: {
+            target: '伴随着经济数据的全面回暖，很多分析师预测新一轮结构性牛市即将来临。',
+            pronunciation: 'Bànsuízhe jīngjì shùjù de quánmiàn huínuǎn, hěn duō fēnxīshī yùcè xīn yì lún jiégòuxìng niúshì jíjiāng láilín.',
+            meaningVi: 'Đi kèm với số liệu kinh tế ấm lên toàn diện, rất nhiều chuyên gia phân tích dự đoán một đợt thị trường bò tót mang tính cấu trúc mới sắp sửa kéo đến.'
+          }
+        },
+        {
+          id: 'zh_h5_3_7',
+          word: '资产',
+          pronunciation: 'zīchǎn',
+          hanViet: 'TƯ SẢN',
+          partOfSpeech: 'noun',
+          meaningVi: 'Tài sản',
+          radicals: '资 (Tư - tiền tài) + 产 (Sản - sản nghiệp)',
+          grammarNote: 'Phân bổ tài sản: 资产配置. Quản lý tài sản: 资产管理.',
+          exampleSentence: {
+            target: '合理的多元化资产配置能够有效平滑投资组合的整体收益波动。',
+            pronunciation: 'Hélǐ de duōyuánhuà zīchǎn pèizhì nénggòu yǒuxiào pínghuá tóuzī zǔhé de zhěngtǐ shōuyì bōdòng.',
+            meaningVi: 'Phân bổ tài sản đa dạng hóa hợp lý có thể làm mượt mà sự biến động lợi nhuận tổng thể của danh mục đầu tư một cách hiệu quả.'
+          }
+        },
+        {
+          id: 'zh_h5_3_8',
+          word: '收益',
+          pronunciation: 'shōuyì',
+          hanViet: 'THU ÍCH',
+          partOfSpeech: 'noun',
+          meaningVi: 'Lợi nhuận thu được, tỷ suất sinh lời',
+          radicals: '收 (Thu - nhận về) + 益 (Ích - lợi ích)',
+          grammarNote: 'Lợi nhuận đi kèm rủi ro: 高风险高收益.',
+          exampleSentence: {
+            target: '投资者在追求高额预期收益的同时，绝不可忽视本金的安全保障。',
+            pronunciation: 'Tóuzīzhě zài zhuīqiú gāo\'é yùqī shōuyì de tóngshí, jué bù kě hūshì běnjīn de ānquán bǎozhàng.',
+            meaningVi: 'Các nhà đầu tư khi mưu cầu lợi nhuận kỳ vọng cao ngất, tuyệt đối không được xem nhẹ bảo đảm an toàn cho số vốn gốc.'
+          }
+        }
+      ]
+    },
+    {
+      id: 'zh_hsk5_l4',
+      title: 'Bài 4: Triết Lý Nhân Sinh & Thư Diện Ngữ 未免, 何必',
+      grammarFocus: 'Thư diện ngữ 未免 (Wèimiǎn - Không tránh khỏi/Có phần hơi quá: 这样评价未免有失偏颇) & 何必 (Hébì - Hà tất/Cần gì phải: 既然已经尽力，又何必自责).',
+      vocabularies: [
+        {
+          id: 'zh_h5_4_1',
+          word: '未免',
+          pronunciation: 'wèimiǎn',
+          hanViet: 'VỊ MIỄN',
+          partOfSpeech: 'adverb',
+          meaningVi: 'Không tránh khỏi, e rằng hơi quá (dùng giảm bớt sự gay gắt)',
+          radicals: '未 (Vị - chưa) + 免 (Miễn - tránh khỏi)',
+          grammarNote: 'Thường đứng trước tính từ: 未免太严格, 未免有点过分.',
+          exampleSentence: {
+            target: '仅仅凭一次偶然的失误就全盘否定一个人的能力，未免太武断了。',
+            pronunciation: 'Jǐnjǐn píng yí cì ǒurán de shīwù jiù quánpán fǒudìng yí ge rén de nénglì, wèimiǎn tài wǔduàn le.',
+            meaningVi: 'Chỉ dựa vào một lần sai sót ngẫu nhiên mà đã phủ định sạch trơn năng lực của một con người, e rằng có phần quá độc đoán.'
+          }
+        },
+        {
+          id: 'zh_h5_4_2',
+          word: '何必',
+          pronunciation: 'hébì',
+          hanViet: 'HÀ TẤT',
+          partOfSpeech: 'adverb',
+          meaningVi: 'Hà tất, việc gì phải, đâu cần thiết',
+          radicals: '何 (Hà - cái gì, làm sao) + 必 (Tất - nhất thiết)',
+          grammarNote: 'Phó từ phản vấn biểu thị việc đó là không cần thiết: 何必当初 (Hà tất lúc đầu).',
+          exampleSentence: {
+            target: '过去的事情既然无法挽回，我们又何必整天沉浸在痛苦的悔恨之中？',
+            pronunciation: 'Guòqu de shìqing jìrán wúfǎ wǎnhuí, wǒmen yòu hébì zhěngtiān chénjìn zài tòngkǔ de huǐhèn zhīzhōng?',
+            meaningVi: 'Những chuyện trong quá khứ một khi đã không thể vãn hồi, chúng ta hà tất phải chìm đắm trong ân hận đau đớn cả ngày?'
+          }
+        },
+        {
+          id: 'zh_h5_4_3',
+          word: '境界',
+          pronunciation: 'jìngjiè',
+          hanViet: 'CẢNH GIỚI',
+          partOfSpeech: 'noun',
+          meaningVi: 'Cảnh giới tinh thần, tầng bậc nhận thức',
+          radicals: '境 (Cảnh - cõi lòng) + 界 (Giới - ranh giới)',
+          grammarNote: 'Cảnh giới tư tưởng: 思想境界.',
+          exampleSentence: {
+            target: '宠辱不惊、去留无意，展现的是一种超然物外的人生崇高境界。',
+            pronunciation: 'Chǒngrǔbùjīng, qùliúwúyì, zhǎnxiàn de shì yì zhǒng chāoránwùwài de rénshēng chónggāo jìngjiè.',
+            meaningVi: 'Vinh hay nhục đều không kinh sợ, đi hay ở chẳng bận lòng, thể hiện một cảnh giới nhân sinh thanh cao siêu thoát sự đời.'
+          }
+        },
+        {
+          id: 'zh_h5_4_4',
+          word: '豁达',
+          pronunciation: 'huòdá',
+          hanViet: 'HOÁT ĐẠT',
+          partOfSpeech: 'adj',
+          meaningVi: 'Khoáng đạt, cởi mở bao dung',
+          radicals: '豁 (Hoát - rộng mở) + 达 (Đạt - thông đạt)',
+          grammarNote: 'Tâm thái khoáng đạt: 豁达的心态.',
+          exampleSentence: {
+            target: '面对人生的坎坷与逆境，保持豁达乐观的心境至关重要。',
+            pronunciation: 'Miànduì rénshēng de kǎnkě yǔ nìjìng, bǎochí huòdá lèguān de xīnjìng zhìguān zhòngyào.',
+            meaningVi: 'Đối mặt với những gập ghềnh và nghịch cảnh của đời người, giữ được tâm trạng khoáng đạt lạc quan là vô cùng hệ trọng.'
+          }
+        },
+        {
+          id: 'zh_h5_4_5',
+          word: '舍得',
+          pronunciation: 'shěde',
+          hanViet: 'XẢ ĐẮC',
+          partOfSpeech: 'verb',
+          meaningVi: 'Sẵn sàng từ bỏ, xả được (Triết lý Có buông bỏ mới có nhận lại)',
+          radicals: '舍 (Xả - buông bỏ, cho đi) + 得 (Đắc - nhận lại, đạt được)',
+          grammarNote: 'Thành ngữ: 有舍才有得 (Có xả mới có đắc).',
+          exampleSentence: {
+            target: '在人生的重要十字路口，唯有懂得舍得，才能拥有更加广阔的天地。',
+            pronunciation: 'Zài rénshēng de zhòngyào shízì lùkǒu, wéiyǒu dǒngde shěde, cái néng yōngyǒu gèngjiā guǎngkuò de tiāndì.',
+            meaningVi: 'Tại ngã tư đường quan trọng của cuộc đời, chỉ khi hiểu được triết lý buông xả, mới có thể sở hữu một chân trời rộng mở hơn.'
+          }
+        },
+        {
+          id: 'zh_h5_4_6',
+          word: '品德',
+          pronunciation: 'pǐndé',
+          hanViet: 'PHẨM ĐỨC',
+          partOfSpeech: 'noun',
+          meaningVi: 'Phẩm chất đạo đức của người quân tử',
+          radicals: '品 (Phẩm - phẩm cách) + 德 (Đức - đạo đức)',
+          grammarNote: 'Phẩm đức cao thượng: 高尚的品德.',
+          exampleSentence: {
+            target: '才华固然重要，但优秀的品德才是决定一个人能走多远的根本。',
+            pronunciation: 'Cáihuá gùrán zhòngyào, dàn yōuxiù de pǐndé cái shì juédìng yí ge rén néng zǒu duō yuǎn de gēnběn.',
+            meaningVi: 'Tài năng tất nhiên quan trọng, nhưng phẩm đức xuất sắc mới là gốc rễ quyết định một con người có thể đi xa đến đâu.'
+          }
+        },
+        {
+          id: 'zh_h5_4_7',
+          word: '从容',
+          pronunciation: 'cóngróng',
+          hanViet: 'THUNG DUNG',
+          partOfSpeech: 'adj/adverb',
+          meaningVi: 'Thong thả ung dung, điềm tĩnh',
+          radicals: '从 (Thung - thong thả) + 容 (Dung - dung mạo)',
+          grammarNote: 'Đối mặt bình thản: 从容面对.',
+          exampleSentence: {
+            target: '真正有智慧的人无论身处顺境还是逆境，都能做到从容自若。',
+            pronunciation: 'Zhēnzhèng yǒu zhìhuì de rén wúlùn shēnchǔ shùnjìng háishì nìjìng, dōu néng zuòdào cóngróng zìruò.',
+            meaningVi: 'Người thực sự có trí tuệ bất luận đang ở trong thuận cảnh hay nghịch cảnh, đều có thể ung dung điềm đạm như không.'
+          }
+        },
+        {
+          id: 'zh_h5_4_8',
+          word: '修养',
+          pronunciation: 'xiūyǎng',
+          hanViet: 'TU DƯỠNG',
+          partOfSpeech: 'noun/verb',
+          meaningVi: 'Sự tu dưỡng, hàm dưỡng văn hóa và nhân cách',
+          radicals: '修 (Tu - trau dồi sửa mình) + 养 (Dưỡng - nuôi dưỡng tâm tính)',
+          grammarNote: 'Có tu dưỡng cao: 很有修养.',
+          exampleSentence: {
+            target: '在公共场合不大声喧哗并主动考虑他人的感受，是一个人良好修养的体现。',
+            pronunciation: 'Zài gōnggòng chǎnghé bú dàshēng xuānhuá bìng zhǔdòng kǎolǜ tārén de gǎnshòu, shì yí ge rén liánghǎo xiūyǎng de tǐxiàn.',
+            meaningVi: 'Ở nơi công cộng không nói cười ồn ào và chủ động nghĩ cho cảm nhận của người khác là sự thể hiện tu dưỡng tốt đẹp của một con người.'
+          }
+        }
+      ]
+    },
+    {
+      id: 'zh_hsk5_l5',
+      title: 'Bài 5: Quản Trị Rủi Ro & Phân Biệt Từ Đồng Nghĩa 辨别 vs 鉴别',
+      grammarFocus: 'Phân biệt từ đồng nghĩa cao cấp: 辨别 (Biànbié - Phân biệt đúng sai, phương hướng) vs 鉴别 (Jiànbié - Giám định, thẩm định chuyên môn thật giả: 鉴别真伪, 鉴别文物).',
+      vocabularies: [
+        {
+          id: 'zh_h5_5_1',
+          word: '鉴别',
+          pronunciation: 'jiànbié',
+          hanViet: 'GIÁM BIỆT',
+          partOfSpeech: 'verb',
+          meaningVi: 'Giám định, thẩm định chuyên sâu phân định thật giả',
+          radicals: '鉴 (Giám - soi xét gương đồng, kiểm định) + 别 (Biệt - phân biệt)',
+          grammarNote: 'Khác với 辨别 (chỉ phân biệt thông thường bằng mắt/tai). 鉴别文物, 鉴别真伪.',
+          exampleSentence: {
+            target: '专家通过科学的光谱分析技术，成功鉴别出了这幅古画的真伪。',
+            pronunciation: 'Zhuānjiā tōngguò kēxué de guāngpǔ fēnxī jìshù, chénggōng jiànbié chū le zhè fú gǔhuà de zhēnwěi.',
+            meaningVi: 'Chuyên gia thông qua kỹ thuật phân tích quang phổ khoa học đã giám định thành công thật giả của bức tranh cổ này.'
+          }
+        },
+        {
+          id: 'zh_h5_5_2',
+          word: '危机',
+          pronunciation: 'wēijī',
+          hanViet: 'NGUY CƠ',
+          partOfSpeech: 'noun',
+          meaningVi: 'Khủng hoảng, mối nguy cơ tiềm ẩn',
+          radicals: '危 (Nguy - nguy hiểm) + 机 (Cơ - cơ hội tiềm tàng)',
+          grammarNote: 'Xử lý khủng hoảng PR: 危机公关. Khủng hoảng tài chính: 金融危机.',
+          exampleSentence: {
+            target: '企业公关部门在突发舆论危机爆发后两小时内迅速发布了声明。',
+            pronunciation: 'Qǐyè gōngguān bùmén zài tūfā yúlùn wēijī bàofā hòu liǎng xiǎoshí nèi xùnsù fābù le shēngmíng.',
+            meaningVi: 'Phòng quan hệ công chúng của doanh nghiệp trong vòng 2 giờ sau khi nổ ra khủng hoảng dư luận đột xuất đã nhanh chóng phát đi thông cáo.'
+          }
+        },
+        {
+          id: 'zh_h5_5_3',
+          word: '预警',
+          pronunciation: 'yùjǐng',
+          hanViet: 'DỰ CẢNH',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Cảnh báo sớm, dự báo nguy cơ',
+          radicals: '预 (Dự - chuẩn bị trước) + 警 (Cảnh - cảnh giác, báo động)',
+          grammarNote: 'Cơ chế cảnh báo rủi ro: 风险预警机制.',
+          exampleSentence: {
+            target: '建立健全财务风险预警系统能帮助管理层及时防范资金链断裂的危险。',
+            pronunciation: 'Jiànlì jiànquán cáiwù fēngxiǎn yùjǐng xìtǒng néng bāngzhù guǎnlǐcéng jíshí fángfàn zījīnliàn duànliè de wēixiǎn.',
+            meaningVi: 'Xây dựng hoàn thiện hệ thống cảnh báo sớm rủi ro tài chính có thể giúp ban quản trị kịp thời phòng ngừa nguy cơ đứt gãy chuỗi dòng tiền.'
+          }
+        },
+        {
+          id: 'zh_h5_5_4',
+          word: '公关',
+          pronunciation: 'gōngguān',
+          hanViet: 'CÔNG QUAN',
+          partOfSpeech: 'noun',
+          meaningVi: 'Quan hệ công chúng (Public Relations - PR)',
+          radicals: '公 (Công - công chúng) + 关 (Quan - quan hệ)',
+          grammarNote: 'Thường nói: 做好危机公关 (Làm tốt PR khủng hoảng).',
+          exampleSentence: {
+            target: '诚恳透明的沟通态度是做好企业危机公关的最有效钥匙。',
+            pronunciation: 'Chéngkěn tòumíng de gōutōng tàidu shì zuò hǎo qǐyè wēijī gōngguān de zuì yǒuxiào yàoshi.',
+            meaningVi: 'Thái độ giao tiếp chân thành và minh bạch là chiếc chìa khóa hiệu quả nhất để làm tốt PR khủng hoảng doanh nghiệp.'
+          }
+        },
+        {
+          id: 'zh_h5_5_5',
+          word: '声誉',
+          pronunciation: 'shēngyù',
+          hanViet: 'THANH DỰ',
+          partOfSpeech: 'noun',
+          meaningVi: 'Danh tiếng, uy tín thương hiệu',
+          radicals: '声 (Thanh - danh tiếng vang xa) + 誉 (Dự - ca ngợi khen ngợi)',
+          grammarNote: 'Tổn hại danh tiếng: 损害企业声誉.',
+          exampleSentence: {
+            target: '良好的商业声誉需要数十年如一日的积累，毁掉它却往往只需要几分钟。',
+            pronunciation: 'Liánghǎo de shāngyè shēngyù xūyào shù shí nián rú yí rì de jīlěi, huǐdiào tā què wǎngwǎng zhǐ xūyào jǐ fēnzhōng.',
+            meaningVi: 'Danh tiếng thương mại tốt đẹp cần tích lũy mấy chục năm như một, nhưng phá hủy nó lại thường chỉ cần vài phút.'
+          }
+        },
+        {
+          id: 'zh_h5_5_6',
+          word: '妥善',
+          pronunciation: 'tuǒshàn',
+          hanViet: 'THỎA THIỆN',
+          partOfSpeech: 'adj/adverb',
+          meaningVi: 'Thỏa đáng, chu toàn vẹn toàn',
+          radicals: '妥 (Thỏa - êm đẹp) + 善 (Thiện - tốt lành)',
+          grammarNote: 'Xử lý ổn thỏa: 妥善处理.',
+          exampleSentence: {
+            target: '经过管理层的妥善安置，客户对于本次系统故障的赔偿方案表示满意。',
+            pronunciation: 'Jīngguò guǎnlǐcéng de tuǒshàn ānzhì, kèhù duìyú běncì xìtǒng gùzhàng de péicháng fāng\'àn biǎoshì mǎnyì.',
+            meaningVi: 'Sau sự thu xếp thỏa đáng của ban quản lý, khách hàng đã bày tỏ hài lòng đối với phương án bồi thường sự cố hệ thống lần này.'
+          }
+        },
+        {
+          id: 'zh_h5_5_7',
+          word: '辨别',
+          pronunciation: 'biànbié',
+          hanViet: 'BIỆN BIỆT',
+          partOfSpeech: 'verb',
+          meaningVi: 'Nhận biết, phân biệt thông thường',
+          radicals: '辨 (Biện - phân tích) + 别 (Biệt - rạch ròi)',
+          grammarNote: 'Phân biệt đúng sai: 辨别是非. Phân biệt phương hướng: 辨别方向.',
+          exampleSentence: {
+            target: '在纷繁复杂的网络信息中，我们应当培养自己独立辨别真伪是非的能力。',
+            pronunciation: 'Zài fēnfán fùzá de wǎngluò xìnxī zhōng, wǒmen yīngdāng péiyǎng zìjǐ dúlì biànbié zhēnwěi shìfēi de nénglì.',
+            meaningVi: 'Giữa thông tin mạng bề bộn phức tạp, chúng ta nên bồi dưỡng năng lực độc lập phân biệt thật giả đúng sai của chính mình.'
+          }
+        },
+        {
+          id: 'zh_h5_5_8',
+          word: '对策',
+          pronunciation: 'duìcè',
+          hanViet: 'ĐỐI SÁCH',
+          partOfSpeech: 'noun',
+          meaningVi: 'Đối sách, biện pháp ứng phó',
+          radicals: '对 (Đối - ứng đối) + 策 (Sách - mưu sách, kế sách)',
+          grammarNote: 'Binh pháp tục ngữ: 兵来将挡，水来土掩 (Có đối sách cho mọi biến cố).',
+          exampleSentence: {
+            target: '面对竞争对手挑起的价格战，公司董事会迅速研究并制定出了强有力的应对对策。',
+            pronunciation: 'Miànduì jìngzhēng duìshǒu tiǎoqǐ de jiàgézhàn, gōngsī dǒngshìhuì xùnsù yánjiū bìng zhìdìng chū le qiángyǒulì de yìngduì duìcè.',
+            meaningVi: 'Đối mặt với cuộc chiến giá cả do đối thủ cạnh tranh khơi mào, hội đồng quản trị công ty đã nhanh chóng nghiên cứu và vạch ra đối sách ứng phó mạnh mẽ.'
+          }
+        }
+      ]
+    },
+    {
+      id: 'zh_hsk5_l6',
+      title: 'Bài 6: Báo Chí Chính Luận & Cấu Trúc Nhấn Mạnh 固然...但是...',
+      grammarFocus: 'Cấu trúc tương phản 固然...但是...: Dẫu rằng... là đúng nhưng... (经济增长固然重要，但是环境保护更是长远大计).',
+      vocabularies: [
+        {
+          id: 'zh_h5_6_1',
+          word: '舆论',
+          pronunciation: 'yúlùn',
+          hanViet: 'DƯ LUẬN',
+          partOfSpeech: 'noun',
+          meaningVi: 'Dư luận xã hội, tiếng nói công chúng',
+          radicals: '舆 (Dư - cỗ xe chở đông người, đại chúng) + 论 (Luận - bàn luận)',
+          grammarNote: 'Định hướng dư luận: 引导舆论. Dư luận xã hội: 社会舆论.',
+          exampleSentence: {
+            target: '新闻媒体在针砭时弊和引导健康社会舆论方面发挥着不可替代的作用。',
+            pronunciation: 'Xīnwén méitǐ zài zhēnbiān shíbì hé yǐndǎo jiànkāng shèhuì yúlùn fāngmiàn fāhuīzhe bù kě tìdài de zuòyòng.',
+            meaningVi: 'Báo chí truyền thông trong việc châm biếm tệ nạn thời cuộc và định hướng dư luận xã hội lành mạnh đang phát huy tác dụng không thể thay thế.'
+          }
+        },
+        {
+          id: 'zh_h5_6_2',
+          word: '固然',
+          pronunciation: 'gùrán',
+          hanViet: 'CỐ NHIÊN',
+          partOfSpeech: 'conjunction',
+          meaningVi: 'Tất nhiên, dẫu biết rằng như vậy là đúng',
+          radicals: '固 (Cố - kiên cố, chắc chắn) + 然 (Nhiên - như thế)',
+          grammarNote: 'Thư diện ngữ thừa nhận vế trước để chuyển ý mạnh ở vế sau với 但是/可是.',
+          exampleSentence: {
+            target: '追求短期的经济效益固然重要，但是走绿色可持续发展道路才是关乎子孙后代的千秋大业。',
+            pronunciation: 'Zhuīqiú duǎnqī de jīngjì xiàoyì gùrán zhòngyào, dànshì zǒu lǜsè kěchíxù fāzhǎn dàolù cái shì guānhū zǐsūn hòudài de qiānqiū dàyè.',
+            meaningVi: 'Mưu cầu hiệu ích kinh tế ngắn hạn dẫu rằng quan trọng, nhưng đi theo con đường phát triển xanh bền vững mới là đại nghiệp ngàn thu liên quan đến con cháu mai sau.'
+          }
+        },
+        {
+          id: 'zh_h5_6_3',
+          word: '深度',
+          pronunciation: 'shēndù',
+          hanViet: 'THÂM ĐỘ',
+          partOfSpeech: 'noun/adj',
+          meaningVi: 'Chiều sâu phân tích, sâu sắc',
+          radicals: '深 (Thâm - sâu thẳm) + 度 (Độ - mức độ)',
+          grammarNote: 'Phóng sự chuyên sâu: 深度报道. Tư duy sâu sắc: 深度思考.',
+          exampleSentence: {
+            target: '这篇深度调查报道揭露了行业内部鲜为人知的灰色产业链。',
+            pronunciation: 'Zhè piān shēndù diàochá bàodào jiēlù le hángyè nèibù xiǎnwéirénzhī de huīsè chǎnyèliàn.',
+            meaningVi: 'Bản tin điều tra chuyên sâu này đã vạch trần chuỗi ngành nghề màu xám ít người biết đến bên trong ngành.'
+          }
+        },
+        {
+          id: 'zh_h5_6_4',
+          word: '焦点',
+          pronunciation: 'jiāodiǎn',
+          hanViet: 'TIÊU ĐIỂM',
+          partOfSpeech: 'noun',
+          meaningVi: 'Tiêu điểm, tâm điểm của sự chú ý',
+          radicals: '焦 (Tiêu - hội tụ điểm cháy) + 点 (Điểm)',
+          grammarNote: 'Trở thành tâm điểm: 成为社会关注的焦点.',
+          exampleSentence: {
+            target: '如何保障人工智能时代的就业稳定成为了今年国际峰会的讨论焦点。',
+            pronunciation: 'Rúhé bǎozhàng réngōng zhìnéng shídài de jiùyè wěndìng chéngwéi le jīnnián guójì fēnghuì de tǎolùn jiāodiǎn.',
+            meaningVi: 'Làm thế nào để bảo đảm ổn định việc làm trong kỷ nguyên trí tuệ nhân tạo đã trở thành tâm điểm thảo luận của hội nghị thượng đỉnh quốc tế năm nay.'
+          }
+        },
+        {
+          id: 'zh_h5_6_5',
+          word: '客观',
+          pronunciation: 'kèguān',
+          hanViet: 'KHÁCH QUAN',
+          partOfSpeech: 'adj',
+          meaningVi: 'Khách quan, trung thực không thiên vị',
+          radicals: '客 (Khách - người ngoài cuộc) + 观 (Quan - quan sát)',
+          grammarNote: 'Trái nghĩa với 主观 (zhǔguān - chủ quan).',
+          exampleSentence: {
+            target: '优秀的记者在报道复杂社会事件时应当恪守客观公正的职业操守。',
+            pronunciation: 'Yōuxiù de jìzhě zài bàodào fùzá shèhuì shìjiàn shí yīngdāng kèshǒu kèguān gōngzhèng de zhíyè cāoshǒu.',
+            meaningVi: 'Nhà báo xuất sắc khi đưa tin các sự kiện xã hội phức tạp cần phải tuân thủ nghiêm ngặt chuẩn mực đạo đức nghề nghiệp khách quan công bằng.'
+          }
+        },
+        {
+          id: 'zh_h5_6_6',
+          word: '抨击',
+          pronunciation: 'pēngjī',
+          hanViet: 'PHANH KÍCH',
+          partOfSpeech: 'verb',
+          meaningVi: 'Công kích, chỉ trích gay gắt bằng ngôn từ',
+          radicals: '抨 (Phanh - bắn dây cung, luận tội) + 击 (Kích - tấn công)',
+          grammarNote: 'Thư diện ngữ chính luận.',
+          exampleSentence: {
+            target: '评论员在社论中严厉抨击了某些垄断企业侵害消费者权益的行为。',
+            pronunciation: 'Pínglùnyuán zài shèlùn zhōng yánlì pēngjī le mǒuxiē lǒngduàn qǐyè qīnhài xiāofèizhě quányì de xíngwéi.',
+            meaningVi: 'Bình luận viên trong bài xã luận đã chỉ trích gay gắt hành vi xâm hại quyền lợi người tiêu dùng của một số doanh nghiệp độc quyền.'
+          }
+        },
+        {
+          id: 'zh_h5_6_7',
+          word: '倡导',
+          pronunciation: 'chàngdǎo',
+          hanViet: 'XƯỚNG ĐẠO',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Khởi xướng, cổ xúy trào lưu tốt đẹp',
+          radicals: '倡 (Xướng - dẫn đầu cất tiếng) + 导 (Đạo - dẫn đường)',
+          grammarNote: 'Cổ xúy lối sống xanh: 倡导绿色健康的生活理念.',
+          exampleSentence: {
+            target: '主流媒体应当积极倡导厉行节约、反对铺张浪费的社会新风尚。',
+            pronunciation: 'Zhǔliú méitǐ yīngdāng jījí chàngdǎo lìxíng jiéyuē, fǎnduì pūzhāng làngfèi de shèhuì xīn fēngshàng.',
+            meaningVi: 'Truyền thông chính thống cần tích cực khởi xướng phong cách xã hội mới triệt để tiết kiệm, bài trừ phô trương lãng phí.'
+          }
+        },
+        {
+          id: 'zh_h5_6_8',
+          word: '趋势',
+          pronunciation: 'qūshì',
+          hanViet: 'XU THẾ',
+          partOfSpeech: 'noun',
+          meaningVi: 'Xu thế, chiều hướng vận động của thời đại',
+          radicals: '趋 (Xu - tiến tới) + 势 (Thế - cục diện sức mạnh)',
+          grammarNote: 'Xu thế không thể đảo ngược: 不可逆转的历史趋势.',
+          exampleSentence: {
+            target: '经济全球化与科技数字化是不可阻挡的历史发展大趋势。',
+            pronunciation: 'Jīngjì quánqiúhuà yǔ kējì shùzìhuà shì bù kě zǔdǎng de lìshǐ fāzhǎn dà qūshì.',
+            meaningVi: 'Toàn cầu hóa kinh tế và số hóa công nghệ là đại xu thế phát triển lịch sử không thể ngăn cản.'
+          }
+        }
+      ]
+    },
+    {
+      id: 'zh_hsk5_l7',
+      title: 'Bài 7: Công Nghệ Đổi Mới & Thư Diện Ngữ 旨在, 鉴于',
+      grammarFocus: 'Thư diện ngữ 旨在 (Zhǐ zài - Nhằm mục đích: 本政策旨在扶持中小微企业) & 鉴于 (Jiànyú - Xét thấy/Trước tình hình: 鉴于当前严峻形势，特采取紧急措施).',
+      vocabularies: [
+        {
+          id: 'zh_h5_7_1',
+          word: '旨在',
+          pronunciation: 'zhǐ zài',
+          hanViet: 'CHỈ TẠI',
+          partOfSpeech: 'verb',
+          meaningVi: 'Nhằm mục đích, với tôn chỉ hướng tới (thư diện ngữ)',
+          radicals: '旨 (Chỉ - ý chỉ, mục đích) + 在 (Tại - ở chỗ)',
+          grammarNote: 'Rất phổ biến trong chính sách, nghị quyết: 本次会议旨在...',
+          exampleSentence: {
+            target: '国家出台一系列税收优惠政策，旨在鼓励高新技术企业加大研发创新投入。',
+            pronunciation: 'Guójiā chūtái yí xìliè shuìshōu yōuhuì zhèngcè, zhǐ zài gǔlì gāoxīnjìshù qǐyè jiàdà yánfā chuàngxīn tóurù.',
+            meaningVi: 'Nhà nước ban hành hàng loạt chính sách ưu đãi thuế khóa, nhằm mục đích khuyến khích các doanh nghiệp công nghệ cao đẩy mạnh đầu tư nghiên cứu đổi mới.'
+          }
+        },
+        {
+          id: 'zh_h5_7_2',
+          word: '鉴于',
+          pronunciation: 'jiànyú',
+          hanViet: 'GIÁM Ư',
+          partOfSpeech: 'preposition',
+          meaningVi: 'Xét thấy, căn cứ trước tình hình thực tế (thư diện ngữ)',
+          radicals: '鉴 (Giám - soi xét gương soi) + 于 (Ư - tại)',
+          grammarNote: 'Đứng đầu câu làm trạng ngữ chỉ lý do/bối cảnh pháp lý.',
+          exampleSentence: {
+            target: '鉴于当前原材料市场价格的大幅攀升，工厂决定适度调整出口报价。',
+            pronunciation: 'Jiànyú dāngqián yuáncáiliào shìchǎng jiàgé de dàfú pānshēng, gōngchǎng juédìng shìdù tiáozhěng chūkǒu bàojià.',
+            meaningVi: 'Xét thấy giá cả thị trường nguyên vật liệu hiện tại tăng mạnh, nhà máy quyết định điều chỉnh mức báo giá xuất khẩu ở mức vừa phải.'
+          }
+        },
+        {
+          id: 'zh_h5_7_3',
+          word: '创新',
+          pronunciation: 'chuàngxīn',
+          hanViet: 'SÁNG TÂN',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Đổi mới sáng tạo, bứt phá cái mới',
+          radicals: '创 (Sáng - khai sáng) + 新 (Tân - mới mẻ)',
+          grammarNote: 'Đổi mới sáng tạo công nghệ: 科技创新.',
+          exampleSentence: {
+            target: '持续的技术创新是科技型企业在激烈国际竞争中永葆生机的源泉。',
+            pronunciation: 'Chíxù de jìshù chuàngxīn shì kējì xíng qǐyè zài jīliè guójì jìngzhēng zhōng yǒngbǎo shēngjī de yuánquán.',
+            meaningVi: 'Đổi mới sáng tạo kỹ thuật liên tục là suối nguồn để các doanh nghiệp kiểu công nghệ mãi giữ gìn sức sống trong cạnh tranh quốc tế khốc liệt.'
+          }
+        },
+        {
+          id: 'zh_h5_7_4',
+          word: '专利',
+          pronunciation: 'zhuānlì',
+          hanViet: 'CHUYÊN LỢI',
+          partOfSpeech: 'noun',
+          meaningVi: 'Bằng sáng chế độc quyền, phát minh patent',
+          radicals: '专 (Chuyên - độc quyền) + 利 (Lợi - lợi ích)',
+          grammarNote: 'Nộp đơn xin cấp bằng sáng chế: 申请发明专利.',
+          exampleSentence: {
+            target: '公司今年累计获得了三十多项国际权威发明专利授权。',
+            pronunciation: 'Gōngsī jīnnián lěijì huòdé le sānshí duō xiàng guójì quánwēi fāmíng zhuānlì shòuquán.',
+            meaningVi: 'Năm nay công ty đã lũy kế nhận được ủy quyền của hơn 30 bằng sáng chế phát minh có uy tín quốc tế.'
+          }
+        },
+        {
+          id: 'zh_h5_7_5',
+          word: '突破',
+          pronunciation: 'tūpò',
+          hanViet: 'ĐỘT PHÁ',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Đột phá, phá vỡ nút thắt cổ chai',
+          radicals: '突 (Đột - xông lên bất ngờ) + 破 (Phá - phá tan rào cản)',
+          grammarNote: 'Đột phá then chốt: 取得重大突破.',
+          exampleSentence: {
+            target: '科研团队经过多年艰苦攻关，终于在量子计算核心芯片领域取得了重大突破。',
+            pronunciation: 'Kēyán tuánduì jīngguò duō nián jiānkǔ gōngguān, zhōngyú zài liàngzǐ jìsuàn héxīn xīnpiàn lǐngyù huòdé le zhòngdà tūpò.',
+            meaningVi: 'Đội ngũ nghiên cứu sau nhiều năm khắc phục gian khổ, cuối cùng đã đạt được đột phá trọng đại trong lĩnh vực chip cốt lõi điện toán lượng tử.'
+          }
+        },
+        {
+          id: 'zh_h5_7_6',
+          word: '颠覆',
+          pronunciation: 'diānfù',
+          hanViet: 'ĐIÊN PHÚC',
+          partOfSpeech: 'verb/adj',
+          meaningVi: 'Lật đổ trật tự cũ, mang tính cách mạng mang tính đảo lộn',
+          radicals: '颠 (Điên - đỉnh đầu, lộn nhào) + 覆 (Phúc - úp ngược)',
+          grammarNote: 'Công nghệ mang tính cách mạng: 颠覆性技术.',
+          exampleSentence: {
+            target: '生成式人工智能被广泛认为是近年来最具颠覆性的科技创新成果之一。',
+            pronunciation: 'Shēngchéngshì réngōng zhìnéng bèi guǎngfàn rènwéi shì jìnnián lái zuì jù diānfùxìng de kējì chuàngxīn chéngguǒ zhī yī.',
+            meaningVi: 'AI tạo sinh được công nhận rộng rãi là một trong những thành quả đổi mới công nghệ mang tính cách mạng lật đổ nhất những năm gần đây.'
+          }
+        },
+        {
+          id: 'zh_h5_7_7',
+          word: '壁垒',
+          pronunciation: 'bìlěi',
+          hanViet: 'BÍCH LŨY',
+          partOfSpeech: 'noun',
+          meaningVi: 'Rào cản, bức tường phòng tuyến kỹ thuật',
+          radicals: '壁 (Bích - bức tường thành) + 垒 (Lũy - chiến lũy đất đá)',
+          grammarNote: 'Rào cản công nghệ: 技术壁垒. Rào cản thương mại: 贸易壁垒.',
+          exampleSentence: {
+            target: '掌握核心知识产权是企业筑牢自身技术壁垒、防御竞争对手的最强法宝。',
+            pronunciation: 'Zhǎngwò héxīn zhīshichǎnquán shì qǐyè zhù láo zìshēn jìshù bìlěi, fángyù jìngzhēng duìshǒu de zuì qiáng fǎbǎo.',
+            meaningVi: 'Nắm vững quyền sở hữu trí tuệ cốt lõi là pháp bảo mạnh nhất để doanh nghiệp xây chắc bức tường rào cản kỹ thuật của bản thân và phòng ngự trước đối thủ cạnh tranh.'
+          }
+        },
+        {
+          id: 'zh_h5_7_8',
+          word: '迭代',
+          pronunciation: 'diédài',
+          hanViet: 'ĐIỆP ĐẠI',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Cập nhật lặp vòng lặp nâng cấp liên tục (Iteration)',
+          radicals: '叠 (Điệp - chồng chất lớp lớp) + 代 (Đại - thế hệ)',
+          grammarNote: 'Lặp phiên bản sản phẩm: 产品快速迭代.',
+          exampleSentence: {
+            target: '互联网软件产品必须敏锐捕捉用户痛点，保持快速迭代优化的敏捷节奏。',
+            pronunciation: 'Hùliánwǎng ruǎnjiàn chǎnpǐn bìxū mǐnruì bǔzhuō yònghù tòngdiǎn, bǎochí kuàisù diédài yōuhuà de mǐnjié jiézòu.',
+            meaningVi: 'Sản phẩm phần mềm Internet bắt buộc phải nắm bắt nhạy bén điểm đau của người dùng, duy trì nhịp độ linh hoạt nâng cấp lặp tối ưu nhanh chóng.'
+          }
+        }
+      ]
+    },
+    {
+      id: 'zh_hsk5_l8',
+      title: 'Bài 8: Tâm Lý Học Hành Vi Tiêu Dùng & Thư Diện Ngữ 势必, 索性',
+      grammarFocus: 'Thư diện ngữ 势必 (Shìbì - Tất yếu sẽ dẫn tới: 盲目扩张势必导致资金断裂) & 索性 (Suǒxìng - Dứt khoát/Thà rằng làm luôn: 既然下雨，索性就在家看书).',
+      vocabularies: [
+        {
+          id: 'zh_h5_8_1',
+          word: '势必',
+          pronunciation: 'shìbì',
+          hanViet: 'THẾ TẤT',
+          partOfSpeech: 'adverb',
+          meaningVi: 'Thế tất sẽ, chắc chắn theo xu thế tất yếu sẽ xảy ra',
+          radicals: '势 (Thế - xu thế) + 必 (Tất - tất yếu)',
+          grammarNote: 'Dự báo hậu quả khách quan: 忽视质量，势必自食其果.',
+          exampleSentence: {
+            target: '企业若一味削减研发费用以美化财报，势必会严重损害长期的创新动能。',
+            pronunciation: 'Qǐyè ruò yíwèi xuējiǎn yánfā fèiyong yǐ měihuà cáibào, shìbì huì yánzhòng sǔnhài chángqī de chuàngxīn dòngnéng.',
+            meaningVi: 'Doanh nghiệp nếu một mực cắt giảm chi phí R&D nhằm làm đẹp báo cáo tài chính, thế tất sẽ làm tổn hại nghiêm trọng động năng đổi mới dài hạn.'
+          }
+        },
+        {
+          id: 'zh_h5_8_2',
+          word: '索性',
+          pronunciation: 'suǒxìng',
+          hanViet: 'TÁC TÍNH',
+          partOfSpeech: 'adverb',
+          meaningVi: 'Dứt khoát, thà rằng một mạch làm cho xong',
+          radicals: '索 (Tác - tìm kiếm, rút ra) + 性 (Tính - tính khí)',
+          grammarNote: 'Biểu thị quyết định dứt khoát thẳng thắn không do dự.',
+          exampleSentence: {
+            target: '既然旧方案存在无法克服的架构缺陷，我们索性推倒重来，重新设计。',
+            pronunciation: 'Jìrán jiù fāng\'àn cúnzài wúfǎ kèfú de jiàgòu quēxiàn, wǒmen suǒxìng tuīdǎo chóng lái, chóngxīn shèjì.',
+            meaningVi: 'Một khi phương án cũ tồn tại khiếm khuyết kiến trúc không thể khắc phục, chúng ta dứt khoát đập đi làm lại, thiết kế mới từ đầu.'
+          }
+        },
+        {
+          id: 'zh_h5_8_3',
+          word: '消费心理',
+          pronunciation: 'xiāofèi xīnlǐ',
+          hanViet: 'TIÊU PHÍ TÂM LÝ',
+          partOfSpeech: 'noun',
+          meaningVi: 'Tâm lý học tiêu dùng',
+          radicals: '消费 (Tiêu dùng) + 心理 (Tâm lý)',
+          grammarNote: 'Thao túng tâm lý mua hàng: 洞察消费者心理.',
+          exampleSentence: {
+            target: '深入洞察年轻一代的消费心理是制定精准营销策划的制胜先机。',
+            pronunciation: 'Shēnrù dòngchá niánqīng yídài de xiāofèi xīnlǐ shì zhìdìng jīngzhǔn yíngxiāo cèhuà de zhìshèng xiānjī.',
+            meaningVi: 'Thấu thị sâu sắc tâm lý tiêu dùng của thế hệ trẻ là thời cơ tiên phong giành chiến thắng để vạch ra kế hoạch tiếp thị chuẩn xác.'
+          }
+        },
+        {
+          id: 'zh_h5_8_4',
+          word: '攀比',
+          pronunciation: 'pānbǐ',
+          hanViet: 'PHAN TỶ',
+          partOfSpeech: 'verb',
+          meaningVi: 'Đua đòi so bì, chạy theo thói phù phiếm',
+          radicals: '攀 (Phan - vin trèo bám víu) + 比 (Tỷ - so sánh hơn thua)',
+          grammarNote: 'Tâm lý đua đòi: 盲目攀比心理.',
+          exampleSentence: {
+            target: '盲目攀比和超前消费容易使年轻人陷入沉重的个人债务泥潭。',
+            pronunciation: 'Mángmù pānbǐ hé chāoqián xiāofèi róngyì shǐ niánqīngrén xiànrù chénzhòng de gèrén zhàiwù nítán.',
+            meaningVi: 'Đua đòi mù quáng và tiêu dùng vượt trước dễ khiến người trẻ rơi vào vũng lầy nợ nần cá nhân nặng nề.'
+          }
+        },
+        {
+          id: 'zh_h5_8_5',
+          word: '认同',
+          pronunciation: 'rèntóng',
+          hanViet: 'NHẬN ĐỒNG',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Đồng thuận, thừa nhận giá trị tương đồng',
+          radicals: '认 (Nhận - công nhận) + 同 (Đồng - giống nhau)',
+          grammarNote: 'Nhận diện thương hiệu: 品牌价值认同.',
+          exampleSentence: {
+            target: '现代消费者购买某种品牌往往源于对其背后倡导的价值观产生高度认同。',
+            pronunciation: 'Xiàndài xiāofèizhě gòumǎi mǒu zhǒng pǐnpái wǎngwǎng yuányú duì qí bèihòu chàngdǎo de jiàzhíguān chǎnshēng gāodù rèntóng.',
+            meaningVi: 'Người tiêu dùng hiện đại mua sắm một thương hiệu nào đó thường bắt nguồn từ sự đồng cảm cao độ đối với hệ giá trị được khởi xướng phía sau nó.'
+          }
+        },
+        {
+          id: 'zh_h5_8_6',
+          word: '诱惑',
+          pronunciation: 'yòuhuò',
+          hanViet: 'DỤ HOẶC',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Cám dỗ, mê hoặc lôi cuốn',
+          radicals: '诱 (Dụ - dẫn dụ) + 惑 (Hoặc - làm cho mê muội)',
+          grammarNote: 'Cưỡng lại cám dỗ: 抵制诱惑.',
+          exampleSentence: {
+            target: '面对电商平台铺天盖地的打折促销信息，消费者需要保持理智抵御冲动消费的诱惑。',
+            pronunciation: 'Miànduì diànshāng píngtái pūtiāngàidì de dǎzhé cùxiāo xìnxī, xiāofèizhě xūyào bǎochí lǐzhì dǐyù chōngdòng xiāofèi de yòuhuò.',
+            meaningVi: 'Đối mặt với thông tin giảm giá khuyến mãi ngợp trời của các sàn thương mại điện tử, người tiêu dùng cần giữ lý trí để chống lại cám dỗ của việc tiêu xài bốc đồng.'
+          }
+        },
+        {
+          id: 'zh_h5_8_7',
+          word: '品牌',
+          pronunciation: 'pǐnpái',
+          hanViet: 'PHẨM BÀI',
+          partOfSpeech: 'noun',
+          meaningVi: 'Thương hiệu, nhãn hiệu',
+          radicals: '品 (Phẩm - phẩm chất) + 牌 (Bài - tấm biển thương hiệu)',
+          grammarNote: 'Độ trung thành thương hiệu: 品牌忠诚度.',
+          exampleSentence: {
+            target: '树立一个享誉全球的高端品牌需要一代代工匠坚守卓越的品质承诺。',
+            pronunciation: 'Shùlì yí ge xiǎngyù quánqiú de gāoduān pǐnpái xūyào yídàidài gōngjiàng jiānshǒu zhuóyuè de pǐnzhì chéngnuò.',
+            meaningVi: 'Tạo dựng một thương hiệu cao cấp lừng danh toàn cầu cần từng thế hệ nghệ nhân kiên trì giữ vững cam kết chất lượng vượt trội.'
+          }
+        },
+        {
+          id: 'zh_h5_8_8',
+          word: '偏好',
+          pronunciation: 'piānhào',
+          hanViet: 'THIÊN HIẾU',
+          partOfSpeech: 'noun/verb',
+          meaningVi: 'Sở thích thiên vị, gu ưa thích riêng',
+          radicals: '偏 (Thiên - nghiêng về một bên) + 好 (Hiếu - yêu thích)',
+          grammarNote: 'Thị hiếu người dùng: 用户偏好.',
+          exampleSentence: {
+            target: '算法系统根据用户过往的浏览轨迹精准刻画出其个性化的商品偏好模型。',
+            pronunciation: 'Suànfǎ xìtǒng gēnjù yònghù guòwǎng de liúlǎn guǐjì jīngzhǔn kèhuà chū qí gèxìnghuà de shāngpǐn piānhào móxíng.',
+            meaningVi: 'Hệ thống thuật toán căn cứ vào dấu vết lướt web trước đây của người dùng để phác họa chuẩn xác mô hình thị hiếu sản phẩm cá nhân hóa của họ.'
+          }
+        }
+      ]
+    },
+    {
+      id: 'zh_hsk5_l9',
+      title: 'Bài 9: Nghệ Thuật Đàm Phán Ngoại Giao & Thư Diện Ngữ 予以, 致使',
+      grammarFocus: 'Thư diện ngữ 予以 (Yǔyǐ - Dành cho/Đưa ra sự can thiệp: 予以支持, 予以严肃处理) & 致使 (Zhìshǐ - Dẫn đến/Khiến cho xảy ra hậu quả nghiêm trọng: 操作失误致使系统瘫痪).',
+      vocabularies: [
+        {
+          id: 'zh_h5_9_1',
+          word: '予以',
+          pronunciation: 'yǔyǐ',
+          hanViet: 'DỮ DĨ',
+          partOfSpeech: 'verb',
+          meaningVi: 'Dành cho, đưa ra sự xử lý/hỗ trợ (thư diện ngữ)',
+          radicals: '予 (Dữ - ban cho) + 以 (Dĩ - lấy đó mà làm)',
+          grammarNote: 'Văn thư chính thức: 予以驳回 (Bác bỏ), 予以协助 (Hỗ trợ).',
+          exampleSentence: {
+            target: '对于一切侵犯知识产权的违法侵权行为，司法机关依法予以严厉打击。',
+            pronunciation: 'Duìyú yíqiè qīnfàn zhīshichǎnquán de wéifǎ qīnquán xíngwéi, sīfǎ jīguān yīfǎ yǔyǐ yánlì dǎjī.',
+            meaningVi: 'Đối với mọi hành vi xâm phạm quyền sở hữu trí tuệ vi phạm pháp luật, cơ quan tư pháp căn cứ theo luật giáng đòn xử lý nghiêm khắc.'
+          }
+        },
+        {
+          id: 'zh_h5_9_2',
+          word: '致使',
+          pronunciation: 'zhìshǐ',
+          hanViet: 'TRÍ SỬ',
+          partOfSpeech: 'conjunction',
+          meaningVi: 'Khiến cho, dẫn đến hậu quả tiêu cực ngoài ý muốn (thư diện ngữ)',
+          radicals: '致 (Trí - đưa tới) + 使 (Sử - làm cho)',
+          grammarNote: 'Đồng nghĩa với 导致 nhưng mang sắc thái văn thư nghiêm trang hơn.',
+          exampleSentence: {
+            target: '物流公司由于内部系统调度故障，致使数万件生鲜包裹未能按时配送。',
+            pronunciation: 'Wùliú gōngsī yóuyú nèibù xìtǒng diàodù gùzhàng, zhìshǐ shù wàn jiàn shēngxiān bāoguǒ wèinéng ànshí pèisòng.',
+            meaningVi: 'Công ty logistics do sự cố điều phối hệ thống nội bộ, đã dẫn đến việc hàng vạn kiện bưu phẩm tươi sống không thể giao đúng giờ.'
+          }
+        },
+        {
+          id: 'zh_h5_9_3',
+          word: '共识',
+          pronunciation: 'gòngshí',
+          hanViet: 'CỘNG THỨC',
+          partOfSpeech: 'noun',
+          meaningVi: 'Nhận thức chung, sự đồng thuận',
+          radicals: '共 (Cộng - cùng nhau) + 识 (Thức - nhận thức)',
+          grammarNote: 'Đạt được nhận thức chung: 达成广泛共识.',
+          exampleSentence: {
+            target: '两国元首在应对气候变化和促进双边经贸发展等议题上达成了广泛共识。',
+            pronunciation: 'Liǎng guó yuánshǒu zài yìngduì qìhòu biànhuà hé cùjìn shuāngbiān jīngmào fāzhǎn děng yìtí shang dáchéng le guǎngfàn gòngshí.',
+            meaningVi: 'Nguyên thủ hai nước đã đạt được sự đồng thuận rộng rãi trên các chủ đề như ứng phó biến đổi khí hậu và thúc đẩy phát triển kinh tế thương mại song phương.'
+          }
+        },
+        {
+          id: 'zh_h5_9_4',
+          word: '斡旋',
+          pronunciation: 'wòxuán',
+          hanViet: 'OÁT TOÀN',
+          partOfSpeech: 'verb',
+          meaningVi: 'Đứng ra trung gian hòa giải, dàn xếp ngoại giao',
+          radicals: '斡 (Oát - xoay chuyển cục diện) + 旋 (Toàn - quay tròn hòa giải)',
+          grammarNote: 'Ngoại giao con thoi: 进行外交斡旋.',
+          exampleSentence: {
+            target: '经过联合国特使的多方奔走斡旋，冲突双方终于同意签署停火协议。',
+            pronunciation: 'Jīngguò Liánhéguó tèshǐ de duōfāng bēnzǒu wòxuán, chōngtū shuāngfāng zhōngyú tóngyì qiānshǔ tínghuǒ xiéyì.',
+            meaningVi: 'Trải qua nhiều chuyến đi hòa giải của đặc phái viên Liên Hợp Quốc, hai bên xung đột cuối cùng đã đồng ý ký thỏa thuận ngừng bắn.'
+          }
+        },
+        {
+          id: 'zh_h5_9_5',
+          word: '声明',
+          pronunciation: 'shēngmíng',
+          hanViet: 'THANH MINH',
+          partOfSpeech: 'noun/verb',
+          meaningVi: 'Tuyên bố chính thức, bản tuyên bố',
+          radicals: '声 (Thanh - phát ra âm thanh) + 明 (Minh - công khai sáng tỏ)',
+          grammarNote: 'Tuyên bố chung: 联合声明. Tuyên bố long trọng: 严正声明.',
+          exampleSentence: {
+            target: '外交部发言人就有关国家干涉我国内政的行为发表了严正抗议声明。',
+            pronunciation: 'Wàijiāobù fāyánrén jiù yǒuguān guójiā gānshè wǒ guó nèizhèng de xíngwéi fābiǎo le yánzhèng kàngyì shēngmíng.',
+            meaningVi: 'Người phát ngôn Bộ Ngoại giao đã đưa ra tuyên bố phản đối nghiêm khắc đối với hành vi can thiệp vào công việc nội bộ nước ta của quốc gia liên quan.'
+          }
+        },
+        {
+          id: 'zh_h5_9_6',
+          word: '底线',
+          pronunciation: 'dǐxiàn',
+          hanViet: 'ĐỂ TUYẾN',
+          partOfSpeech: 'noun',
+          meaningVi: 'Lằn ranh đỏ, giới hạn chịu đựng cuối cùng',
+          radicals: '底 (Để - đáy sâu, nền móng) + 线 (Tuyến - đường vạch)',
+          grammarNote: 'Giữ vững lằn ranh đỏ: 坚守底线. Không thể chạm vào: 触碰底线.',
+          exampleSentence: {
+            target: '国家主权与领土完整是任何主权国家在外交博弈中绝不可退让的核心底线。',
+            pronunciation: 'Guójiā zhǔquán yǔ lǐngtǔ wánzhěng shì rènhé zhǔquán guójiā zài wàijiāo bóyì zhōng jué bù kě tuìràng de héxīn dǐxiàn.',
+            meaningVi: 'Chủ quyền quốc gia và toàn vẹn lãnh thổ là lằn ranh đỏ cốt lõi tuyệt đối không thể nhượng bộ của bất kỳ quốc gia có chủ quyền nào trong ván cờ ngoại giao.'
+          }
+        },
+        {
+          id: 'zh_h5_9_7',
+          word: '博弈',
+          pronunciation: 'bóyì',
+          hanViet: 'BÁC DỊCH',
+          partOfSpeech: 'noun/verb',
+          meaningVi: 'Ván cờ đấu trí so tài (Game theory)',
+          radicals: '博 (Bác - đánh bạc mưu trí) + 弈 (Dịch - đánh cờ vây)',
+          grammarNote: 'Ván cờ nước lớn: 大国博弈.',
+          exampleSentence: {
+            target: '地缘政治与经济博弈日益复杂，需要具备全局战略眼光才能立于不败之地。',
+            pronunciation: 'Dìyuán zhèngzhì yǔ jīngjì bóyì rìyì fùzá, xūyào jùbèi quánjú zhànlüè yǎnguāng cái néng lì yú búbài zhī dì.',
+            meaningVi: 'Ván cờ địa chính trị và kinh tế ngày càng phức tạp, đòi hỏi phải có nhãn quan chiến lược toàn cục mới có thể đứng vững ở thế bất bại.'
+          }
+        },
+        {
+          id: 'zh_h5_9_8',
+          word: '分歧',
+          pronunciation: 'fēnqí',
+          hanViet: 'PHÂN KỲ',
+          partOfSpeech: 'noun',
+          meaningVi: 'Bất đồng chia rẽ, ngã rẽ quan điểm',
+          radicals: '分 (Phân - chia tách) + 歧 (Kỳ - ngã ba đường, rẽ nhánh)',
+          grammarNote: 'Thu hẹp bất đồng: 缩小分歧. Gác lại bất đồng tìm điểm chung: 求同存异.',
+          exampleSentence: {
+            target: '求同存异、管控分歧是推动多边国际合作行稳致远的基本前提。',
+            pronunciation: 'Qiú tóng cún yì, guǎnkòng fēnqí shì tuīdòng duōbiān guójì hézuò xíng wěn zhì yuǎn de jīběn qiántí.',
+            meaningVi: 'Tìm điểm tương đồng gác lại bất đồng, kiểm soát các ngả chia rẽ là tiền đề cơ bản để thúc đẩy hợp tác quốc tế đa phương đi xa và vững chắc.'
+          }
+        }
+      ]
+    },
+    {
+      id: 'zh_hsk5_l10',
+      title: 'Bài 10: Quản Lý Chuỗi Cung Ứng & Thư Diện Ngữ 毋庸置疑, 相辅相成',
+      grammarFocus: 'Thành ngữ thư diện ngữ: 毋庸置疑 (Wú yōng zhì yí - Không cần phải bàn cãi / Chắc chắn 100%) & 相辅相成 (Xiāng fǔ xiāng chéng - Bổ trợ nâng đỡ lẫn nhau).',
+      vocabularies: [
+        {
+          id: 'zh_h5_10_1',
+          word: '毋庸置疑',
+          pronunciation: 'wú yōng zhì yí',
+          hanViet: 'VÔ DUNG TRÍ NGHI',
+          partOfSpeech: 'idiom',
+          meaningVi: 'Không có gì phải nghi ngờ, hiển nhiên là sự thật',
+          radicals: '毋庸 (Không cần) + 置疑 (Đặt câu hỏi nghi ngờ)',
+          grammarNote: 'Đồng nghĩa với 不容置疑, 毫无疑问.',
+          exampleSentence: {
+            target: '高效韧性的供应链体系对现代制造企业的稳健运营具有毋庸置疑的决定性意义。',
+            pronunciation: 'Gāoxiào rènxìng de gōngyìngliàn tǐxì duì xiàndài zhìzào qǐyè de wěnjiàn yùnyíng jùyǒu wúyōngzhìyí de juédìngxìng yìyì.',
+            meaningVi: 'Hệ thống chuỗi cung ứng hiệu quả và dẻo dai có ý nghĩa mang tính quyết định không cần bàn cãi đối với sự vận hành vững chãi của doanh nghiệp sản xuất hiện đại.'
+          }
+        },
+        {
+          id: 'zh_h5_10_2',
+          word: '相辅相成',
+          pronunciation: 'xiāng fǔ xiāng chéng',
+          hanViet: 'TƯƠNG PHỤ TƯƠNG THÀNH',
+          partOfSpeech: 'idiom',
+          meaningVi: 'Bổ trợ tương hỗ cho nhau cùng hoàn thiện',
+          radicals: '相辅 (Giúp đỡ lẫn nhau) + 相成 (Cùng tạo nên thành tựu)',
+          grammarNote: 'Miêu tả mối quan hệ cộng sinh.',
+          exampleSentence: {
+            target: '数字化智能仓储与精益生产管理相辅相成，共同驱动了企业生产效率的飞跃。',
+            pronunciation: 'Shùzìhuà zhìnéng cāngchǔ yǔ jīngyì shēngchǎn guǎnlǐ xiāngfǔxiāngchéng, gòngtóng qūdòng le qǐyè shēngchǎn xiàolǜ de fēiyuè.',
+            meaningVi: 'Kho bãi thông minh kỹ thuật số và quản lý sản xuất tinh gọn bổ trợ nâng đỡ lẫn nhau, cùng nhau thúc đẩy bước nhảy vọt về hiệu suất sản xuất của doanh nghiệp.'
+          }
+        },
+        {
+          id: 'zh_h5_10_3',
+          word: '供应链',
+          pronunciation: 'gōngyìngliàn',
+          hanViet: 'CUNG ỨNG LIỆN',
+          partOfSpeech: 'noun',
+          meaningVi: 'Chuỗi cung ứng toàn cầu',
+          radicals: '供应 (Cung ứng cung cấp) + 链 (Liện - mắt xích liên kết)',
+          grammarNote: 'Quản lý chuỗi cung ứng: 供应链管理 (SCM).',
+          exampleSentence: {
+            target: '面对突发全球公共卫生事件，重构安全多元的供应链体系成为跨国巨头的当务之急。',
+            pronunciation: 'Miànduì tūfā quánqiú gōnggòng wèishēng shìjiàn, chónggòu ānquán duōyuán de gōngyìngliàn tǐxì chéngwéi le kuàguó jùtóu de dāngwùzhījí.',
+            meaningVi: 'Đối mặt với sự kiện vệ sinh công cộng toàn cầu đột xuất, tái cấu trúc hệ thống chuỗi cung ứng an toàn đa dạng đã trở thành nhiệm vụ cấp bách hàng đầu của các ông lớn đa quốc gia.'
+          }
+        },
+        {
+          id: 'zh_h5_10_4',
+          word: '库存',
+          pronunciation: 'kùcún',
+          hanViet: 'KHỐ TỒN',
+          partOfSpeech: 'noun',
+          meaningVi: 'Hàng tồn kho, tồn dư kho',
+          radicals: '库 (Khố - kho hàng) + 存 (Tồn - lưu trữ lại)',
+          grammarNote: 'Giảm tồn kho: 降低库存. Tồn kho bằng 0: 零库存 (JIT).',
+          exampleSentence: {
+            target: '引入准时制生产模式能帮助工厂将原材料库存占用资金降低百分之四十。',
+            pronunciation: 'Yǐnrù zhǔnshízhì shēngchǎn móshì néng bāngzhù gōngchǎng jiāng yuáncáiliào kùcún zhànyòng zījīn jiàngdī bǎifēnzhī sìshí.',
+            meaningVi: 'Đưa vào mô hình sản xuất vừa đúng lúc (JIT) có thể giúp nhà máy hạ bớt 40% vốn bị chiếm dụng trong hàng tồn kho nguyên vật liệu.'
+          }
+        },
+        {
+          id: 'zh_h5_10_5',
+          word: '物流',
+          pronunciation: 'wùliú',
+          hanViet: 'VẬT LƯU',
+          partOfSpeech: 'noun',
+          meaningVi: 'Dịch vụ hậu cần, logistics',
+          radicals: '物 (Vật - hàng hóa) + 流 (Lưu - dòng lưu chuyển)',
+          grammarNote: 'Logistics thông minh: 智慧物流.',
+          exampleSentence: {
+            target: '依托自动化立体仓库和无人搬运车，现代物流中心的运转效率大幅提升。',
+            pronunciation: 'Yītuō zìdònghuà lìtǐ cāngkù hé wúrén bānyùnchē, xiàndài wùliú zhōngxīn de yùnzhuǎn xiàolǜ dàfú tíshēng.',
+            meaningVi: 'Dựa vào kho hàng lập thể tự động hóa và xe tự hành AGV, hiệu suất vận hành của trung tâm logistics hiện đại đã tăng lên mạnh mẽ.'
+          }
+        },
+        {
+          id: 'zh_h5_10_6',
+          word: '供应商',
+          pronunciation: 'gōngyìngshāng',
+          hanViet: 'CUNG ỨNG THƯƠNG',
+          partOfSpeech: 'noun',
+          meaningVi: 'Nhà cung cấp hàng hóa/linh kiện',
+          radicals: '供应 (Cung ứng) + 商 (Thương - thương nhân, đối tác)',
+          grammarNote: 'Đánh giá nhà cung cấp: 供应商审核.',
+          exampleSentence: {
+            target: '对核心零部件供应商进行定期实地验厂是确保产品源头质量的必经流程。',
+            pronunciation: 'Duì héxīn língbùjiàn gōngyìngshāng jìnxíng dìngqī shídì yàn chǎng shì quèbǎo chǎnpǐn yuántóu zhìliàng de bì jīng liúchéng.',
+            meaningVi: 'Tiến hành thẩm định thực địa định kỳ đối với nhà cung ứng linh kiện cốt lõi là quy trình bắt buộc để bảo đảm chất lượng từ tận gốc sản phẩm.'
+          }
+        },
+        {
+          id: 'zh_h5_10_7',
+          word: '韧性',
+          pronunciation: 'rènxìng',
+          hanViet: 'NHẪN TÍNH',
+          partOfSpeech: 'noun/adj',
+          meaningVi: 'Tính dẻo dai bền bỉ, sức chịu tải phục hồi (Resilience)',
+          radicals: '韧 (Nhẫn - dẻo dai uốn cong không gãy) + 性 (Tính - bản tính)',
+          grammarNote: 'Sức dẻo dai của chuỗi cung ứng: 供应链韧性.',
+          exampleSentence: {
+            target: '增强产业供应链韧性能够有效抵御外部地缘冲突带来的不可控断供冲击。',
+            pronunciation: 'Zēngqiáng chǎnyè gōngyìngliàn rènxìng nénggòu yǒuxiào dǐyù wàibù dìyuán chōngtū dàilái de bùkěkòng duàngōng chōngjī.',
+            meaningVi: 'Tăng cường tính dẻo dai của chuỗi cung ứng công nghiệp có thể chống đỡ hiệu quả cú sốc đứt gãy nguồn cung ngoài tầm kiểm soát do xung đột địa chính trị bên ngoài mang lại.'
+          }
+        },
+        {
+          id: 'zh_h5_10_8',
+          word: '优化',
+          pronunciation: 'yōuhuà',
+          hanViet: 'ƯU HÓA',
+          partOfSpeech: 'verb/noun',
+          meaningVi: 'Tối ưu hóa quy trình/hệ thống',
+          radicals: '优 (Ưu - tốt nhất) + 化 (Hóa - biến đổi)',
+          grammarNote: 'Tối ưu hóa đường đi vận chuyển: 优化运输路径.',
+          exampleSentence: {
+            target: '通过大数据算法持续优化配送路线，物流车队每天可节约近百分之十五的燃油消耗。',
+            pronunciation: 'Tōngguò dàshùjù suànfǎ chíxù yōuhuà pèisòng lùxiàn, wùliú chēduì měitiān kě jiéyuē jìn bǎifēnzhī shíwǔ de rányóu xiāohào.',
+            meaningVi: 'Thông qua thuật toán dữ liệu lớn liên tục tối ưu hóa lộ trình giao hàng, đội xe logistics mỗi ngày có thể tiết kiệm gần 15% mức tiêu hao nhiên liệu.'
+          }
+        }
+      ]
+    }
+  ]
+};
+
+fs.writeFileSync(path.join(__dirname, 'data-chunks/zh_hsk5.json'), JSON.stringify(zhHsk5, null, 2));
+console.log('zh_hsk5.json written! Lessons count:', zhHsk5.lessons.length);

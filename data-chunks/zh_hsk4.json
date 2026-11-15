@@ -1,0 +1,1277 @@
+{
+  "levelId": "zh_hsk4",
+  "code": "HSK 4",
+  "title": "HSK 4 - Trung Cấp 2: Thương Mại Điện Tử, Xã Hội & Thành Ngữ Tứ Tự",
+  "lessons": [
+    {
+      "id": "zh_hsk4_l1",
+      "title": "Bài 1: Thương Mại Điện Tử & Livestream Bán Hàng",
+      "grammarFocus": "Liên từ phức hợp 不仅...而且...: Không những... mà còn... (这家网店不仅发货速度极快，而且售后服务非常完善).",
+      "vocabularies": [
+        {
+          "id": "zh_h4_1_1",
+          "word": "电商",
+          "pronunciation": "diànshāng",
+          "hanViet": "ĐIỆN THƯƠNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Thương mại điện tử (viết tắt của 电子商务)",
+          "radicals": "电 (Điện) + 商 (Thương - buôn bán)",
+          "grammarNote": "Thường nói: 跨境电商 (thương mại điện tử xuyên biên giới).",
+          "exampleSentence": {
+            "target": "如今电商平台已经深刻改变了传统零售业的格局。",
+            "pronunciation": "Rújīn diànshāng píngtái yǐjīng shēnkè gǎibiàn le chuántǒng língshòuyè de géjú.",
+            "meaningVi": "Ngày nay các nền tảng thương mại điện tử đã thay đổi sâu sắc cục diện của ngành bán lẻ truyền thống."
+          }
+        },
+        {
+          "id": "zh_h4_1_2",
+          "word": "直播",
+          "pronunciation": "zhíbō",
+          "hanViet": "TRỰC BÁ / TRỰC BÔI",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Phát trực tiếp, livestream",
+          "radicals": "直 (Trực - trực tiếp) + 播 (Bá - truyền phát sóng)",
+          "grammarNote": "Livestream bán hàng: 直播带货. Phòng livestream: 直播间.",
+          "exampleSentence": {
+            "target": "主播在直播间里热情地向观众介绍新产品的优惠活动。",
+            "pronunciation": "Zhǔbō zài zhíbōjiān lǐ rèqíng de xiàng guānzhòng jièshào xīn chǎnpǐn de yōuhuì huódòng.",
+            "meaningVi": "Streamer trong phòng livestream nhiệt tình giới thiệu với khán giả hoạt động ưu đãi của sản phẩm mới."
+          }
+        },
+        {
+          "id": "zh_h4_1_3",
+          "word": "下单",
+          "pronunciation": "xiàdān",
+          "hanViet": "HẠ ĐƠN",
+          "partOfSpeech": "verb",
+          "meaningVi": "Đặt đơn hàng, chốt đơn",
+          "radicals": "下 (Hạ - hạ lệnh, gửi đi) + 单 (Đơn - đơn hàng)",
+          "grammarNote": "Thường đi với 立即下单 (đặt mua ngay lập tức).",
+          "exampleSentence": {
+            "target": "在活动开始的前十分钟内，超过十万名用户完成了下单。",
+            "pronunciation": "Zài huódòng kāishǐ de qián shí fēnzhōng nèi, chāoguò shí wàn míng yònghù wánchéng le xiàdān.",
+            "meaningVi": "Trong 10 phút đầu khi sự kiện bắt đầu, hơn 100.000 người dùng đã hoàn tất việc đặt đơn hàng."
+          }
+        },
+        {
+          "id": "zh_h4_1_4",
+          "word": "快递",
+          "pronunciation": "kuàidì",
+          "hanViet": "KHOÁI ĐỆ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Chuyển phát nhanh, kiện hàng chuyển phát",
+          "radicals": "快 (Khoái - nhanh chóng) + 递 (Đệ - trao tận tay)",
+          "grammarNote": "Nhân viên giao hàng: 快递员. Nhận bưu kiện: 收快递.",
+          "exampleSentence": {
+            "target": "不仅运费全免，而且同城快递三小时内就能送达。",
+            "pronunciation": "Bùjǐn yùnfèi quán miǎn, érqiě tóngchéng kuàidì sān xiǎoshí nèi jiù néng sòngdá.",
+            "meaningVi": "Không những miễn phí toàn bộ vận chuyển, mà chuyển phát nội thành trong 3 giờ là giao tới."
+          }
+        },
+        {
+          "id": "zh_h4_1_5",
+          "word": "退款",
+          "pronunciation": "tuìkuǎn",
+          "hanViet": "THỐI KHOẢN",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Hoàn tiền, trả lại tiền mua hàng",
+          "radicals": "退 (Thối - lùi lại, trả lại) + 款 (Khoản - tiền bạc)",
+          "grammarNote": "Chính sách: 七天无理由退货退款 (7 ngày đổi trả hoàn tiền không cần lý do).",
+          "exampleSentence": {
+            "target": "如果收到商品后发现质量问题，可以随时申请全额退款。",
+            "pronunciation": "Rúguǒ shōudào shāngpǐn hòu fāxiàn zhìliàng wèntí, kěyǐ suíshí shēnqǐng quán'é tuìkuǎn.",
+            "meaningVi": "Nếu sau khi nhận hàng phát hiện vấn đề chất lượng, có thể nộp đơn xin hoàn lại toàn bộ tiền bất cứ lúc nào."
+          }
+        },
+        {
+          "id": "zh_h4_1_6",
+          "word": "销量",
+          "pronunciation": "xiàoliàng",
+          "hanViet": "TIÊU LƯỢNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Doanh số bán ra, lượng tiêu thụ",
+          "radicals": "销 (Tiêu - bán buôn, tiêu thụ) + 量 (Lượng - số lượng)",
+          "grammarNote": "Đứng đầu doanh số: 销量第一.",
+          "exampleSentence": {
+            "target": "这款护肤品凭借优秀的口碑在各大网店销量领先。",
+            "pronunciation": "Zhè kuǎn hùfūpǐn píngjiè yōuxiù de kǒubēi zài gè dà wǎngdiàn xiàoliàng lǐngxiān.",
+            "meaningVi": "Dòng sản phẩm dưỡng da này nhờ danh tiếng xuất sắc nên dẫn đầu doanh số trên các trang bán hàng lớn."
+          }
+        },
+        {
+          "id": "zh_h4_1_7",
+          "word": "折扣",
+          "pronunciation": "zhékòu",
+          "hanViet": "CHIẾT KHẤU",
+          "partOfSpeech": "noun",
+          "meaningVi": "Mức chiết khấu, giảm giá",
+          "radicals": "折 (Chiết - gập lại, chiết giảm) + 扣 (Khấu - khấu trừ)",
+          "grammarNote": "Cách tính giảm giá tiếng Trung: 打八折 (giảm 20%, bán 80% giá gốc), 打五折 (giảm 50%).",
+          "exampleSentence": {
+            "target": "年中大促销期间很多品牌都给出了前所未有的超低折扣。",
+            "pronunciation": "Niánzhōng dà cùxiāo qījiān hěn duō pǐnpái dōu gěichū le qiánsuǒwèiyǒu de chāodī zhékòu.",
+            "meaningVi": "Trong đợt đại khuyến mãi giữa năm rất nhiều thương hiệu đã đưa ra mức giảm giá cực thấp chưa từng có."
+          }
+        },
+        {
+          "id": "zh_h4_1_8",
+          "word": "评价",
+          "pronunciation": "píngjià",
+          "hanViet": "BÌNH GIÁ",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Đánh giá, nhận xét từ người dùng",
+          "radicals": "评 (Bình - phê bình, nhận xét) + 价 (Giá - giá trị)",
+          "grammarNote": "Đánh giá 5 sao: 五星好评. Nhận xét tiêu cực: 差评.",
+          "exampleSentence": {
+            "target": "消费者在网上购物时通常会先参考以往买家的真实评价。",
+            "pronunciation": "Xiāofèizhě zài wǎngshang gòuwù shí tōngcháng huì xiān cānkǎo yǐwǎng mǎijiā de zhēnshí píngjià.",
+            "meaningVi": "Người tiêu dùng khi mua sắm trên mạng thông thường sẽ tham khảo trước đánh giá chân thực của các khách mua trước."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk4_l2",
+      "title": "Bài 2: Phỏng Vấn Xin Việc, Tuyển Dụng & Thử Việc",
+      "grammarFocus": "Liên từ 无论...都...: Bất kể... đều... (无论遇到什么难题，他都能冷静应对).",
+      "vocabularies": [
+        {
+          "id": "zh_h4_2_1",
+          "word": "简历",
+          "pronunciation": "jiǎnlì",
+          "hanViet": "GIẢN LỊCH",
+          "partOfSpeech": "noun",
+          "meaningVi": "Sơ yếu lý lịch, CV xin việc",
+          "radicals": "简 (Giản - ngắn gọn, thẻ tre) + 历 (Lịch - quá trình trải qua)",
+          "grammarNote": "Nộp CV: 投递简历. Sàng lọc CV: 筛选简历. Lượng từ dùng 份 (fèn).",
+          "exampleSentence": {
+            "target": "他在简历中详细列出了过往的成功项目经验。",
+            "pronunciation": "Tā zài jiǎnlì zhōng xiángxì lièchū le guòwǎng de chénggōng xiàngmù jīngyàn.",
+            "meaningVi": "Anh ấy đã liệt kê chi tiết trong CV những kinh nghiệm dự án thành công trong quá khứ."
+          }
+        },
+        {
+          "id": "zh_h4_2_2",
+          "word": "面试",
+          "pronunciation": "miànshì",
+          "hanViet": "DIỆN THÍ",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Phỏng vấn trực tiếp",
+          "radicals": "面 (Diện - khuôn mặt, đối diện) + 试 (Thí - thi cử, kiểm tra)",
+          "grammarNote": "Người phỏng vấn: 面试官 (HR/interviewer).",
+          "exampleSentence": {
+            "target": "无论面对多么严格的面试官，他都能从容自信地回答问题。",
+            "pronunciation": "Wúlùn miànduì duōme yángé de miànshìguān, tā dōu néng cóngróng zìxìn de huídá wèntí.",
+            "meaningVi": "Bất kể đối mặt với người phỏng vấn nghiêm khắc đến đâu, anh ấy đều có thể ung dung tự tin trả lời câu hỏi."
+          }
+        },
+        {
+          "id": "zh_h4_2_3",
+          "word": "薪资",
+          "pronunciation": "xīnzī",
+          "hanViet": "TÂN TƯ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Tiền lương và đãi ngộ (viết tắt của 薪水与资金)",
+          "radicals": "薪 (Tân - củi lửa, lương bổng) + 资 (Tư - tư bản, tài chính)",
+          "grammarNote": "Thương lượng mức lương: 薪资谈判. Đãi ngộ phúc lợi: 薪资待遇.",
+          "exampleSentence": {
+            "target": "这家跨国企业提供的薪资待遇在行业内具有很强的竞争力。",
+            "pronunciation": "Zhè jiā kuàguó qǐyè tígōng de xīnzī dàiyù zài hángyè nèi jùyǒu hěn qiáng de jìngzhēnglì.",
+            "meaningVi": "Mức đãi ngộ tiền lương mà doanh nghiệp đa quốc gia này đưa ra có tính cạnh tranh rất cao trong ngành."
+          }
+        },
+        {
+          "id": "zh_h4_2_4",
+          "word": "录取",
+          "pronunciation": "lùqǔ",
+          "hanViet": "LỤC THỦ",
+          "partOfSpeech": "verb",
+          "meaningVi": "Trúng tuyển, tiếp nhận vào làm/học",
+          "radicals": "录 (Lục - ghi tên vào danh sách) + 取 (Thủ - lấy, nhận)",
+          "grammarNote": "Giấy báo trúng tuyển: 录取通知书.",
+          "exampleSentence": {
+            "target": "经过三轮激烈选拔，他终于收到了这家科技大厂的正式录取通知。",
+            "pronunciation": "Jīngguò sān lún jīliè xuǎnbá, tā zhōngyú shōudào le zhè jiā kējì dàchǎng de zhèngshì lùqǔ tōngzhī.",
+            "meaningVi": "Trải qua ba vòng tuyển chọn gay cấn, anh ấy cuối cùng đã nhận được thông báo trúng tuyển chính thức của tập đoàn công nghệ lớn này."
+          }
+        },
+        {
+          "id": "zh_h4_2_5",
+          "word": "试用期",
+          "pronunciation": "shìyòngqī",
+          "hanViet": "THÍ DỤNG KỲ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Thời gian thử việc",
+          "radicals": "试用 (Thử việc) + 期 (Kỳ - kỳ hạn)",
+          "grammarNote": "Vượt qua thử việc: 通过试用期 (chuyển chính thức 转正).",
+          "exampleSentence": {
+            "target": "根据劳动法规定，试用期内的工资不得低于正式工资的百分之八十。",
+            "pronunciation": "Gēnjù láodòngfǎ guīdìng, shìyòngqī nèi de gōngzī bùdé dǐyú zhèngshì gōngzī de bǎifēnzhī bāshí.",
+            "meaningVi": "Căn cứ theo quy định của luật lao động, lương trong thời gian thử việc không được thấp hơn 80% lương chính thức."
+          }
+        },
+        {
+          "id": "zh_h4_2_6",
+          "word": "优势",
+          "pronunciation": "yōushì",
+          "hanViet": "ƯU THẾ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Ưu thế, thế mạnh vượt trội",
+          "radicals": "优 (Ưu - tốt đẹp, ưu tú) + 势 (Thế - cục diện, sức mạnh)",
+          "grammarNote": "Trái nghĩa với 劣势 (lièshì - thế yếu).",
+          "exampleSentence": {
+            "target": "精通两门外语是他应聘国际业务经理岗位的最大优势。",
+            "pronunciation": "Jīngtōng liǎng mén wàiyǔ shì tā yìngpìn guójì yèwù jīnglǐ gǎngwèi de zuì dà yōushì.",
+            "meaningVi": "Thành thạo hai ngoại ngữ là ưu thế lớn nhất của anh ấy khi ứng tuyển vị trí giám đốc kinh doanh quốc tế."
+          }
+        },
+        {
+          "id": "zh_h4_2_7",
+          "word": "应聘",
+          "pronunciation": "yìngpìn",
+          "hanViet": "ỨNG SÍNH",
+          "partOfSpeech": "verb",
+          "meaningVi": "Ứng tuyển công việc",
+          "radicals": "应 (Ứng - tiếp ứng) + 聘 (Sính - mời làm việc, tuyển dụng)",
+          "grammarNote": "Người ứng tuyển: 应聘者. Nhà tuyển dụng: 招聘方.",
+          "exampleSentence": {
+            "target": "今天前来应聘研发工程师的人才络绎不绝。",
+            "pronunciation": "Jīntiān qiánlái yìngpìn yánfā gōngchéngshī de réncái luòyìbùjué.",
+            "meaningVi": "Hôm nay các nhân tài đến ứng tuyển kỹ sư nghiên cứu và phát triển nhiều không ngớt."
+          }
+        },
+        {
+          "id": "zh_h4_2_8",
+          "word": "能力",
+          "pronunciation": "nénglì",
+          "hanViet": "NĂNG LỰC",
+          "partOfSpeech": "noun",
+          "meaningVi": "Năng lực, khả năng thực chiến",
+          "radicals": "能 (Năng - tài năng) + 力 (Lực - sức mạnh)",
+          "grammarNote": "Năng lực giao tiếp: 沟通能力. Năng lực giải quyết vấn đề: 解决问题的能力.",
+          "exampleSentence": {
+            "target": "企业不仅看重毕业院校，更注重候选人的综合解决问题能力。",
+            "pronunciation": "Qǐyè bùjǐn kànzhòng bìyè yuànxiào, gèng zhùzhòng hòuxuǎnrén de zōnghé jiějué wèntí nénglì.",
+            "meaningVi": "Doanh nghiệp không chỉ coi trọng trường tốt nghiệp mà còn chú trọng hơn đến năng lực giải quyết vấn đề tổng hợp của ứng viên."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk4_l3",
+      "title": "Bài 3: Quản Lý Cảm Xúc & Tâm Lý Học Ứng Dụng",
+      "grammarFocus": "Liên từ 既然...就...: Đã... thì... (既然已经做出了选择，就不要再后悔).",
+      "vocabularies": [
+        {
+          "id": "zh_h4_3_1",
+          "word": "情绪",
+          "pronunciation": "qíngxù",
+          "hanViet": "TÌNH TỰ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Tâm trạng, cảm xúc",
+          "radicals": "情 (Tình - tình cảm) + 绪 (Tự - manh mối đầu mối)",
+          "grammarNote": "Quản lý cảm xúc: 情绪管理. Cảm xúc tiêu cực: 负面情绪.",
+          "exampleSentence": {
+            "target": "一个成熟的人应该学会控制自己的情绪，而不是被情绪左右。",
+            "pronunciation": "Yí ge chéngshú de rén yīnggāi xuéhuì kòngzhì zìjǐ de qíngxù, ér bú shì bèi qíngxù zuǒyòu.",
+            "meaningVi": "Một người trưởng thành nên học cách kiểm soát cảm xúc của bản thân, chứ không phải bị cảm xúc chi phối."
+          }
+        },
+        {
+          "id": "zh_h4_3_2",
+          "word": "压力",
+          "pronunciation": "yālì",
+          "hanViet": "ÁP LỰC",
+          "partOfSpeech": "noun",
+          "meaningVi": "Áp lực, căng thẳng",
+          "radicals": "压 (Áp - đè nén) + 力 (Lực - sức ép)",
+          "grammarNote": "Giải tỏa áp lực: 缓解压力, 减压. Chịu áp lực lớn: 承受巨大压力.",
+          "exampleSentence": {
+            "target": "听轻音乐和适度运动是缓解工作压力的好方法。",
+            "pronunciation": "Tīng qīngyīnyuè hé shìdù yùndòng shì huǎnjiě gōngzuò yālì de hǎo fāngfǎ.",
+            "meaningVi": "Nghe nhạc nhẹ và vận động vừa phải là phương pháp tốt để giải tỏa áp lực công việc."
+          }
+        },
+        {
+          "id": "zh_h4_3_3",
+          "word": "冷静",
+          "pronunciation": "lěngjìng",
+          "hanViet": "LÃNH TĨNH",
+          "partOfSpeech": "adj/verb",
+          "meaningVi": "Bình tĩnh, điềm đạm",
+          "radicals": "冷 (Lãnh - lạnh lùng) + 静 (Tĩnh - yên tĩnh, tĩnh tâm)",
+          "grammarNote": "Khuyên nhủ: 请保持冷静 (xin hãy giữ bình tĩnh).",
+          "exampleSentence": {
+            "target": "遇到突发紧急情况时，最重要的是保持头脑冷静。",
+            "pronunciation": "Yùdào tūfā jǐnjí qíngkuàng shí, zuì zhòngyào de shì bǎochí tóunǎo lěngjìng.",
+            "meaningVi": "Khi gặp tình huống khẩn cấp đột xuất, điều quan trọng nhất là giữ cho đầu óc bình tĩnh."
+          }
+        },
+        {
+          "id": "zh_h4_3_4",
+          "word": "沟通",
+          "pronunciation": "gōutōng",
+          "hanViet": "CÂU THÔNG",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Giao tiếp, trao đổi thấu hiểu",
+          "radicals": "沟 (Câu - mương nước, kết nối đôi bờ) + 通 (Thông - thông suốt)",
+          "grammarNote": "Thường nói: 善于沟通 (giỏi giao tiếp), 缺乏沟通 (thiếu giao tiếp).",
+          "exampleSentence": {
+            "target": "人与人之间的误会往往是因为缺乏及时的沟通而产生的。",
+            "pronunciation": "Rén yǔ rén zhījiān de wùhuì wǎngwǎng shì yīnwèi quēfá jíshí de gōutōng ér chǎnshēng de.",
+            "meaningVi": "Hiểu lầm giữa người với người thường nảy sinh do thiếu đi sự giao tiếp kịp thời."
+          }
+        },
+        {
+          "id": "zh_h4_3_5",
+          "word": "态度",
+          "pronunciation": "tàidu",
+          "hanViet": "THÁI ĐỘ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Thái độ sống, cách ứng xử",
+          "radicals": "态 (Thái - tâm thái) + 度 (Độ - mức độ, phong thái)",
+          "grammarNote": "Thành ngữ: 态度决定一切 (Thái độ quyết định tất cả).",
+          "exampleSentence": {
+            "target": "积极乐观的生活态度能帮助我们度过人生的低谷。",
+            "pronunciation": "Jījí lèguān de shēnghuó tàidu néng bāngzhù wǒmen dùguò rénshēng de dīgǔ.",
+            "meaningVi": "Thái độ sống tích cực lạc quan có thể giúp chúng ta vượt qua những nốt trầm của cuộc đời."
+          }
+        },
+        {
+          "id": "zh_h4_3_6",
+          "word": "尊重",
+          "pronunciation": "zūnzhòng",
+          "hanViet": "TÔN TRỌNG",
+          "partOfSpeech": "verb",
+          "meaningVi": "Tôn trọng, kính trọng",
+          "radicals": "尊 (Tôn - tôn sùng) + 重 (Trọng - coi trọng)",
+          "grammarNote": "Cấu trúc: 互相尊重 (tôn trọng lẫn nhau).",
+          "exampleSentence": {
+            "target": "只有懂得尊重他人的人，才能获得别人发自内心的尊重。",
+            "pronunciation": "Zhǐyǒu dǒngde zūnzhòng tārén de rén, cái néng huòdé biérén fā zì nèixīn de zūnzhòng.",
+            "meaningVi": "Chỉ có người biết tôn trọng người khác mới có thể nhận lại sự tôn trọng xuất phát từ tận đáy lòng của người khác."
+          }
+        },
+        {
+          "id": "zh_h4_3_7",
+          "word": "同情",
+          "pronunciation": "tóngqíng",
+          "hanViet": "ĐỒNG TÌNH",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Đồng cảm, thương cảm",
+          "radicals": "同 (Đồng - cùng chung) + 情 (Tình - cảm xúc)",
+          "grammarNote": "Đồng cảm sâu sắc: 同情心.",
+          "exampleSentence": {
+            "target": "我们不仅要对处于困境中的人抱有同情，更要伸出援助之手。",
+            "pronunciation": "Wǒmen bùjǐn yào duì chǔyú kùnjìng zhōng de rén bàoyǒu tóngqíng, gèng yào shēnchū yuánzhù zhī shǒu.",
+            "meaningVi": "Chúng ta không chỉ phải có lòng trắc ẩn với những người trong nghịch cảnh, mà hơn nữa cần chìa tay ra giúp đỡ."
+          }
+        },
+        {
+          "id": "zh_h4_3_8",
+          "word": "烦恼",
+          "pronunciation": "fánnǎo",
+          "hanViet": "PHIỀN NÃO",
+          "partOfSpeech": "noun/adj",
+          "meaningVi": "Phiền muộn, ưu phiền",
+          "radicals": "烦 (Phiền - nóng nảy khó chịu) + 恼 (Não - bực tức bồn chồn)",
+          "grammarNote": "Xua tan phiền não: 消除烦恼.",
+          "exampleSentence": {
+            "target": "既然事情已经过去了，就不要再自寻烦恼了。",
+            "pronunciation": "Jìrán shìqing yǐjīng guòqu le, jiù bú yào zài zìxún fánnǎo le.",
+            "meaningVi": "Một khi sự việc đã qua đi rồi thì đừng tự chuốc lấy phiền não nữa."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk4_l4",
+      "title": "Bài 4: Khoa Học Kỹ Thuật & Internet Vạn Vật",
+      "grammarFocus": "Liên từ 哪怕...也...: Cho dù/Dẫu rằng... cũng... (哪怕遇到再多挫折，科学家也不会放弃探索).",
+      "vocabularies": [
+        {
+          "id": "zh_h4_4_1",
+          "word": "人工智能",
+          "pronunciation": "réngōng zhìnéng",
+          "hanViet": "NHÂN CÔNG TRÍ NĂNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Trí tuệ nhân tạo (AI)",
+          "radicals": "人工 (Nhân tạo) + 智能 (Thông minh, trí năng)",
+          "grammarNote": "Kỷ nguyên AI: 人工智能时代.",
+          "exampleSentence": {
+            "target": "人工智能技术的发展正在重塑医疗、教育和交通等各个行业。",
+            "pronunciation": "Réngōng zhìnéng jìshù de fāzhǎn zhèngzài chóngsù yīliáo, jiàoyù hé jiāotōng děng gè ge hángyè.",
+            "meaningVi": "Sự phát triển của công nghệ trí tuệ nhân tạo đang tái định hình các ngành như y tế, giáo dục và giao thông."
+          }
+        },
+        {
+          "id": "zh_h4_4_2",
+          "word": "算法",
+          "pronunciation": "suànfǎ",
+          "hanViet": "TOÁN PHÁP",
+          "partOfSpeech": "noun",
+          "meaningVi": "Thuật toán máy tính",
+          "radicals": "算 (Toán - tính toán) + 法 (Pháp - phương pháp, quy luật)",
+          "grammarNote": "Đề xuất thuật toán: 算法推荐.",
+          "exampleSentence": {
+            "target": "短视频平台通过高效的算法向用户推荐他们感兴趣的内容。",
+            "pronunciation": "Duǎn shìpín píngtái tōngguò gāoxiào de suànfǎ xiàng yònghù tuījiàn tāmen gǎn xìngqù de nèiróng.",
+            "meaningVi": "Nền tảng video ngắn thông qua thuật toán hiệu quả cao để đề xuất nội dung người dùng quan tâm."
+          }
+        },
+        {
+          "id": "zh_h4_4_3",
+          "word": "数据",
+          "pronunciation": "shùjù",
+          "hanViet": "SỐ CỨ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Dữ liệu số liệu",
+          "radicals": "数 (Số - con số) + 据 (Cứ - căn cứ)",
+          "grammarNote": "Dữ liệu lớn: 大数据 (Big Data).",
+          "exampleSentence": {
+            "target": "通过分析海量用户数据，公司能够更加精准地预测市场趋势。",
+            "pronunciation": "Tōngguò fēnxī hǎiliàng yònghù shùjù, gōngsī nénggòu gèngjiā jīngzhǔn de yùcè shìchǎng qūshì.",
+            "meaningVi": "Thông qua phân tích dữ liệu người dùng khổng lồ, công ty có thể dự đoán xu hướng thị trường chuẩn xác hơn."
+          }
+        },
+        {
+          "id": "zh_h4_4_4",
+          "word": "网络",
+          "pronunciation": "wǎngluò",
+          "hanViet": "VÕNG LẠC",
+          "partOfSpeech": "noun",
+          "meaningVi": "Mạng lưới, Internet",
+          "radicals": "网 (Võng - tấm lưới) + 络 (Lạc - dây nối, liên kết)",
+          "grammarNote": "An ninh mạng: 网络安全. Ngôn ngữ mạng: 网络用语.",
+          "exampleSentence": {
+            "target": "高速网络让跨国远程办公和视频会议变得无比顺畅。",
+            "pronunciation": "Gāosù wǎngluò ràng kuàguó yuǎnchéng bàngōng hé shìpín huìyì biàn de wúbǐ shùnchàng.",
+            "meaningVi": "Mạng internet tốc độ cao làm cho làm việc từ xa xuyên quốc gia và họp video trở nên vô cùng mượt mà."
+          }
+        },
+        {
+          "id": "zh_h4_4_5",
+          "word": "发明",
+          "pronunciation": "fāmíng",
+          "hanViet": "PHÁT MINH",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Phát minh, sáng chế",
+          "radicals": "发 (Phát - tạo ra) + 明 (Minh - sáng tỏ, đem lại ánh sáng)",
+          "grammarNote": "Tứ đại phát minh cổ đại: 四大发明 (La bàn, Thuốc súng, Giấy, Kỹ thuật in).",
+          "exampleSentence": {
+            "target": "智能手机的发明彻底改变了人类获取信息和社交的方式。",
+            "pronunciation": "Zhìnéng shǒujī de fāmíng chèdǐ gǎibiàn le rénlèi huòqǔ xìnxī hé shèjiāo de fāngshì.",
+            "meaningVi": "Phát minh điện thoại thông minh đã thay đổi triệt để phương thức tiếp nhận thông tin và giao tiếp của nhân loại."
+          }
+        },
+        {
+          "id": "zh_h4_4_6",
+          "word": "安全",
+          "pronunciation": "ānquán",
+          "hanViet": "AN TOÀN",
+          "partOfSpeech": "adj/noun",
+          "meaningVi": "An toàn, bảo mật",
+          "radicals": "安 (An - bình an) + 全 (Toàn - vẹn toàn)",
+          "grammarNote": "Trái nghĩa với 危险 (wēixiǎn - nguy hiểm). Cụm từ: 注意安全.",
+          "exampleSentence": {
+            "target": "哪怕系统再先进，保护用户隐私和信息安全也是第一位的。",
+            "pronunciation": "Nǎpà xìtǒng zài xiānjìn, bǎohù yònghù yǐnsī hé xìnxī ānquán yě shì dì-yī wèi de.",
+            "meaningVi": "Cho dù hệ thống có tiên tiến đến đâu, việc bảo vệ quyền riêng tư và an toàn thông tin của người dùng cũng là vị trí hàng đầu."
+          }
+        },
+        {
+          "id": "zh_h4_4_7",
+          "word": "硬件",
+          "pronunciation": "yìngjiàn",
+          "hanViet": "NGẠNH KIỆN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Phần cứng máy tính/thiết bị",
+          "radicals": "硬 (Ngạnh - cứng rắn) + 件 (Kiện - linh kiện)",
+          "grammarNote": "Trái nghĩa với 软件 (ruǎnjiàn - phần mềm).",
+          "exampleSentence": {
+            "target": "芯片是计算机硬件中最核心的技术部件。",
+            "pronunciation": "Xīnpiàn shì jìsuànjī yìngjiàn zhōng zuì héxīn de jìshù bùjiàn.",
+            "meaningVi": "Con chip là bộ phận kỹ thuật cốt lõi nhất trong phần cứng máy tính."
+          }
+        },
+        {
+          "id": "zh_h4_4_8",
+          "word": "升级",
+          "pronunciation": "shēngjí",
+          "hanViet": "THĂNG CẤP",
+          "partOfSpeech": "verb",
+          "meaningVi": "Nâng cấp phần mềm/hệ thống",
+          "radicals": "升 (Thăng - bay lên, nâng cao) + 级 (Cấp - đẳng cấp)",
+          "grammarNote": "Nâng cấp hệ thống: 系统升级. Nâng cấp thiết bị: 设备升级.",
+          "exampleSentence": {
+            "target": "完成软件升级后，应用程序的运行速度提升了将近百分之三十。",
+            "pronunciation": "Wánchéng ruǎnjiàn shēngjí hòu, yìngyòng chéngxù de yùnxíng sùdù tíshēng le jiāngjìn bǎifēnzhī sānshí.",
+            "meaningVi": "Sau khi hoàn thành nâng cấp phần mềm, tốc độ chạy của ứng dụng đã tăng gần 30%."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk4_l5",
+      "title": "Bài 5: Giáo Dục Hiện Đại & Định Hướng Nghề Nghiệp",
+      "grammarFocus": "Liên từ 之所以...是因为...: Sở dĩ... là bởi vì... (他之所以能够取得优异成绩，是因为他付出了常人难以想象的努力).",
+      "vocabularies": [
+        {
+          "id": "zh_h4_5_1",
+          "word": "专业",
+          "pronunciation": "zhuānyè",
+          "hanViet": "CHUYÊN NGHIỆP",
+          "partOfSpeech": "noun/adj",
+          "meaningVi": "Chuyên ngành học tập, chuyên nghiệp",
+          "radicals": "专 (Chuyên - chuyên sâu) + 业 (Nghiệp - nghề nghiệp, học nghiệp)",
+          "grammarNote": "Chọn ngành học: 选择专业. Kiến thức chuyên môn: 专业知识.",
+          "exampleSentence": {
+            "target": "大学生在选择专业时既要结合个人兴趣，也要考虑未来的就业前景。",
+            "pronunciation": "Dàxuéshēng zài xuǎnzé zhuānyè shí jì yào jiéhé gèrén xìngqù, yě yào kǎolǜ wèilái de jiùyè qiánjǐng.",
+            "meaningVi": "Sinh viên khi chọn chuyên ngành vừa phải kết hợp sở thích cá nhân, vừa phải cân nhắc triển vọng việc làm tương lai."
+          }
+        },
+        {
+          "id": "zh_h4_5_2",
+          "word": "硕士",
+          "pronunciation": "shuòshì",
+          "hanViet": "THẠC SĨ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Thạc sĩ (bằng Master)",
+          "radicals": "硕 (Thạc - to lớn, sâu rộng) + 士 (Sĩ - học giả)",
+          "grammarNote": "Cử nhân: 学士 (bachelor). Tiến sĩ: 博士 (doctorate).",
+          "exampleSentence": {
+            "target": "他之所以选择继续攻读硕士学位，是因为希望在科研领域有更深造诣。",
+            "pronunciation": "Tā zhīsuǒyǐ xuǎnzé jìxù gōngdú shuòshì xuéwèi, shì yīnwèi xīwàng zài kēyán lǐngyù yǒu gèng shēn zàoyì.",
+            "meaningVi": "Sở dĩ anh ấy lựa chọn tiếp tục học lên thạc sĩ là vì hi vọng có nghiên cứu sâu hơn trong lĩnh vực khoa học."
+          }
+        },
+        {
+          "id": "zh_h4_5_3",
+          "word": "实习",
+          "pronunciation": "shíxí",
+          "hanViet": "THỰC TẬP",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Thực tập công việc",
+          "radicals": "实 (Thực - thực tế) + 习 (Tập - học tập rèn luyện)",
+          "grammarNote": "Thực tập sinh: 实习生.",
+          "exampleSentence": {
+            "target": "假期去知名企业实习能让学生提前了解真实的职场运作。",
+            "pronunciation": "Jiàqī qù zhīmíng qǐyè shíxí néng ràng xuésheng tíqián liǎojiě zhēnshí de zhíchǎng yùnzuò.",
+            "meaningVi": "Kỳ nghỉ đến các doanh nghiệp danh tiếng thực tập có thể giúp sinh viên hiểu trước cách vận hành thực tế của chốn công sở."
+          }
+        },
+        {
+          "id": "zh_h4_5_4",
+          "word": "奖学金",
+          "pronunciation": "jiǎngxuéjīn",
+          "hanViet": "TƯỞNG HỌC KIM",
+          "partOfSpeech": "noun",
+          "meaningVi": "Học bổng",
+          "radicals": "奖 (Tưởng - khen thưởng) + 学 (Học) + 金 (Kim - tiền bạc)",
+          "grammarNote": "Đạt học bổng: 获得奖学金. Xin học bổng: 申请奖学金.",
+          "exampleSentence": {
+            "target": "凭借优秀的学业成绩和学术成果，她获得了国家全额奖学金。",
+            "pronunciation": "Píngjiè yōuxiù de xuéyè chéngjì hé xuéshù chéngguǒ, tā huòdé le guójiā quán'é jiǎngxuéjīn.",
+            "meaningVi": "Nhờ vào thành tích học tập và kết quả nghiên cứu xuất sắc, cô ấy đã giành được học bổng toàn phần của quốc gia."
+          }
+        },
+        {
+          "id": "zh_h4_5_5",
+          "word": "毕业",
+          "pronunciation": "bìyè",
+          "hanViet": "TẤT NGHIỆP",
+          "partOfSpeech": "verb",
+          "meaningVi": "Tốt nghiệp",
+          "radicals": "毕 (Tất - xong xuôi, hoàn tất) + 业 (Nghiệp - khóa học)",
+          "grammarNote": "Từ ly hợp: 毕业典礼 (lễ tốt nghiệp).",
+          "exampleSentence": {
+            "target": "从清华大学毕业后，他选择留在北京投身人工智能领域的创业。",
+            "pronunciation": "Cóng Qīnghuá Dàxué bìyè hòu, tā xuǎnzé liú zài Běijīng tóushēn réngōng zhìnéng lǐngyù de chuàngyè.",
+            "meaningVi": "Sau khi tốt nghiệp Đại học Thanh Hoa, anh ấy lựa chọn ở lại Bắc Kinh dấn thân vào khởi nghiệp lĩnh vực AI."
+          }
+        },
+        {
+          "id": "zh_h4_5_6",
+          "word": "培养",
+          "pronunciation": "péiyǎng",
+          "hanViet": "BỒI DƯỠNG",
+          "partOfSpeech": "verb",
+          "meaningVi": "Bồi dưỡng, ươm mầm đào tạo",
+          "radicals": "培 (Bồi - vun xới đất) + 养 (Dưỡng - nuôi nấng)",
+          "grammarNote": "Bồi dưỡng nhân tài: 培养人才.",
+          "exampleSentence": {
+            "target": "现代教育不仅注重传授知识，更重视培养学生的独立思考能力。",
+            "pronunciation": "Xiàndài jiàoyù bùjǐn zhùzhòng chuánshòu zhīshi, gèng zhòngshì péiyǎng xuésheng de dúlì sīkǎo nénglì.",
+            "meaningVi": "Giáo dục hiện đại không chỉ chú trọng truyền thụ kiến thức mà còn coi trọng hơn việc bồi dưỡng năng lực tư duy độc lập của học sinh."
+          }
+        },
+        {
+          "id": "zh_h4_5_7",
+          "word": "优秀",
+          "pronunciation": "yōuxiù",
+          "hanViet": "ƯU TÚ",
+          "partOfSpeech": "adj",
+          "meaningVi": "Xuất sắc, ưu tú",
+          "radicals": "优 (Ưu - vượt trội) + 秀 (Tú - thanh tú, nở hoa kết quả)",
+          "grammarNote": "Học sinh xuất sắc: 优秀学生.",
+          "exampleSentence": {
+            "target": "他在各个方面都表现得极其优秀，是大家学习的榜样。",
+            "pronunciation": "Tā zài gè ge fāngmiàn dōu biǎoxiàn de jíqí yōuxiù, shì dàjiā xuéxí de bǎngyàng.",
+            "meaningVi": "Anh ấy ở mọi phương diện đều thể hiện cực kỳ xuất sắc, là tấm gương cho mọi người học tập."
+          }
+        },
+        {
+          "id": "zh_h4_5_8",
+          "word": "经验",
+          "pronunciation": "jīngyàn",
+          "hanViet": "KINH NGHIỆM",
+          "partOfSpeech": "noun/verb",
+          "meaningVi": "Kinh nghiệm thực tiễn",
+          "radicals": "经 (Kinh - trải qua) + 验 (Nghiệm - kiểm chứng)",
+          "grammarNote": "Tích lũy kinh nghiệm: 积累经验. Giàu kinh nghiệm: 经验丰富.",
+          "exampleSentence": {
+            "target": "年轻时多做不同尝试，能够为未来的职业发展积累宝贵的经验。",
+            "pronunciation": "Niánqīng shí duō zuò bùtóng chángshì, nénggòu wèi wèilái de zhíyè fāzhǎn jīlěi bǎoguì de jīngyàn.",
+            "meaningVi": "Thời trẻ thử sức nhiều việc khác nhau có thể tích lũy kinh nghiệm quý báu cho sự phát triển nghề nghiệp sau này."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk4_l6",
+      "title": "Bài 6: Luật Lao Động Cơ Bản & Thành Ngữ \"Nhập Hương Tùy Tục\"",
+      "grammarFocus": "Thành ngữ Tứ tự (Chengyu): 入乡随俗 (Đến đâu theo phong tục ở đó) & 按部就班 (Làm việc theo đúng trình tự bài bản).",
+      "vocabularies": [
+        {
+          "id": "zh_h4_6_1",
+          "word": "入乡随俗",
+          "pronunciation": "rù xiāng suí sú",
+          "hanViet": "NHẬP HƯƠNG TÙY TỤC",
+          "partOfSpeech": "idiom",
+          "meaningVi": "Nhập gia tùy tục, đến đâu tôn trọng phong tục nơi đó",
+          "radicals": "入 (Vào) + 乡 (Làng xóm) + 随 (Theo) + 俗 (Phong tục)",
+          "grammarNote": "Lời khuyên khi hòa nhập môi trường mới.",
+          "exampleSentence": {
+            "target": "到外国工作生活，首先要学会入乡随俗，尊重当地的文化习惯。",
+            "pronunciation": "Dào wàiguó gōngzuò shēnghuó, shǒuxiān yào xuéhuì rù xiāng suí sú, zūnzhòng dāngdì de wénhuà xíguàn.",
+            "meaningVi": "Đến nước ngoài làm việc sinh sống, trước tiên phải học cách nhập gia tùy tục, tôn trọng tập quán văn hóa địa phương."
+          }
+        },
+        {
+          "id": "zh_h4_6_2",
+          "word": "按部就班",
+          "pronunciation": "àn bù jiù bān",
+          "hanViet": "ÁN BỘ TỰU BAN",
+          "partOfSpeech": "idiom",
+          "meaningVi": "Theo đúng trình tự, từng bước bài bản không đốt cháy giai đoạn",
+          "radicals": "按 (Theo) + 部 (Bộ phận) + 就 (Vào) + 班 (Ban thứ bậc)",
+          "grammarNote": "Dùng miêu tả tác phong làm việc cẩn trọng, kỷ luật.",
+          "exampleSentence": {
+            "target": "只要我们按照项目计划按部就班地推进，就一定能如期交付。",
+            "pronunciation": "Zhǐyào wǒmen ànzhào xiàngmù jìhuà ànbùjiùbān de tuījìn, jiù yídìng néng rúqī jiāofù.",
+            "meaningVi": "Chỉ cần chúng ta thúc đẩy theo kế hoạch dự án một cách bài bản từng bước, chắc chắn sẽ bàn giao đúng hạn."
+          }
+        },
+        {
+          "id": "zh_h4_6_3",
+          "word": "劳动法",
+          "pronunciation": "láodòngfǎ",
+          "hanViet": "LAO ĐỘNG PHÁP",
+          "partOfSpeech": "noun",
+          "meaningVi": "Luật lao động",
+          "radicals": "劳动 (Lao động) + 法 (Pháp luật)",
+          "grammarNote": "Tuân thủ luật: 遵守劳动法.",
+          "exampleSentence": {
+            "target": "劳动法明确规定了用人单位和劳动者双方的合法权利与义务。",
+            "pronunciation": "Láodòngfǎ míngquè guīdìng le yòngrén dānwèi hé láodòngzhě shuāngfāng de héfǎ quánlì yǔ yìwù.",
+            "meaningVi": "Luật lao động quy định rõ ràng quyền lợi hợp pháp và nghĩa vụ của cả bên sử dụng lao động và người lao động."
+          }
+        },
+        {
+          "id": "zh_h4_6_4",
+          "word": "加班",
+          "pronunciation": "jiābān",
+          "hanViet": "GIA BAN",
+          "partOfSpeech": "verb",
+          "meaningVi": "Làm thêm giờ, tăng ca",
+          "radicals": "加 (Gia - thêm vào) + 班 (Ban - ca làm việc)",
+          "grammarNote": "Tiền làm thêm giờ: 加班费.",
+          "exampleSentence": {
+            "target": "周末安排员工加班的，企业必须依法支付双倍工资。",
+            "pronunciation": "Zhōumò ānpái yuángōng jiābān de, qǐyè bìxū yīfǎ zhīfù shuāngbèi gōngzī.",
+            "meaningVi": "Cuối tuần sắp xếp nhân viên tăng ca, doanh nghiệp bắt buộc phải chi trả lương gấp đôi theo luật."
+          }
+        },
+        {
+          "id": "zh_h4_6_5",
+          "word": "保险",
+          "pronunciation": "bǎoxiǎn",
+          "hanViet": "BẢO HIỂM",
+          "partOfSpeech": "noun/adj",
+          "meaningVi": "Bảo hiểm (xã hội, y tế), chắc chắn an toàn",
+          "radicals": "保 (Bảo - bảo đảm) + 险 (Hiểm - hiểm nguy)",
+          "grammarNote": "Chế độ Trung Quốc: 五险一金 (5 bảo hiểm + 1 quỹ nhà ở).",
+          "exampleSentence": {
+            "target": "正规公司在入职当月就必须为员工缴纳社会保险和公积金。",
+            "pronunciation": "Zhèngguī gōngsī zài rùzhí dàng yuè jiù bìxū wèi yuángōng jiǎonà shèhuì bǎoxiǎn hé gōngjījīn.",
+            "meaningVi": "Công ty chuẩn chỉnh trong tháng nhân viên nhận việc bắt buộc phải đóng bảo hiểm xã hội và quỹ nhà ở cho nhân viên."
+          }
+        },
+        {
+          "id": "zh_h4_6_6",
+          "word": "权利",
+          "pronunciation": "quánlì",
+          "hanViet": "QUYỀN LỢI",
+          "partOfSpeech": "noun",
+          "meaningVi": "Quyền lợi hợp pháp",
+          "radicals": "权 (Quyền - quyền hạn) + 利 (Lợi - lợi ích)",
+          "grammarNote": "Bảo vệ quyền lợi: 维护合法权利. Phân biệt với 权力 (quánlì - quyền lực nhà nước).",
+          "exampleSentence": {
+            "target": "当自身合法权利受到侵害时，应当勇敢地拿起法律武器维权。",
+            "pronunciation": "Dāng zìshēn héfǎ quánlì shòudào qīnhài shí, yīngdāng yǒnggǎn de ná qǐ fǎlǜ wǔqì wéiquán.",
+            "meaningVi": "Khi quyền lợi hợp pháp của bản thân bị xâm hại, cần dũng cảm cầm lấy vũ khí pháp luật để bảo vệ quyền lợi."
+          }
+        },
+        {
+          "id": "zh_h4_6_7",
+          "word": "赔偿",
+          "pronunciation": "péicháng",
+          "hanViet": "BỒI THƯỜNG",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Bồi thường tổn thất/thiệt hại",
+          "radicals": "赔 (Bồi - mất tiền đền) + 偿 (Thường - hoàn trả)",
+          "grammarNote": "Bồi thường kinh tế: 经济赔偿金.",
+          "exampleSentence": {
+            "target": "如果公司违法解除劳动合同，必须向员工支付双倍经济赔偿。",
+            "pronunciation": "Rúguǒ gōngsī wéifǎ jiěchú láodòng hétong, bìxū xiàng yuángōng zhīfù shuāngbèi jīngjì péicháng.",
+            "meaningVi": "Nếu công ty đơn phương hủy hợp đồng lao động trái luật, bắt buộc phải trả cho nhân viên gấp đôi tiền bồi thường kinh tế."
+          }
+        },
+        {
+          "id": "zh_h4_6_8",
+          "word": "法律",
+          "pronunciation": "fǎlǜ",
+          "hanViet": "PHÁP LUẬT",
+          "partOfSpeech": "noun",
+          "meaningVi": "Pháp luật, luật lệ",
+          "radicals": "法 (Pháp - khuôn mẫu) + 律 (Luật - quy định điều lệnh)",
+          "grammarNote": "Tuân thủ pháp luật: 遵守法律.",
+          "exampleSentence": {
+            "target": "在法律面前，人人一律平等。",
+            "pronunciation": "Zài fǎlǜ miànqián, rénrén yílǜ píngděng.",
+            "meaningVi": "Trước pháp luật, mọi người hoàn toàn bình đẳng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk4_l7",
+      "title": "Bài 7: Truyền Thông Số & Thành Ngữ \"Nhất Cử Lưỡng Đắc\"",
+      "grammarFocus": "Thành ngữ Tứ tự: 一举两得 (Một mũi tên trúng hai đích / Một công đôi việc) & 画龙点睛 (Điểm xuyết chi tiết đắt giá làm bừng sáng cả tác phẩm).",
+      "vocabularies": [
+        {
+          "id": "zh_h4_7_1",
+          "word": "一举两得",
+          "pronunciation": "yì jǔ liǎng dé",
+          "hanViet": "NHẤT CỬ LƯỠNG ĐẮC",
+          "partOfSpeech": "idiom",
+          "meaningVi": "Một công đôi việc, tiện cả đôi đường",
+          "radicals": "一 (Một) + 举 (Hành động) + 两 (Hai) + 得 (Được, đạt được)",
+          "grammarNote": "Đồng nghĩa với 一石二鸟.",
+          "exampleSentence": {
+            "target": "骑自行车上下班不仅能锻炼身体，还能节能减排，真是一举两得。",
+            "pronunciation": "Qí zìxíngchē shàngxiàbān bùjǐn néng duànliàn shēntǐ, hái néng jiénéng jiǎnpái, zhēn shì yì jǔ liǎng dé.",
+            "meaningVi": "Đạp xe đạp đi làm không những có thể rèn luyện sức khỏe mà còn tiết kiệm năng lượng giảm phát thải, thật đúng là một công đôi việc."
+          }
+        },
+        {
+          "id": "zh_h4_7_2",
+          "word": "画龙点睛",
+          "pronunciation": "huà lóng diǎn jīng",
+          "hanViet": "HỌA LONG ĐIỂM TINH",
+          "partOfSpeech": "idiom",
+          "meaningVi": "Vẽ rồng điểm mắt (thêm chi tiết then chốt làm bừng sáng toàn bộ)",
+          "radicals": "画 (Vẽ) + 龙 (Rồng) + 点 (Chấm điểm) + 睛 (Con ngươi của mắt)",
+          "grammarNote": "Khen ngợi câu kết bài viết hoặc điểm sáng trong thiết kế.",
+          "exampleSentence": {
+            "target": "设计师在海报正中央加的那句文案起到了画龙点睛的作用。",
+            "pronunciation": "Shèjìshī zài hǎibào zhèng zhōngyāng jiā de nà jù wén'àn qǐdào le huà lóng diǎn jīng de zuòyòng.",
+            "meaningVi": "Câu slogan mà nhà thiết kế thêm vào chính giữa tấm poster đã phát huy tác dụng vẽ rồng điểm mắt."
+          }
+        },
+        {
+          "id": "zh_h4_7_3",
+          "word": "广告",
+          "pronunciation": "guǎnggào",
+          "hanViet": "QUẢNG CÁO",
+          "partOfSpeech": "noun",
+          "meaningVi": "Quảng cáo thương mại",
+          "radicals": "广 (Quảng - rộng rãi) + 告 (Cáo - thông báo)",
+          "grammarNote": "Chạy quảng cáo: 投放广告.",
+          "exampleSentence": {
+            "target": "优质的创意广告不仅能提高品牌知名度，还能引发消费者的情感共鸣。",
+            "pronunciation": "Yōuzhì de chuàngyì guǎnggào bùjǐn néng tígāo pǐnpái zhīmíngdù, hái néng yǐnfā xiāofèizhě de qínggǎn gòngmíng.",
+            "meaningVi": "Quảng cáo sáng tạo chất lượng cao không chỉ nâng cao độ nhận diện thương hiệu mà còn gợi lên sự đồng cảm sâu sắc của người tiêu dùng."
+          }
+        },
+        {
+          "id": "zh_h4_7_4",
+          "word": "宣传",
+          "pronunciation": "xuānchuán",
+          "hanViet": "TUYÊN TRUYỀN",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Tuyên truyền, quảng bá",
+          "radicals": "宣 (Tuyên - công bố) + 传 (Truyền - lan tỏa)",
+          "grammarNote": "Chiến dịch truyền thông: 宣传活动.",
+          "exampleSentence": {
+            "target": "团队在各大社交平台上全力展开新产品的宣传推广。",
+            "pronunciation": "Tuánduì zài gè dà shèjiāo píngtái shang quánlì zhǎnkāi xīn chǎnpǐn de xuānchuán tuīguǎng.",
+            "meaningVi": "Đội ngũ dốc toàn lực triển khai tuyên truyền quảng bá sản phẩm mới trên khắp các nền tảng mạng xã hội."
+          }
+        },
+        {
+          "id": "zh_h4_7_5",
+          "word": "媒体",
+          "pronunciation": "méitǐ",
+          "hanViet": "MÔI THỂ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Phương tiện truyền thông, báo đài",
+          "radicals": "媒 (Môi - môi giới kết nối) + 体 (Thể - thể thức)",
+          "grammarNote": "Mạng xã hội mới: 自媒体 (we-media), 社交媒体 (social media).",
+          "exampleSentence": {
+            "target": "新媒体时代的到来让每个人都拥有了发声和展示才华的机会。",
+            "pronunciation": "Xīn méitǐ shídài de dàolái ràng měi ge rén dōu yōngyǒu le fāshēng hé zhǎnshì cáihuá de jīhuì.",
+            "meaningVi": "Thời đại truyền thông mới đến mang lại cơ hội cất lên tiếng nói và thể hiện tài năng cho mỗi con người."
+          }
+        },
+        {
+          "id": "zh_h4_7_6",
+          "word": "流量",
+          "pronunciation": "liúliàng",
+          "hanViet": "LƯU LƯỢNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Lưu lượng truy cập, traffic trên mạng",
+          "radicals": "流 (Lưu - dòng chảy) + 量 (Lượng - số lượng)",
+          "grammarNote": "Đổi traffic thành doanh số: 流量变现.",
+          "exampleSentence": {
+            "target": "优质的内容永远是吸引海量网络流量的最根本保证。",
+            "pronunciation": "Yōuzhì de nèiróng yǒngyuǎn shì xīyǐn hǎiliàng wǎngluò liúliàng de zuì gēnběn bǎozhèng.",
+            "meaningVi": "Nội dung chất lượng cao mãi mãi là bảo đảm căn bản nhất để thu hút lượng traffic khổng lồ trên mạng."
+          }
+        },
+        {
+          "id": "zh_h4_7_7",
+          "word": "影响",
+          "pronunciation": "yǐngxiǎng",
+          "hanViet": "ẢNH HƯỞNG",
+          "partOfSpeech": "noun/verb",
+          "meaningVi": "Ảnh hưởng, tác động lan tỏa",
+          "radicals": "影 (Ảnh - cái bóng) + 响 (Hưởng - tiếng vang vọng)",
+          "grammarNote": "Người có tầm ảnh hưởng: 意见领袖 (KOL). Sức ảnh hưởng: 影响力.",
+          "exampleSentence": {
+            "target": "知名博主的测评视频对年轻群体的购买决策产生了深远影响。",
+            "pronunciation": "Zhīmíng bózhǔ de cèpíng shìpín duì niánqīng qúntǐ de gòumǎi juécè chǎnshēng le shēnyuǎn yǐngxiǎng.",
+            "meaningVi": "Video đánh giá của blogger nổi tiếng đã tạo ra ảnh hưởng sâu xa đối với quyết định mua sắm của giới trẻ."
+          }
+        },
+        {
+          "id": "zh_h4_7_8",
+          "word": "吸引",
+          "pronunciation": "xīyǐn",
+          "hanViet": "HẤP DẪN",
+          "partOfSpeech": "verb",
+          "meaningVi": "Thu hút, hấp dẫn ánh nhìn",
+          "radicals": "吸 (Hấp - hút vào) + 引 (Dẫn - kéo tới)",
+          "grammarNote": "Thu hút sự chú ý: 吸引注意力.",
+          "exampleSentence": {
+            "target": "这场独特的艺术展览吸引了上万名来自各地的观众前来参观。",
+            "pronunciation": "Zhè chǎng dútè de yìshù zhǎnlǎn xīyǐn le shàng wàn míng láizì gèdì de guānzhòng qiánlái cānguān.",
+            "meaningVi": "Triển lãm nghệ thuật độc đáo này đã thu hút hàng vạn khán giả từ khắp nơi đến tham quan."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk4_l8",
+      "title": "Bài 8: Bảo Vệ Môi Trường Xanh & Thành Ngữ \"Bán Đồ Nhi Phế\"",
+      "grammarFocus": "Thành ngữ Tứ tự: 半途而废 (Bỏ dở nửa chừng / Đứt gánh giữa đường) & 循序渐进 (Tiến hành tuần tự từng bước vững chắc).",
+      "vocabularies": [
+        {
+          "id": "zh_h4_8_1",
+          "word": "半途而废",
+          "pronunciation": "bàn tú ér fèi",
+          "hanViet": "BÁN ĐỒ NHI PHẾ",
+          "partOfSpeech": "idiom",
+          "meaningVi": "Bỏ dở nửa chừng, làm việc không kiên trì đến cùng",
+          "radicals": "半 (Nửa) + 途 (Đường đi) + 而 (Mà) + 废 (Phế bỏ, vứt bỏ)",
+          "grammarNote": "Khuyên răn: 决不能半途而废.",
+          "exampleSentence": {
+            "target": "学习任何一门技术都需要坚持到底，绝不能半途而废。",
+            "pronunciation": "Xuéxí rènhé yì mén jìshù dōu xūyào jiānchí dàodǐ, jué bù néng bàntú'érfèi.",
+            "meaningVi": "Học bất kỳ một môn kỹ thuật nào cũng cần phải kiên trì đến cùng, tuyệt đối không được bỏ dở nửa chừng."
+          }
+        },
+        {
+          "id": "zh_h4_8_2",
+          "word": "循序渐进",
+          "pronunciation": "xún xù jiàn jìn",
+          "hanViet": "TUẦN TỰ TIỆM TIẾN",
+          "partOfSpeech": "idiom",
+          "meaningVi": "Tuần tự từng bước, tiến lên có phương pháp lớp lang",
+          "radicals": "循 (Theo) + 序 (Thứ tự) + 渐 (Dần dần) + 进 (Tiến lên)",
+          "grammarNote": "Phương pháp sư phạm chuẩn mực.",
+          "exampleSentence": {
+            "target": "掌握高级词汇必须遵循循序渐进的规律，从基础慢慢积累。",
+            "pronunciation": "Zhǎngwò gāojí cíhuì bìxū zūnxún xúnxùjiànjìn de guīlǜ, cóng jīchǔ mànmàn jīlěi.",
+            "meaningVi": "Nắm vững từ vựng cao cấp bắt buộc phải tuân theo quy luật tuần tự tiệm tiến, tích lũy dần từ nền tảng."
+          }
+        },
+        {
+          "id": "zh_h4_8_3",
+          "word": "垃圾分类",
+          "pronunciation": "lājī fēnlèi",
+          "hanViet": "LẠP TẠP PHÂN LOẠI",
+          "partOfSpeech": "noun/verb",
+          "meaningVi": "Phân loại rác thải tại nguồn",
+          "radicals": "垃圾 (Rác rưởi) + 分类 (Phân chia chủng loại)",
+          "grammarNote": "Bốn loại rác: 可回收物, 有害垃圾, 厨余垃圾, 其他垃圾.",
+          "exampleSentence": {
+            "target": "推行垃圾分类不仅能促进资源循环利用，还能保护城市生态。",
+            "pronunciation": "Tuīxíng lājī fēnlèi bùjǐn néng cùjìn zīyuán xúnhuán lìyòng, hái néng bǎohù chéngshì shēngtài.",
+            "meaningVi": "Thúc đẩy phân loại rác thải không những thúc đẩy tái chế tài nguyên mà còn bảo vệ sinh thái đô thị."
+          }
+        },
+        {
+          "id": "zh_h4_8_4",
+          "word": "节约",
+          "pronunciation": "jiéyuē",
+          "hanViet": "TIẾT ƯỚC",
+          "partOfSpeech": "verb",
+          "meaningVi": "Tiết kiệm, chắt chiu",
+          "radicals": "节 (Tiết - kiềm chế) + 约 (Ước - ước thúc, co bớt)",
+          "grammarNote": "Tiết kiệm nước: 节约用水. Trái nghĩa: 浪费 (làngfèi - lãng phí).",
+          "exampleSentence": {
+            "target": "随手关灯、节约用电是我们每个人举手之劳的环保行动。",
+            "pronunciation": "Suíshǒu guāndēng, jiéyuē yòngdiàn shì wǒmen měi ge rén jǔshǒuzhīláo de huánbǎo xíngdòng.",
+            "meaningVi": "Tiện tay tắt đèn, tiết kiệm điện là hành động bảo vệ môi trường vừa tầm tay của mỗi người chúng ta."
+          }
+        },
+        {
+          "id": "zh_h4_8_5",
+          "word": "污染",
+          "pronunciation": "wūrǎn",
+          "hanViet": "Ô NHIỄM",
+          "partOfSpeech": "noun/verb",
+          "meaningVi": "Ô nhiễm môi trường",
+          "radicals": "污 (Ô - bẩn thỉu) + 染 (Nhiễm - lây lan)",
+          "grammarNote": "Ô nhiễm không khí: 空气污染. Ô nhiễm nguồn nước: 水污染.",
+          "exampleSentence": {
+            "target": "大力发展新能源汽车有助于减少汽车尾气对大气环境的污染。",
+            "pronunciation": "Dàlì fāzhǎn xīn néngyuán qìchē yǒuzhùyú jiǎnshǎo qìchē wěiqì duì dàqì huánjìng de wūrǎn.",
+            "meaningVi": "Dốc sức phát triển xe năng lượng mới giúp ích cho việc giảm ô nhiễm của khí thải ô tô đối với môi trường khí quyển."
+          }
+        },
+        {
+          "id": "zh_h4_8_6",
+          "word": "塑料",
+          "pronunciation": "sùliào",
+          "hanViet": "TỐ LIỆU",
+          "partOfSpeech": "noun",
+          "meaningVi": "Chất liệu nhựa, đồ nhựa",
+          "radicals": "塑 (Tố - uốn nắn tạo hình) + 料 (Liệu - vật liệu)",
+          "grammarNote": "Túi nilon: 塑料袋. Cấm dùng đồ nhựa 1 lần: 限塑令.",
+          "exampleSentence": {
+            "target": "超市购物时自带环保布袋可以有效减少塑料袋的使用量。",
+            "pronunciation": "Chāoshì gòuwù shí zìdài huánbǎo bùdài kěyǐ yǒuxiào jiǎnshǎo sùliàodài de shǐyòngliàng.",
+            "meaningVi": "Khi đi mua sắm ở siêu thị tự mang theo túi vải thân thiện môi trường có thể giảm thiểu lượng túi nhựa một cách hiệu quả."
+          }
+        },
+        {
+          "id": "zh_h4_8_7",
+          "word": "绿化",
+          "pronunciation": "lǜhuà",
+          "hanViet": "LỤC HÓA",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Phủ xanh, trồng cây tạo mảng xanh",
+          "radicals": "绿 (Lục - màu xanh lá cây) + 化 (Hóa - biến đổi)",
+          "grammarNote": "Tỷ lệ phủ xanh đô thị: 城市绿化率.",
+          "exampleSentence": {
+            "target": "近十年来，这座城市的绿化面积扩大了将近一倍。",
+            "pronunciation": "Jìn shí nián lái, zhè zuò chéngshì de lǜhuà miànjī kuòdà le jiāngjìn yí bèi.",
+            "meaningVi": "Mười năm trở lại đây, diện tích phủ xanh của thành phố này đã mở rộng gần gấp đôi."
+          }
+        },
+        {
+          "id": "zh_h4_8_8",
+          "word": "责任",
+          "pronunciation": "zérèn",
+          "hanViet": "TRÁCH NHIỆM",
+          "partOfSpeech": "noun",
+          "meaningVi": "Trách nhiệm, bổn phận",
+          "radicals": "责 (Trách - nghĩa vụ) + 任 (Nhiệm - gánh vác)",
+          "grammarNote": "Có tinh thần trách nhiệm: 有责任心. Trách nhiệm xã hội: 社会责任.",
+          "exampleSentence": {
+            "target": "留给子孙后代一个天蓝地绿水清的美丽家园是我们共同的责任。",
+            "pronunciation": "Liú gěi zǐsūn hòudài yí ge tiān lán dì lǜ shuǐ qīng de měilì jiāyuán shì wǒmen gòngtóng de zérèn.",
+            "meaningVi": "Để lại cho con cháu mai sau một mái nhà tươi đẹp trời xanh đất xanh nước trong là trách nhiệm chung của chúng ta."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk4_l9",
+      "title": "Bài 9: Du Lịch Khám Phá Địa Lý & Thành Ngữ \"Mã Đáo Thành Công\"",
+      "grammarFocus": "Thành ngữ Tứ tự: 马到成功 (Mã đáo thành công / Đánh đâu thắng đó) & 流连忘返 (Say mê ngắm cảnh quên cả lối về).",
+      "vocabularies": [
+        {
+          "id": "zh_h4_9_1",
+          "word": "马到成功",
+          "pronunciation": "mǎ dào chéng gōng",
+          "hanViet": "MÃ ĐÁO THÀNH CÔNG",
+          "partOfSpeech": "idiom",
+          "meaningVi": "Mã đáo thành công, ra trận chiến thắng vẻ vang",
+          "radicals": "马 (Mã) + 到 (Đến) + 成 (Thành) + 功 (Công trạng)",
+          "grammarNote": "Câu chúc tụng kinh điển: 祝您马到成功!",
+          "exampleSentence": {
+            "target": "祝愿你在新的工作岗位上大展宏图，马到成功！",
+            "pronunciation": "Zhùyuàn nǐ zài xīn de gōngzuò gǎngwèi shang dàzhǎn hóngtú, mǎ dào chéng gōng!",
+            "meaningVi": "Chúc bạn ở cương vị công tác mới mở rộng tiền đồ, mã đáo thành công!"
+          }
+        },
+        {
+          "id": "zh_h4_9_2",
+          "word": "流连忘返",
+          "pronunciation": "liú lián wàng fǎn",
+          "hanViet": "LƯU LIÊN VONG PHẢN",
+          "partOfSpeech": "idiom",
+          "meaningVi": "Quyến luyến say mê cảnh đẹp quên cả đường về",
+          "radicals": "流连 (Lưu luyến gắn bó) + 忘返 (Quên mất việc quay về)",
+          "grammarNote": "Dùng miêu tả vẻ đẹp mê hoặc của danh lam thắng cảnh.",
+          "exampleSentence": {
+            "target": "九寨沟如诗如画的山水美景让每一位前来的游客都流连忘返。",
+            "pronunciation": "Jiǔzhàigōu rú shī rú huà de shānshuǐ měijǐng ràng měi yí wèi qiánlái de yóukè dōu liúliánwàngfǎn.",
+            "meaningVi": "Cảnh sắc non nước đẹp như thơ như họa của Cửu Trại Câu khiến mỗi du khách đến đây đều lưu luyến quên cả lối về."
+          }
+        },
+        {
+          "id": "zh_h4_9_3",
+          "word": "风景",
+          "pronunciation": "fēngjǐng",
+          "hanViet": "PHONG CẢNH",
+          "partOfSpeech": "noun",
+          "meaningVi": "Phong cảnh, cảnh sắc thiên nhiên",
+          "radicals": "风 (Phong - gió) + 景 (Cảnh - cảnh tượng)",
+          "grammarNote": "Khu danh thắng: 风景区.",
+          "exampleSentence": {
+            "target": "登上长城顶峰，群山连绵起伏的壮丽风景尽收眼底。",
+            "pronunciation": "Dēng shàng Chángchéng dǐngfēng, qúnshān liánmián qǐfú de zhuànglì fēngjǐng jìn shōu yǎndǐ.",
+            "meaningVi": "Trèo lên đỉnh Vạn Lý Trường Thành, phong cảnh tráng lệ của các dãy núi nhấp nhô trùng điệp thu trọn vào tầm mắt."
+          }
+        },
+        {
+          "id": "zh_h4_9_4",
+          "word": "名胜古迹",
+          "pronunciation": "míngshèng gǔjì",
+          "hanViet": "DANH THẮNG CỔ TÍCH",
+          "partOfSpeech": "noun",
+          "meaningVi": "Danh lam thắng cảnh và di tích cổ",
+          "radicals": "名胜 (Thắng cảnh nổi tiếng) + 古迹 (Dấu tích di tích cổ xưa)",
+          "grammarNote": "Du lịch văn hóa: 游览名胜古迹.",
+          "exampleSentence": {
+            "target": "西安作为千年古都，拥有兵马俑、大雁塔等无数著名的名胜古迹。",
+            "pronunciation": "Xī'ān zuòwéi qiānnián gǔdū, yōngyǒu Bīngmǎyǒng, Dàyàntǎ děng wúshù zhùmíng de míngshèng gǔjì.",
+            "meaningVi": "Tây An với tư cách là cổ đô ngàn năm, sở hữu vô số danh thắng cổ tích nổi tiếng như Binh mã dũng, Tháp Đại Nhạn."
+          }
+        },
+        {
+          "id": "zh_h4_9_5",
+          "word": "特色",
+          "pronunciation": "tèsè",
+          "hanViet": "ĐẶC SẮC",
+          "partOfSpeech": "noun/adj",
+          "meaningVi": "Đặc sắc, nét đặc trưng độc đáo",
+          "radicals": "特 (Đặc biệt) + 色 (Sắc thái)",
+          "grammarNote": "Đặc sản địa phương: 地方特色.",
+          "exampleSentence": {
+            "target": "品尝具有地方特色的小吃是旅行中不可或缺的乐趣之一。",
+            "pronunciation": "Pǐncháng jùyǒu dìfāng tèsè de xiǎochī shì lǚxíng zhōng bù kě huò quē de lèqù zhī yī.",
+            "meaningVi": "Thưởng thức những món ăn vặt mang đậm đặc sắc địa phương là một trong những niềm vui không thể thiếu trong chuyến du lịch."
+          }
+        },
+        {
+          "id": "zh_h4_9_6",
+          "word": "拍照",
+          "pronunciation": "pāizhào",
+          "hanViet": "PHÁCH CHIẾU",
+          "partOfSpeech": "verb",
+          "meaningVi": "Chụp hình, chụp ảnh lưu niệm",
+          "radicals": "拍 (Phách - vỗ, bấm máy) + 照 (Chiếu - bức ảnh)",
+          "grammarNote": "Check-in chụp ảnh: 拍照打卡.",
+          "exampleSentence": {
+            "target": "游客们纷纷在标志性建筑前拍照留念。",
+            "pronunciation": "Yóukèmen fēnfēn zài biāozhìxìng jiànzhù qián pāizhào liúniàn.",
+            "meaningVi": "Du khách tấp nập chụp ảnh lưu niệm trước công trình kiến trúc mang tính biểu tượng."
+          }
+        },
+        {
+          "id": "zh_h4_9_7",
+          "word": "纪念品",
+          "pronunciation": "jìniànpǐn",
+          "hanViet": "KỶ NIỆM PHẨM",
+          "partOfSpeech": "noun",
+          "meaningVi": "Đồ lưu niệm kỷ niệm",
+          "radicals": "纪念 (Kỷ niệm ghi nhớ) + 品 (Vật phẩm)",
+          "grammarNote": "Mua đồ lưu niệm: 买纪念品.",
+          "exampleSentence": {
+            "target": "他给办公室的同事们带回了许多富有云南少数民族风情的纪念品。",
+            "pronunciation": "Tā gěi bàngōngshì de tóngshìmen dàihuí le xǔduō fùyǒu Yúnnán shǎoshù mínzú fēngqíng de jìniànpǐn.",
+            "meaningVi": "Anh ấy đã mang về cho các đồng nghiệp ở văn phòng rất nhiều món đồ lưu niệm đậm đà phong vị dân tộc thiểu số Vân Nam."
+          }
+        },
+        {
+          "id": "zh_h4_9_8",
+          "word": "气候",
+          "pronunciation": "qìhòu",
+          "hanViet": "KHÍ HẬU",
+          "partOfSpeech": "noun",
+          "meaningVi": "Khí hậu thời tiết vùng miền",
+          "radicals": "气 (Khí quyển) + 候 (Thời điểm khí tiết)",
+          "grammarNote": "Khí hậu ôn hòa: 气候温和. Khí hậu khắc nghiệt: 气候恶劣.",
+          "exampleSentence": {
+            "target": "昆明四季如春，气候宜人，因而享有春城的美誉。",
+            "pronunciation": "Kūnmíng sìjì rú chūn, qìhòu yírén, yīn'ér xiǎngyǒu Chūnchéng de měiyù.",
+            "meaningVi": "Côn Minh bốn mùa như xuân, khí hậu dễ chịu lòng người, bởi thế được hưởng danh xưng tuyệt mỹ là Thành phố mùa xuân."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk4_l10",
+      "title": "Bài 10: Khởi Nghiệp, Kế Hoạch Tương Lai & \"Thục Năng Sinh Xảo\"",
+      "grammarFocus": "Thành ngữ Tứ tự: 熟能生巧 (Trăm hay không bằng tay quen / Rèn luyện mãi ắt thành kỹ xảo) & 坚持不懈 (Bền bỉ kiên trì không hề chểnh mảng).",
+      "vocabularies": [
+        {
+          "id": "zh_h4_10_1",
+          "word": "熟能生巧",
+          "pronunciation": "shú néng shēng qiǎo",
+          "hanViet": "THỤC NĂNG SINH XẢO",
+          "partOfSpeech": "idiom",
+          "meaningVi": "Quen tay hay việc, luyện tập thuần thục sẽ sinh ra kỹ xảo khéo léo",
+          "radicals": "熟 (Thuần thục chín muồi) + 能 (Có thể) + 生 (Sinh ra) + 巧 (Khéo léo xảo diệu)",
+          "grammarNote": "Nguyên lý học ngoại ngữ và kỹ năng.",
+          "exampleSentence": {
+            "target": "练习汉字书写最重要的是持之以恒，熟能生巧自然就能写得既快又美。",
+            "pronunciation": "Liànxí hànzì shūxiě zuì zhòngyào de shì chízhīyǐhéng, shúnéngshēngqiǎo zìrán jiù néng xiě de jì kuài yòu měi.",
+            "meaningVi": "Luyện tập viết chữ Hán điều quan trọng nhất là kiên trì giữ vững, trăm hay không bằng tay quen tự nhiên sẽ viết được vừa nhanh vừa đẹp."
+          }
+        },
+        {
+          "id": "zh_h4_10_2",
+          "word": "坚持不懈",
+          "pronunciation": "jiān chí bú xiè",
+          "hanViet": "KIÊN TRÌ BẤT GIẢI",
+          "partOfSpeech": "idiom",
+          "meaningVi": "Kiên trì không lơi lỏng, bền bỉ đến cùng",
+          "radicals": "坚持 (Kiên trì giữ vững) + 不懈 (Không hề chểnh mảng lơi là)",
+          "grammarNote": "Đức tính khởi nghiệp thành công.",
+          "exampleSentence": {
+            "target": "经过创业团队五年来坚持不懈的拼搏，公司终于成功挂牌上市。",
+            "pronunciation": "Jīngguò chuàngyè tuánduì wǔ nián lái jiānchíbúxiè de pīnbó, gōngsī zhōngyú chénggōng guàpái shàngshì.",
+            "meaningVi": "Trải qua 5 năm nỗ lực kiên trì không ngừng nghỉ của đội ngũ sáng lập, công ty cuối cùng đã niêm yết lên sàn chứng khoán thành công."
+          }
+        },
+        {
+          "id": "zh_h4_10_3",
+          "word": "创业",
+          "pronunciation": "chuàngyè",
+          "hanViet": "SÁNG NGHIỆP",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Khởi nghiệp, lập nghiệp kinh doanh",
+          "radicals": "创 (Sáng - khai sáng tạo ra) + 业 (Nghiệp - cơ nghiệp)",
+          "grammarNote": "Công ty khởi nghiệp: 初创企业. Tinh thần khởi nghiệp: 创业精神.",
+          "exampleSentence": {
+            "target": "创业不仅需要敏锐的市场洞察力，更需要强大的抗压心理素质。",
+            "pronunciation": "Chuàngyè bùjǐn xūyào mǐnruì de shìchǎng dòngchálì, gèng xūyào qiángdà de kàngyā xīnlǐ sùzhì.",
+            "meaningVi": "Khởi nghiệp không chỉ cần năng lực thấu thị thị trường nhạy bén mà còn cần tố chất tâm lý chịu áp lực mạnh mẽ."
+          }
+        },
+        {
+          "id": "zh_h4_10_4",
+          "word": "投资",
+          "pronunciation": "tóuzī",
+          "hanViet": "ĐẦU TƯ",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Đầu tư tài chính, nguồn vốn đầu tư",
+          "radicals": "投 (Đầu - ném vào, đổ tiền vào) + 资 (Tư - tư bản)",
+          "grammarNote": "Nhà đầu tư mạo hiểm: 风险投资人 (VC). Thu hồi vốn: 投资回报率 (ROI).",
+          "exampleSentence": {
+            "target": "项目在初创阶段就获得了知名投资机构一千万元的天使投资。",
+            "pronunciation": "Xiàngmù zài chūchuàng jiēduàn jiù huòdé le zhīmíng tóuzī jīgòu yì qiān wàn yuán de tiānshǐ tóuzī.",
+            "meaningVi": "Dự án ngay tại giai đoạn sơ khai đã nhận được 10 triệu tệ vốn đầu tư thiên thần từ một tổ chức đầu tư danh tiếng."
+          }
+        },
+        {
+          "id": "zh_h4_10_5",
+          "word": "目标",
+          "pronunciation": "mùbiāo",
+          "hanViet": "MỤC TIÊU",
+          "partOfSpeech": "noun",
+          "meaningVi": "Mục tiêu, đích nhắm đến",
+          "radicals": "目 (Mục - con mắt nhìn) + 标 (Tiêu - cột mốc)",
+          "grammarNote": "Đặt ra mục tiêu: 制定目标. Đạt được mục tiêu: 实现目标.",
+          "exampleSentence": {
+            "target": "制定清晰可行的短期和长期目标是迈向成功的基石。",
+            "pronunciation": "Zhìdìng qīngxī kěxíng de duǎnqī hé chángqī mùbiāo shì màixiàng chénggōng de jīshí.",
+            "meaningVi": "Đề ra mục tiêu ngắn hạn và dài hạn rõ ràng khả thi là viên đá nền tảng để tiến tới thành công."
+          }
+        },
+        {
+          "id": "zh_h4_10_6",
+          "word": "机遇",
+          "pronunciation": "jīyù",
+          "hanViet": "CƠ NGỘ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Cơ hội tốt ngàn năm có một, thời cơ thuận lợi",
+          "radicals": "机 (Cơ - thời cơ, máy tính) + 遇 (Ngộ - cơ duyên gặp gỡ)",
+          "grammarNote": "Nắm bắt cơ hội: 抓住机遇. Thách thức đi kèm cơ hội: 机遇与挑战并存.",
+          "exampleSentence": {
+            "target": "数字化转型浪潮为广大中小企业带来了前所未有的发展机遇。",
+            "pronunciation": "Shùzìhuà zhuǎnxíng làngcháo wèi guǎngdà zhōngxiǎo qǐyè dàilái le qiánsuǒwèiyǒu de fāzhǎn jīyù.",
+            "meaningVi": "Làn sóng chuyển đổi số đã mang lại cơ hội phát triển chưa từng có cho đông đảo các doanh nghiệp vừa và nhỏ."
+          }
+        },
+        {
+          "id": "zh_h4_10_7",
+          "word": "团队",
+          "pronunciation": "tuánduì",
+          "hanViet": "ĐOÀN ĐỘI",
+          "partOfSpeech": "noun",
+          "meaningVi": "Đội ngũ, tập thể teamwork",
+          "radicals": "团 (Đoàn - gắn kết thành khối) + 队 (Đội - hàng ngũ)",
+          "grammarNote": "Tinh thần đồng đội: 团队合作精神.",
+          "exampleSentence": {
+            "target": "一个优秀高效的团队能够把看似不可能的目标变为现实。",
+            "pronunciation": "Yí ge yōuxiù gāoxiào de tuánduì nénggòu bǎ kànsì bù kěnéng de mùbiāo biàn wéi xiànshí.",
+            "meaningVi": "Một đội ngũ xuất sắc và hiệu suất cao có thể biến những mục tiêu tưởng chừng không thể thành hiện thực."
+          }
+        },
+        {
+          "id": "zh_h4_10_8",
+          "word": "成功",
+          "pronunciation": "chénggōng",
+          "hanViet": "THÀNH CÔNG",
+          "partOfSpeech": "noun/verb/adj",
+          "meaningVi": "Thành công",
+          "radicals": "成 (Thành - hoàn thành) + 功 (Công - thành tựu)",
+          "grammarNote": "Trái nghĩa với 失败 (shībài - thất bại). Thành ngữ: 失败乃成功之母.",
+          "exampleSentence": {
+            "target": "成功的背后往往凝聚着无数次不为人知的汗水与泪水。",
+            "pronunciation": "Chénggōng de bèihòu wǎngwǎng níngjùzhe wúshù cì bù wéi rén zhī de hànshuǐ yǔ lèishuǐ.",
+            "meaningVi": "Phía sau thành công thường kết tinh từ vô số lần mồ hôi và nước mắt không mấy ai hay biết."
+          }
+        }
+      ]
+    }
+  ]
+}

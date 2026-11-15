@@ -1,0 +1,1531 @@
+{
+  "levelId": "zh_hsk6",
+  "code": "HSK 6",
+  "title": "HSK 6 - Cao Cấp 2 & Chuyên Ngành Nhà Máy, Xuất Nhập Khẩu, Logistics",
+  "lessons": [
+    {
+      "id": "zh_hsk6_l1",
+      "title": "Bài 1: Vận Hành Dây Chuyền Sản Xuất & Công Nghệ SMT",
+      "grammarFocus": "Thuật ngữ nhà máy công nghiệp: 流水线 (Dây chuyền sản xuất), SMT 贴片 (Gắn chip bề mặt), 节拍时间 (Cycle time).",
+      "vocabularies": [
+        {
+          "id": "zh_h6_1_1",
+          "word": "流水线",
+          "pronunciation": "liúshuǐxiàn",
+          "hanViet": "LƯU THỦY TUYẾN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Dây chuyền sản xuất lắp ráp liên tục",
+          "radicals": "流水 (Nước chảy không ngừng) + 线 (Đường tuyến)",
+          "grammarNote": "Vận hành dây chuyền: 流水线作业. Công nhân dây chuyền: 普工.",
+          "exampleSentence": {
+            "target": "总装车间的新型自动化流水线每四十五秒即可下线一台成品手机。",
+            "pronunciation": "Zǒngzhuāng chējiān de xīnxíng zìdònghuà liúshuǐxiàn měi sìshíwǔ miǎo jíkě xiàxiàn yì tái chéngpǐn shǒujī.",
+            "meaningVi": "Dây chuyền lắp ráp tự động hóa kiểu mới của xưởng tổng lắp cứ mỗi 45 giây là có thể xuất xưởng một chiếc điện thoại thành phẩm."
+          }
+        },
+        {
+          "id": "zh_h6_1_2",
+          "word": "贴片",
+          "pronunciation": "tiēpiàn",
+          "hanViet": "THIẾP PHIẾN",
+          "partOfSpeech": "noun/verb",
+          "meaningVi": "Công nghệ dán linh kiện bề mặt bo mạch (SMT - Surface Mount Technology)",
+          "radicals": "贴 (Thiếp - dán lên) + 片 (Phiến - mảnh mạch mỏng)",
+          "grammarNote": "Xưởng SMT: 贴片车间. Máy dán chip: 贴片机.",
+          "exampleSentence": {
+            "target": "高精度贴片机能够以每小时八万只元件的极高速度将微型芯片精准贴装在电路板上。",
+            "pronunciation": "Gāojīngdù tiēpiànjī nénggòu yǐ měi xiǎoshí bā wàn zhī yuánjiàn de jígāo sùdù jiāng wēixíng xīnpiàn jīngzhǔn tiēzhuāng zài diànlùbǎn shang.",
+            "meaningVi": "Máy dán chip độ chính xác cao có thể gắn chuẩn xác các vi chip lên bo mạch với tốc độ cực cao 80.000 linh kiện mỗi giờ."
+          }
+        },
+        {
+          "id": "zh_h6_1_3",
+          "word": "产能",
+          "pronunciation": "chǎnnéng",
+          "hanViet": "SẢN NĂNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Năng lực sản xuất, công suất nhà máy (Capacity)",
+          "radicals": "产 (Sản - sản xuất) + 能 (Năng - năng lực)",
+          "grammarNote": "Đạt công suất tối đa: 满负荷产能. Mở rộng công suất: 扩充产能.",
+          "exampleSentence": {
+            "target": "随着第二期厂房正式投产，该基地的年产能预计将突破五百万台。",
+            "pronunciation": "Suízhe dì-èr qī chǎngfáng zhèngshì tóuchǎn, gāi jīdì de nián chǎnnéng yùjì jiāng tūpò wǔ bǎi wàn tái.",
+            "meaningVi": "Cùng với việc nhà xưởng giai đoạn hai chính thức đi vào sản xuất, công suất năm của cứ điểm này dự kiến sẽ vượt mốc 5 triệu chiếc."
+          }
+        },
+        {
+          "id": "zh_h6_1_4",
+          "word": "组装",
+          "pronunciation": "zǔzhuāng",
+          "hanViet": "TỔ TRANG",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Lắp ráp linh kiện thành phẩm (Assembly)",
+          "radicals": "组 (Tổ - tập hợp sắp xếp) + 装 (Trang - lắp ráp)",
+          "grammarNote": "Xưởng lắp ráp: 组装厂. Dây chuyền lắp ráp: 组装线.",
+          "exampleSentence": {
+            "target": "工人经过为期两周的技能培训后，才能正式进入无尘车间进行精密光学仪器的组装工作。",
+            "pronunciation": "Gōngrén jīngguò wéiqī liǎng zhōu de jìnéng péixùn hòu, cái néng zhèngshì jìnrù wúchén chējiān jìnxíng jīngmì guāngxué yíqì de zǔzhuāng gōngzuò.",
+            "meaningVi": "Công nhân sau khi trải qua khóa đào tạo kỹ năng kéo dài hai tuần, mới có thể chính thức bước vào phòng sạch để tiến hành công việc lắp ráp thiết bị quang học chính xác."
+          }
+        },
+        {
+          "id": "zh_h6_1_5",
+          "word": "调试",
+          "pronunciation": "tiáoshì",
+          "hanViet": "ĐIỀU THÍ",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Căn chỉnh, chạy thử nghiệm thiết bị (Commissioning & Debugging)",
+          "radicals": "调 (Điều - điều chỉnh) + 试 (Thí - thử nghiệm)",
+          "grammarNote": "Căn chỉnh thông số: 调试参数. Kỹ sư căn chỉnh: 调试工程师.",
+          "exampleSentence": {
+            "target": "设备工程师正在对新引进的数控机床进行二十四小时不间断带载调试。",
+            "pronunciation": "Shèbèi gōngchéngshī zhèngzài duì xīn yǐnjìn de shùkòng jīchuáng jìnxíng èrshísì xiǎoshí bú jiànduàn dàizǎi tiáoshì.",
+            "meaningVi": "Kỹ sư thiết bị đang tiến hành chạy thử tải liên tục 24 giờ đối với máy tiện CNC mới nhập khẩu."
+          }
+        },
+        {
+          "id": "zh_h6_1_6",
+          "word": "交期",
+          "pronunciation": "jiāoqī",
+          "hanViet": "GIAO KỲ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Hạn bàn giao lô hàng, tiến độ giao hàng (Lead time / Delivery deadline)",
+          "radicals": "交 (Giao - bàn giao) + 期 (Kỳ - thời hạn)",
+          "grammarNote": "Đảm bảo đúng tiến độ bàn giao: 确保交期. Trễ hạn giao hàng: 延迟交期.",
+          "exampleSentence": {
+            "target": "为了确保欧美大客户圣诞促销季的订单交期，工厂启动了三班倒连续生产机制。",
+            "pronunciation": "Wèile quèbǎo Ōu-Měi dà kèhù Shèngdàn cùxiāo jì de dìngdān jiāoqī, gōngchǎng qǐdòng le sānbāndǎo liánxù shēngchǎn jīzhì.",
+            "meaningVi": "Để bảo đảm hạn giao hàng đơn hàng mùa khuyến mãi Giáng sinh của khách hàng lớn Âu-Mỹ, nhà máy đã kích hoạt cơ chế sản xuất liên tục 3 ca xoay vòng."
+          }
+        },
+        {
+          "id": "zh_h6_1_7",
+          "word": "模具",
+          "pronunciation": "mújù",
+          "hanViet": "MÔ CỤ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Khuôn mẫu đúc cơ khí/nhựa (Molding)",
+          "radicals": "模 (Mô - khuôn đúc) + 具 (Cụ - dụng cụ thiết bị)",
+          "grammarNote": "Đúc khuôn ép nhựa: 注塑模具. Chế tạo khuôn: 开模.",
+          "exampleSentence": {
+            "target": "精密模具的设计精度直接决定了注塑外壳的平整度与密合公差。",
+            "pronunciation": "Jīngmì mújù de shèjì jīngdù zhíjiē juédìng le zhùsù wàiké de píngzhěngdù yǔ mìhé gōngchā.",
+            "meaningVi": "Độ chính xác thiết kế của khuôn mẫu chính xác quyết định trực tiếp đến độ phẳng và dung sai ăn khớp của vỏ ép nhựa."
+          }
+        },
+        {
+          "id": "zh_h6_1_8",
+          "word": "负荷",
+          "pronunciation": "fùhè",
+          "hanViet": "PHỤ HÀ",
+          "partOfSpeech": "noun/verb",
+          "meaningVi": "Tải trọng, công suất chịu tải (Load)",
+          "radicals": "负 (Phụ - gánh vác) + 荷 (Hà - gánh nặng trên vai)",
+          "grammarNote": "Quá tải: 超负荷运转. Tải điện: 电力负荷.",
+          "exampleSentence": {
+            "target": "严禁生产设备长期处于超负荷运转状态，以免引发不可挽回的机械故障。",
+            "pronunciation": "Yánjìn shēngchǎn shèbèi chángqī chǔyú chāofùhè yùnzhuǎn zhuàngtài, yǐmiǎn yǐnfā bù kě wǎnhuí de jīxiè gùzhàng.",
+            "meaningVi": "Nghiêm cấm thiết bị sản xuất ở trong trạng thái vận hành quá tải thời gian dài, để tránh gây ra sự cố cơ khí không thể cứu vãn."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk6_l2",
+      "title": "Bài 2: Quản Lý Chất Lượng & Kiểm Tra Lỗi (QC, QA, IQC, OQC)",
+      "grammarFocus": "Thuật ngữ quản lý chất lượng quốc tế: 品质保证 (QA), 进料检验 (IQC), 出货检验 (OQC), 不良率 (Defect rate), 合格品 (OK) / 不合格品 (NG).",
+      "vocabularies": [
+        {
+          "id": "zh_h6_2_1",
+          "word": "不良率",
+          "pronunciation": "bùliánglǜ",
+          "hanViet": "BẤT LƯƠNG SUẤT",
+          "partOfSpeech": "noun",
+          "meaningVi": "Tỷ lệ hàng lỗi phế phẩm (Defect rate / Scrap rate)",
+          "radicals": "不良 (Hỏng hóc khiếm khuyết) + 率 (Suất - tỷ lệ phần trăm)",
+          "grammarNote": "Giảm tỷ lệ lỗi: 降低不良率. Đo bằng phần triệu: PPM (Parts Per Million).",
+          "exampleSentence": {
+            "target": "通过推行六西格玛质量管理方法，车间产品的不良率从千分之三降到了五十个PPM以内。",
+            "pronunciation": "Tōngguò tuīxíng Liù Xīgémǎ zhìliàng guǎnlǐ fāngfǎ, chējiān chǎnpǐn de bùliánglǜ cóng qiānfēnzhī sān jiàng dào le wǔshí ge PPM yǐnèi.",
+            "meaningVi": "Thông qua triển khai phương pháp quản lý chất lượng Six Sigma, tỷ lệ lỗi sản phẩm của xưởng từ 3 phần nghìn đã hạ xuống dưới 50 PPM."
+          }
+        },
+        {
+          "id": "zh_h6_2_2",
+          "word": "抽样检验",
+          "pronunciation": "chōuyàng jiǎnyàn",
+          "hanViet": "TRỪU DẠNG KIỂM NGHIỆM",
+          "partOfSpeech": "noun/verb",
+          "meaningVi": "Kiểm tra mẫu rút ngẫu nhiên (Sampling Inspection / AQL Standard)",
+          "radicals": "抽样 (Lấy mẫu ngẫu nhiên) + 检验 (Kiểm nghiệm đo lường)",
+          "grammarNote": "Tiêu chuẩn quốc tế: 按照AQL标准抽样检验.",
+          "exampleSentence": {
+            "target": "质检员严格依照国际AQL二级检验标准对每批入库原料进行随机抽样检验。",
+            "pronunciation": "Zhìjiǎnyuán yángé yīzhào guójì AQL èr jí jiǎnyàn biāozhǔn duì měi pī rùkù yuánliào jìnxíng suíjī chōuyàng jiǎnyàn.",
+            "meaningVi": "Nhân viên kiểm tra chất lượng tuân thủ nghiêm ngặt tiêu chuẩn kiểm tra AQL cấp 2 quốc tế để tiến hành kiểm tra mẫu rút ngẫu nhiên đối với mỗi lô nguyên liệu nhập kho."
+          }
+        },
+        {
+          "id": "zh_h6_2_3",
+          "word": "公差",
+          "pronunciation": "gōngchā",
+          "hanViet": "CÔNG SOA",
+          "partOfSpeech": "noun",
+          "meaningVi": "Dung sai cho phép trong cơ khí chính xác (Tolerance)",
+          "radicals": "公 (Công - tiêu chuẩn chung) + 差 (Soa - sai số cho phép)",
+          "grammarNote": "Dung sai hình học: 几何公差. Vượt quá dung sai: 超出公差范围.",
+          "exampleSentence": {
+            "target": "这批航空精密结构件的加工尺寸公差必须严格控制在正负零点零零五毫米之内。",
+            "pronunciation": "Zhè pī hángkōng jīngmì jiégòujiàn de jiāgōng chǐcun gōngchā bìxū yángé kòngzhì zài zhèng-fù líng diǎn líng líng wǔ háomǐ zhīnèi.",
+            "meaningVi": "Dung sai kích thước gia công của lô linh kiện kết cấu hàng không chính xác này bắt buộc phải kiểm soát nghiêm ngặt trong phạm vi cộng trừ 0.005 milimét."
+          }
+        },
+        {
+          "id": "zh_h6_2_4",
+          "word": "品保",
+          "pronunciation": "pǐnbǎo",
+          "hanViet": "PHẨM BẢO",
+          "partOfSpeech": "noun",
+          "meaningVi": "Đảm bảo chất lượng (QA - Quality Assurance)",
+          "radicals": "品 (Chất lượng sản phẩm) + 保 (Bảo đảm cam kết)",
+          "grammarNote": "Phòng phẩm bảo: 品保部. Trưởng bộ phận QA: 品保经理.",
+          "exampleSentence": {
+            "target": "所有新产品必须由品保部出具全套可靠性测试合格报告后，方能批准量产。",
+            "pronunciation": "Suǒyǒu xīn chǎnpǐn bìxū yóu pǐnbǎobù chūjù quántào kěkàoxìng cèshì hégé bàogào hòu, fāng néng pīzhǔn liàngchǎn.",
+            "meaningVi": "Mọi sản phẩm mới bắt buộc phải do bộ phận QA cấp toàn bộ báo cáo đạt thử nghiệm độ tin cậy, sau đó mới được phê duyệt sản xuất hàng loạt."
+          }
+        },
+        {
+          "id": "zh_h6_2_5",
+          "word": "报废",
+          "pronunciation": "bàofèi",
+          "hanViet": "BÁO PHẾ",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Báo phế, vứt bỏ hàng hỏng không thể sửa (Scrap)",
+          "radicals": "报 (Báo - khai báo) + 废 (Phế - đồ bỏ đi)",
+          "grammarNote": "Tỷ lệ phế phẩm: 报废率. Quy trình tiêu hủy: 报废处理.",
+          "exampleSentence": {
+            "target": "因焊锡温度异常导致电路板内部微晶烧毁，整批产品只能作报废处理。",
+            "pronunciation": "Yīn hànxī wēndù yìcháng dǎozhì diànlùbǎn nèibù wēijīng shāohuǐ, zhěng pī chǎnpǐn zhǐ néng zuò bàofèi chǔlǐ.",
+            "meaningVi": "Do nhiệt độ thiếc hàn bất thường dẫn đến vi tinh thể bên trong bo mạch bị cháy hỏng, toàn bộ lô sản phẩm chỉ có thể đưa vào xử lý báo phế."
+          }
+        },
+        {
+          "id": "zh_h6_2_6",
+          "word": "返工",
+          "pronunciation": "fǎngōng",
+          "hanViet": "PHẢN CÔNG",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Làm lại, sửa hàng lỗi (Rework)",
+          "radicals": "返 (Phản - quay trở lại) + 工 (Công - gia công)",
+          "grammarNote": "Khu vực sửa chữa hàng lỗi: 返工区.",
+          "exampleSentence": {
+            "target": "未通过最终出货检验的批次必须退回返工区重新拆解并排查原因。",
+            "pronunciation": "Wèitōngguò zuìzhōng chūhuò jiǎnyàn de pīcì bìxū tuìhuí fǎngōngqū chóngxīn chāijiě bìng páichá yuányīn.",
+            "meaningVi": "Các lô hàng không vượt qua khâu kiểm tra xuất hàng cuối cùng bắt buộc phải trả về khu vực làm lại để tháo dỡ lại và rà soát nguyên nhân."
+          }
+        },
+        {
+          "id": "zh_h6_2_7",
+          "word": "追溯",
+          "pronunciation": "zhuīsù",
+          "hanViet": "TRUY TỐ",
+          "partOfSpeech": "verb",
+          "meaningVi": "Truy xuất nguồn gốc xuất xứ (Traceability)",
+          "radicals": "追 (Truy - lần theo dấu vết) + 溯 (Tố - lần ngược dòng nước)",
+          "grammarNote": "Hệ thống truy xuất nguồn gốc: 质量追溯系统. Mã vạch truy xuất: 追溯码.",
+          "exampleSentence": {
+            "target": "扫描外包装上的唯一二维码，可以追溯到该产品由哪位工人、在哪台机床、何时生产。",
+            "pronunciation": "Sǎomiáo wàibāozhuāng shang de wéiyī èrwéimǎ, kěyǐ zhuīsù dào gāi chǎnpǐn yóu nǎ wèi gōngrén, zài nǎ tái jīchuáng, héshí shēngchǎn.",
+            "meaningVi": "Quét mã QR duy nhất trên bao bì ngoài, có thể truy xuất đến sản phẩm này do công nhân nào, trên cỗ máy nào và sản xuất vào thời điểm nào."
+          }
+        },
+        {
+          "id": "zh_h6_2_8",
+          "word": "达标",
+          "pronunciation": "dábiāo",
+          "hanViet": "ĐẠT TIÊU",
+          "partOfSpeech": "verb",
+          "meaningVi": "Đạt chuẩn, chạm mốc tiêu chuẩn đề ra",
+          "radicals": "达 (Đạt - tới nơi) + 标 (Tiêu - tiêu chuẩn)",
+          "grammarNote": "Tỷ lệ đạt chuẩn: 达标率. Không đạt tiêu chuẩn: 未达标.",
+          "exampleSentence": {
+            "target": "经过工艺改进，本月首件检查达标率由原本的百分之九十提升至百分之九十八点五。",
+            "pronunciation": "Jīngguò gōngyì gǎijìn, běn yuè shǒujiàn jiǎnchá dábiāolǜ yóu yuánběn de bǎifēnzhī jiǔshí tíshēng zhì bǎifēnzhī jiǔshíbā diǎn wǔ.",
+            "meaningVi": "Sau cải tiến công nghệ, tỷ lệ đạt chuẩn kiểm tra sản phẩm đầu tiên của tháng này đã từ 90% ban đầu nâng lên đến 98.5%."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk6_l3",
+      "title": "Bài 3: Quy Trình Thao Tác Chuẩn SOP & Phòng Sạch (Cleanroom, PPE)",
+      "grammarFocus": "Tiêu chuẩn nhà máy công nghệ cao: 标准作业程序 (SOP), 无尘室 (Cleanroom), 静电防护 (ESD), 劳保用品 (PPE).",
+      "vocabularies": [
+        {
+          "id": "zh_h6_3_1",
+          "word": "操作规程",
+          "pronunciation": "cāozuò guīchéng",
+          "hanViet": "THAO TÁC QUY TRÌNH",
+          "partOfSpeech": "noun",
+          "meaningVi": "Quy trình thao tác chuẩn (SOP - Standard Operating Procedure)",
+          "radicals": "操作 (Vận hành tay nghề) + 规程 (Quy định trình tự)",
+          "grammarNote": "Tuân thủ SOP: 严格按照标准操作规程作业.",
+          "exampleSentence": {
+            "target": "每位现场操作工在上岗前必须熟背并严格遵守本科室的标准操作规程。",
+            "pronunciation": "Měi wèi xiànchǎng cāozuògōng zài shànggǎng qián bìxū shúbèi bìng yángé zūnshǒu běn kēshì de biāozhǔn cāozuò guīchéng.",
+            "meaningVi": "Mỗi công nhân thao tác tại hiện trường trước khi vào vị trí bắt buộc phải học thuộc và tuân thủ nghiêm ngặt quy trình thao tác chuẩn của phòng ban mình."
+          }
+        },
+        {
+          "id": "zh_h6_3_2",
+          "word": "无尘室",
+          "pronunciation": "wúchénshì",
+          "hanViet": "VÔ TRẦN THẤT",
+          "partOfSpeech": "noun",
+          "meaningVi": "Phòng sạch sản xuất vi mạch/dược phẩm (Cleanroom)",
+          "radicals": "无尘 (Không có bụi bẩn) + 室 (Căn phòng kín)",
+          "grammarNote": "Cấp độ phòng sạch: 万级无尘室 (Class 10,000), 百级无尘室 (Class 100).",
+          "exampleSentence": {
+            "target": "进入半导体百级无尘室之前，必须穿戴全身防静电服并经过风淋室彻底除尘。",
+            "pronunciation": "Jìnrù bàndǎotǐ bǎi jí wúchénshì zhīqián, bìxū chuāndài quánshēn fángjìngdiàn fú bìng jīngguò fēnglínshì chèdǐ chúchén.",
+            "meaningVi": "Trước khi bước vào phòng sạch bán dẫn cấp 100, bắt buộc phải mặc trang phục chống tĩnh điện toàn thân và đi qua buồng tắm khí (Air shower) để thổi sạch bụi triệt để."
+          }
+        },
+        {
+          "id": "zh_h6_3_3",
+          "word": "防静电",
+          "pronunciation": "fáng jìngdiàn",
+          "hanViet": "PHÒNG TĨNH ĐIỆN",
+          "partOfSpeech": "adj/verb",
+          "meaningVi": "Chống tĩnh điện, bảo vệ linh kiện vi điện tử (ESD Protection)",
+          "radicals": "防 (Phòng ngừa) + 静电 (Tĩnh điện ma sát)",
+          "grammarNote": "Vòng đeo tay chống tĩnh điện: 防静电手环. Giày chống tĩnh điện: 防静电鞋.",
+          "exampleSentence": {
+            "target": "在接触高灵敏度集成电路板时，必须佩戴经过阻值检测合格的防静电手环。",
+            "pronunciation": "Zài jiēchù gāo língmǐndù jíchéng diànlùbǎn shí, bìxū pèidài jīngguò zǔzhí jiǎncè hégé de fángjìngdiàn shǒuhuán.",
+            "meaningVi": "Khi tiếp xúc với bo mạch tích hợp độ nhạy cao, bắt buộc phải đeo vòng tay chống tĩnh điện đã qua kiểm tra trị số điện trở đạt chuẩn."
+          }
+        },
+        {
+          "id": "zh_h6_3_4",
+          "word": "防护",
+          "pronunciation": "fánghù",
+          "hanViet": "PHÒNG HỘ",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Bảo hộ an toàn, đồ bảo hộ lao động (PPE)",
+          "radicals": "防 (Phòng chống) + 护 (Che chở bảo vệ)",
+          "grammarNote": "Đồ bảo hộ lao động cá nhân: 个人防护装备 (PPE). Kính bảo hộ: 防护眼镜.",
+          "exampleSentence": {
+            "target": "在化学清洗工位作业的员工必须按规定穿戴防酸碱手套和全封闭防护面罩。",
+            "pronunciation": "Zài huàxué qīngxǐ gōngwèi zuòyè de yuángōng bìxū àn guīdìng chuāndài fáng suān-jiǎn shǒutào hé quán fēngbì fánghù miànzhào.",
+            "meaningVi": "Nhân viên thao tác tại vị trí tẩy rửa hóa chất bắt buộc phải đeo găng tay chống axit kiềm và mặt nạ bảo hộ kín toàn diện theo quy định."
+          }
+        },
+        {
+          "id": "zh_h6_3_5",
+          "word": "违章",
+          "pronunciation": "wéizhāng",
+          "hanViet": "VI CHƯƠNG",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Vi phạm quy tắc quy định an toàn (Violation)",
+          "radicals": "违 (Vi phạm) + 章 (Chương - điều lệ chương trình)",
+          "grammarNote": "Thao tác sai quy tắc: 违章操作. Khẩu hiệu nhà máy: 杜绝违章.",
+          "exampleSentence": {
+            "target": "安全督导员在巡查中一旦发现违章操作行为，有权立即叫停作业并开具整改通知单。",
+            "pronunciation": "Ānquán dūdǎoyuán zài xúnchá zhōng yídàn fāxiàn wéizhāng cāozuò xíngwéi, yǒu quán lìjí jiàotíng zuòyè bìng kāijù zhěnggǎi tōngzhīdān.",
+            "meaningVi": "Giám sát viên an toàn trong lúc tuần tra một khi phát hiện hành vi thao tác sai quy định, có quyền yêu cầu dừng công việc ngay lập tức và lập phiếu thông báo khắc phục."
+          }
+        },
+        {
+          "id": "zh_h6_3_6",
+          "word": "巡检",
+          "pronunciation": "xúnjiǎn",
+          "hanViet": "TUẦN KIỂM",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Tuần tra kiểm tra định kỳ hiện trường (Patrol inspection)",
+          "radicals": "巡 (Tuần - đi tuần tra) + 检 (Kiểm - kiểm tra)",
+          "grammarNote": "Kiểm tra lưu động của IPQC: 巡检记录表.",
+          "exampleSentence": {
+            "target": "制程质检员每隔两小时需对生产线各个工序的温湿度和设备参数进行一次巡检。",
+            "pronunciation": "Zhìchéng zhìjiǎnyuán měi gé liǎng xiǎoshí xū duì shēngchǎnxiàn gè ge gōngxù de wēn-shīdù hé shèbèi cānshù jìnxíng yí cì xúnjiǎn.",
+            "meaningVi": "Nhân viên kiểm tra chất lượng công đoạn cứ cách 2 giờ cần tiến hành tuần tra kiểm tra một lần đối với nhiệt ẩm độ và thông số thiết bị của các công đoạn trên dây chuyền."
+          }
+        },
+        {
+          "id": "zh_h6_3_7",
+          "word": "警示",
+          "pronunciation": "jǐngshì",
+          "hanViet": "CẢNH THỊ",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Cảnh báo nhắc nhở an toàn",
+          "radicals": "警 (Cảnh - báo động) + 示 (Thị - hiển thị cho thấy)",
+          "grammarNote": "Biển cảnh báo nguy hiểm: 安全警示标志.",
+          "exampleSentence": {
+            "target": "高压配电房和激光切割机周围均张贴有醒目的黄黑相间警示标语。",
+            "pronunciation": "Gāoyā pèidiànfáng hé jīguāng qiēgējī zhōuwéi jūn zhāngtiē yǒu xǐngmù de huáng-hēi xiāngjiàn jǐngshì biāoyǔ.",
+            "meaningVi": "Xung quanh phòng phân phối điện cao áp và máy cắt laser đều được dán các khẩu hiệu cảnh báo sọc vàng đen bắt mắt."
+          }
+        },
+        {
+          "id": "zh_h6_3_8",
+          "word": "素养",
+          "pronunciation": "sùyǎng",
+          "hanViet": "TỐ DƯỠNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Ý thức tự giác, chữ S thứ 5 trong mô hình 5S (Shitsuke)",
+          "radicals": "素 (Tố - nguyên bản tố chất) + 养 (Dưỡng - nuôi dưỡng rèn rũa)",
+          "grammarNote": "5S nhà máy Nhật: 整理(Seiri), 整顿(Seiton), 清扫(Seiso), 清洁(Seiketsu), 素养(Shitsuke).",
+          "exampleSentence": {
+            "target": "推行5S管理的核心归根结底在于提升全体员工的职业素养和自我约束力。",
+            "pronunciation": "Tuīxíng Wǔ S guǎnlǐ de héxīn guīgēnjiédǐ zàiyú tíshēng quántǐ yuángōng de zhíyè sùyǎng hé zìwǒ yuēshùlì.",
+            "meaningVi": "Cốt lõi của việc triển khai quản lý 5S suy cho cùng nằm ở chỗ nâng cao tố dưỡng nghề nghiệp và ý thức tự giác kỷ luật của toàn thể nhân viên."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk6_l4",
+      "title": "Bài 4: Quản Lý Kho Nguyên Vật Liệu (BOM, FIFO, Ký Mã Hiệu)",
+      "grammarFocus": "Quản trị kho vận nhà máy: 物料清单 (BOM), 先进先出 (FIFO), 安全库存 (Safety stock), 盘点 (Kiểm kê).",
+      "vocabularies": [
+        {
+          "id": "zh_h6_4_1",
+          "word": "物料清单",
+          "pronunciation": "wùliào qīngdān",
+          "hanViet": "VẬT LIỆU THANH ĐƠN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Bảng định mức nguyên vật liệu sản phẩm (BOM - Bill of Materials)",
+          "radicals": "物料 (Vật liệu linh kiện) + 清单 (Bảng danh sách chi tiết)",
+          "grammarNote": "Khớp nối hệ thống ERP: 根据BOM清单领料.",
+          "exampleSentence": {
+            "target": "研发部门对产品架构进行改版后，必须同步在ERP系统中更新对应的物料清单。",
+            "pronunciation": "Yánfā bùmén duì chǎnpǐn jiàgòu jìnxíng gǎibǎn hòu, bìxū tóngbù zài ERP xìtǒng zhōng gēngxīn duìyìng de wùliào qīngdān.",
+            "meaningVi": "Phòng nghiên cứu phát triển sau khi sửa đổi kiến trúc sản phẩm, bắt buộc phải cập nhật đồng bộ bảng định mức nguyên vật liệu tương ứng trên hệ thống ERP."
+          }
+        },
+        {
+          "id": "zh_h6_4_2",
+          "word": "先进先出",
+          "pronunciation": "xiān jìn xiān chū",
+          "hanViet": "TIÊN TIẾN TIÊN XUẤT",
+          "partOfSpeech": "idiom",
+          "meaningVi": "Nguyên tắc nhập trước xuất trước trong kho bãi (FIFO - First In, First Out)",
+          "radicals": "先进 (Vào trước) + 先出 (Xuất ra trước)",
+          "grammarNote": "Ngăn ngừa hàng quá hạn: 严格遵守先进先出原则.",
+          "exampleSentence": {
+            "target": "仓储管理员必须严格执行先进先出原则，防止易受潮胶水因超期存放而失效。",
+            "pronunciation": "Cāngchǔ guǎnlǐyuán bìxū yángé zhíxíng xiānjìn-xiānchū yuánzé, fángzhǐ yì shòucháo jiāoshuǐ yīn chāoqī cúnfàng ér shīxiào.",
+            "meaningVi": "Thủ kho bắt buộc phải chấp hành nghiêm ngặt nguyên tắc nhập trước xuất trước, phòng ngừa keo dán dễ hút ẩm bị mất tác dụng do lưu kho quá hạn."
+          }
+        },
+        {
+          "id": "zh_h6_4_3",
+          "word": "盘点",
+          "pronunciation": "pándiǎn",
+          "hanViet": "BÀN ĐIỂM",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Kiểm kê kho hàng, đối chiếu số liệu thực tế (Inventory count)",
+          "radicals": "盘 (Bàn - mâm tính đếm) + 点 (Điểm - đếm từng chiếc)",
+          "grammarNote": "Kiểm kê cuối tháng: 月末盘点. Kiểm kê cuối năm: 年终大盘点.",
+          "exampleSentence": {
+            "target": "仓库在月末大盘点时发现实际物料数量与财务账面记录保持百分之百吻合。",
+            "pronunciation": "Cāngkù zài yuèmò dà pándiǎn shí fāxiàn shíjì wùliào shùliàng yǔ cáiwù zhàngmiàn jìlù bǎochí bǎifēnzhī bǎi wěnhé.",
+            "meaningVi": "Kho hàng trong đợt đại kiểm kê cuối tháng phát hiện số lượng vật tư thực tế ăn khớp 100% với ghi chép sổ sách kế toán."
+          }
+        },
+        {
+          "id": "zh_h6_4_4",
+          "word": "安全库存",
+          "pronunciation": "ānquán kùcún",
+          "hanViet": "AN TOÀN KHỐ TỒN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Lượng tồn kho an toàn đệm dự phòng (Safety stock)",
+          "radicals": "安全 (An toàn) + 库存 (Hàng tồn kho)",
+          "grammarNote": "Cảnh báo dưới ngưỡng: 低于安全库存水位.",
+          "exampleSentence": {
+            "target": "为应对上游芯片断供危机，采购部已将通用晶体管的安全库存天数从十五天提高到了四十五天。",
+            "pronunciation": "Wèi yìngduì shàngyóu xīnpiàn duàngōng wēijī, cǎigòubù yǐ jiāng tōngyòng jīngtǐguǎn de ānquán kùcún tiānshù cóng shíwǔ tiān tígāo dào le sìshíwǔ tiān.",
+            "meaningVi": "Để ứng phó nguy cơ đứt nguồn cung chip thượng nguồn, phòng thu mua đã nâng số ngày tồn kho an toàn của bóng bán dẫn thông dụng từ 15 ngày lên 45 ngày."
+          }
+        },
+        {
+          "id": "zh_h6_4_5",
+          "word": "领料",
+          "pronunciation": "lǐngliào",
+          "hanViet": "LÃNH LIỆU",
+          "partOfSpeech": "verb",
+          "meaningVi": "Lĩnh vật tư, xuất kho vật liệu cho xưởng sản xuất",
+          "radicals": "领 (Lãnh - nhận lấy) + 料 (Liệu - nguyên vật liệu)",
+          "grammarNote": "Phiếu lĩnh vật tư: 领料单.",
+          "exampleSentence": {
+            "target": "车间物料员凭生产主管签字确认的领料单前往一号立体仓库申领电子元器件。",
+            "pronunciation": "Chējiān wùliàoyuán píng shēngchǎn zhǔguǎn qiānzì quèrèn de lǐngliàodān qiánwǎng yī hào lìtǐ cāngkù shēnlǐng diànzǐ yuánqìjiàn.",
+            "meaningVi": "Nhân viên vật tư của xưởng dựa vào phiếu lĩnh vật tư có chữ ký xác nhận của chủ quản sản xuất đến kho lập thể số 1 nhận linh kiện điện tử."
+          }
+        },
+        {
+          "id": "zh_h6_4_6",
+          "word": "呆滞料",
+          "pronunciation": "dāizhìliào",
+          "hanViet": "NGỐC TRỆ LIỆU",
+          "partOfSpeech": "noun",
+          "meaningVi": "Vật tư ứ đọng, tồn kho chết không sử dụng (Dead inventory / Obsolete stock)",
+          "radicals": "呆滞 (Trì trệ ứ đọng) + 料 (Vật liệu)",
+          "grammarNote": "Thanh lý hàng tồn đọng: 清理呆滞物料.",
+          "exampleSentence": {
+            "target": "公司定期召开跨部门评审会，研究处理因客户改型而滞留在库房的大量呆滞料。",
+            "pronunciation": "Gōngsī dìngqī zhàokāi kuàbùmén píngshěnhuì, yánjiū chǔlǐ yīn kèhù gǎixíng ér zhìliú zài kùfáng de dàliàng dāizhìliào.",
+            "meaningVi": "Công ty định kỳ tổ chức cuộc họp thẩm định liên phòng ban, nghiên cứu xử lý lượng lớn vật tư tồn đọng ứ trong kho do khách hàng thay đổi mẫu mã."
+          }
+        },
+        {
+          "id": "zh_h6_4_7",
+          "word": "条形码",
+          "pronunciation": "tiáoxíngmǎ",
+          "hanViet": "ĐIỀU HÌNH MÃ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Mã vạch Barcode quản lý kho",
+          "radicals": "条形 (Hình các vạch sọc) + 码 (Chữ số mã hóa)",
+          "grammarNote": "Súng bắn mã vạch: 条码扫描枪 (PDA).",
+          "exampleSentence": {
+            "target": "仓管员利用无线手持终端扫描外箱条形码，五秒内即可完成入库数据录入。",
+            "pronunciation": "Cāngguǎnyuán lìyòng wúxiàn shǒuchí zhōngduān sǎomiáo wàixiāng tiáoxíngmǎ, wǔ miǎo nèi jíkě wánchéng rùkù shùjù lùrù.",
+            "meaningVi": "Thủ kho tận dụng thiết bị đầu cuối cầm tay không dây quét mã vạch trên thùng ngoài, trong 5 giây là có thể hoàn thành việc nhập dữ liệu vào kho."
+          }
+        },
+        {
+          "id": "zh_h6_4_8",
+          "word": "库位",
+          "pronunciation": "kùwèi",
+          "hanViet": "KHỐ VỊ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Vị trí kệ để hàng trong kho (Bin location)",
+          "radicals": "库 (Kho) + 位 (Vị trí tọa độ)",
+          "grammarNote": "Định vị vị trí kho: 库位编号.",
+          "exampleSentence": {
+            "target": "每个料架均编有唯一的立体库位号，使叉车司机能够准确定位并迅速取货。",
+            "pronunciation": "Měi ge liàojià jūn biān yǒu wéiyī de lìtǐ kùwèihào, shǐ chāchē sījī nénggòu zhǔnquè dìngwèi bìng xùnsù qǔhuò.",
+            "meaningVi": "Mỗi giá để hàng đều được đánh số vị trí kho lập thể duy nhất, giúp lái xe nâng có thể định vị chuẩn xác và lấy hàng nhanh chóng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk6_l5",
+      "title": "Bài 5: Thiết Bị Máy Móc & Bảo Trì Bảo Dưỡng Định Kỳ (TPM)",
+      "grammarFocus": "Quản lý bảo trì nhà máy: 全员生产维护 (TPM), 预防性维护 (Preventive maintenance), 故障率 (Downtime).",
+      "vocabularies": [
+        {
+          "id": "zh_h6_5_1",
+          "word": "保养",
+          "pronunciation": "bǎoyǎng",
+          "hanViet": "BẢO DƯỠNG",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Bảo dưỡng định kỳ thiết bị máy móc",
+          "radicals": "保 (Bảo quản) + 养 (Nuôi dưỡng máy chạy bền)",
+          "grammarNote": "Cấp độ bảo dưỡng: 日常保养 (hàng ngày), 一级保养 (định kỳ).",
+          "exampleSentence": {
+            "target": "按照设备维护手册，自动化冲压机必须每周进行一次润滑与清洁保养。",
+            "pronunciation": "Ànzhào shèbèi wéihù shǒucè, zìdònghuà chōngyājī bìxū měi zhōu jìnxíng yí cì rùnhuá yǔ qīngjié bǎoyǎng.",
+            "meaningVi": "Theo sổ tay bảo trì thiết bị, máy đột dập tự động bắt buộc mỗi tuần phải tiến hành tra dầu bôi trơn và vệ sinh bảo dưỡng một lần."
+          }
+        },
+        {
+          "id": "zh_h6_5_2",
+          "word": "故障",
+          "pronunciation": "gùzhàng",
+          "hanViet": "CỐ CHƯỚNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Sự cố hỏng hóc máy móc",
+          "radicals": "故 (Cố - nguyên cớ biến cố) + 障 (Chướng - cản trở tắc nghẽn)",
+          "grammarNote": "Thời gian dừng máy do sự cố: 故障停机时间 (Downtime). Xử lý sự cố: 排除故障.",
+          "exampleSentence": {
+            "target": "主电机突发过热故障导致整条涂装生产线停滞了整整三个小时。",
+            "pronunciation": "Zhǔ diànjī tūfā guòrè gùzhàng dǎozhì zhěng tiáo túzhuāng shēngchǎnxiàn tíngzhì le zhěngzhěng sān ge xiǎoshí.",
+            "meaningVi": "Động cơ chính đột ngột gặp sự cố quá nhiệt khiến cho toàn bộ dây chuyền sơn bị ngưng trệ suốt 3 giờ đồng hồ."
+          }
+        },
+        {
+          "id": "zh_h6_5_3",
+          "word": "备件",
+          "pronunciation": "bèijiàn",
+          "hanViet": "BỊ KIỆN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Linh kiện phụ tùng thay thế dự phòng (Spare parts)",
+          "radicals": "备 (Bị - chuẩn bị sẵn) + 件 (Kiện - phụ tùng)",
+          "grammarNote": "Kho phụ tùng: 备品备件库.",
+          "exampleSentence": {
+            "target": "关键机床易损备件必须在车间备件仓库内常年保持两套以上的周转库存。",
+            "pronunciation": "Guānjiàn jīchuáng yìsǔn bèijiàn bìxū zài chējiān bèijiàn cāngkù nèi chángnián bǎochí liǎng tào yǐshàng de zhōuzhuǎn kùcún.",
+            "meaningVi": "Phụ tùng thay thế dễ hao mòn của máy công cụ then chốt bắt buộc phải duy trì tồn kho luân chuyển từ 2 bộ trở lên quanh năm trong kho phụ tùng của xưởng."
+          }
+        },
+        {
+          "id": "zh_h6_5_4",
+          "word": "磨损",
+          "pronunciation": "mósǔn",
+          "hanViet": "MA TỔN",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Hao mòn, mài mòn do ma sát cơ học (Wear and tear)",
+          "radicals": "磨 (Ma - cọ xát ma sát) + 损 (Tổn - hư tổn sứt mẻ)",
+          "grammarNote": "Hao mòn tự nhiên: 正常磨损. Thay thế vì mòn: 磨损更换.",
+          "exampleSentence": {
+            "target": "高速切削刀具在使用八十小时后刀刃会出现严重磨损，必须按时更换。",
+            "pronunciation": "Gāosù qiēxiāo dāojù zài shǐyòng bāshí xiǎoshí hòu dāorèn huì chūxiàn yánzhòng mósǔn, bìxū ànshí gēnghuàn.",
+            "meaningVi": "Dao cắt gọt tốc độ cao sau khi sử dụng 80 giờ lưỡi dao sẽ xuất hiện mài mòn nghiêm trọng, bắt buộc phải thay thế đúng giờ."
+          }
+        },
+        {
+          "id": "zh_h6_5_5",
+          "word": "校准",
+          "pronunciation": "jiàozhǔn",
+          "hanViet": "HIỆU CHUẨN",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Hiệu chuẩn thiết bị đo lường (Calibration)",
+          "radicals": "校 (Hiệu - so sánh kiểm tra) + 准 (Chuẩn - độ chuẩn xác)",
+          "grammarNote": "Tem kiểm định hiệu chuẩn: 校准合格标签.",
+          "exampleSentence": {
+            "target": "三坐标测量仪等高精密度计量仪器必须每年送交国家法定机构进行强制校准。",
+            "pronunciation": "Sān zuòbiāo cèliángyí děng gāo jīngmìdù jìliáng yíqì bìxū měi nián sòngjiāo guójiā fǎdìng jīgòu jìnxíng qiángzhì jiàozhǔn.",
+            "meaningVi": "Dụng cụ đo lường độ chính xác cao như máy đo tọa độ 3 chiều bắt buộc hàng năm phải gửi đến cơ quan pháp định nhà nước để hiệu chuẩn bắt buộc."
+          }
+        },
+        {
+          "id": "zh_h6_5_6",
+          "word": "寿命",
+          "pronunciation": "shòumìng",
+          "hanViet": "THỌ MỆNH",
+          "partOfSpeech": "noun",
+          "meaningVi": "Tuổi thọ sử dụng của máy móc linh kiện",
+          "radicals": "寿 (Thọ - sống lâu) + 命 (Mệnh - mệnh số)",
+          "grammarNote": "Kéo dài tuổi thọ: 延长使用寿命.",
+          "exampleSentence": {
+            "target": "规范的日常点检与良好的润滑状态能够极大延长电机的使用寿命。",
+            "pronunciation": "Guīfàn de rìcháng diǎnjiǎn yǔ liánghǎo de rùnhuá zhuàngtài nénggòu jídà yáncháng diànjī de shǐyòng shòumìng.",
+            "meaningVi": "Kiểm tra điểm hàng ngày đúng quy chuẩn và trạng thái bôi trơn tốt đẹp có thể kéo dài cực lớn tuổi thọ sử dụng của động cơ điện."
+          }
+        },
+        {
+          "id": "zh_h6_5_7",
+          "word": "停机",
+          "pronunciation": "tíngjī",
+          "hanViet": "ĐÌNH CƠ",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Tắt máy, ngưng máy ngừng dây chuyền (Shutdown)",
+          "radicals": "停 (Đình - dừng lại) + 机 (Cơ - cỗ máy)",
+          "grammarNote": "Dừng máy khẩn cấp: 紧急停机 (E-Stop).",
+          "exampleSentence": {
+            "target": "一旦发生人身安全险情，现场任何操作人员均有权按下红色紧急停机按钮。",
+            "pronunciation": "Yídàn fāshēng rénshēn ānquán xiǎnqíng, xiànchǎng rènhé cāozuò rényuán jūn yǒu quán ànxià hóngsè jǐnjí tíngjī ànniǔ.",
+            "meaningVi": "Một khi phát sinh tình huống hiểm nguy an toàn thân thể, bất kỳ nhân viên thao tác nào tại hiện trường đều có quyền bấm nút màu đỏ dừng máy khẩn cấp."
+          }
+        },
+        {
+          "id": "zh_h6_5_8",
+          "word": "点检",
+          "pronunciation": "diǎnjiǎn",
+          "hanViet": "ĐIỂM KIỂM",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Kiểm tra từng điểm theo checklist hàng ngày (Spot check)",
+          "radicals": "点 (Điểm - từng hạng mục) + 检 (Kiểm - rà soát)",
+          "grammarNote": "Bảng checklist kiểm tra thiết bị: 设备点检表.",
+          "exampleSentence": {
+            "target": "开工前必须逐项对照设备点检表确认油位、气压和电压均处于正常工作区间。",
+            "pronunciation": "Kāigōng qián bìxū zhúxiàng duìzhào shèbèi diǎnjiǎnbǐao quèrèn yóuwèi, qìyā hé diànyā jūn chǔyú zhèngcháng gōngzuò qūjiān.",
+            "meaningVi": "Trước khi bắt đầu làm việc bắt buộc phải đối chiếu từng mục theo bảng checklist thiết bị để xác nhận mức dầu, áp suất khí và điện áp đều nằm trong khoảng làm việc bình thường."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk6_l6",
+      "title": "Bài 6: Thủ Tục Hải Quan & Thông Quan Xuất Nhập Khẩu (Customs Clearance)",
+      "grammarFocus": "Nghiệp vụ xuất nhập khẩu: 报关 (Khai báo Hải quan), 通关 / 清关 (Thông quan), 海关编码 (Mã HS), 查验 (Kiểm hóa).",
+      "vocabularies": [
+        {
+          "id": "zh_h6_6_1",
+          "word": "报关",
+          "pronunciation": "bàoguān",
+          "hanViet": "BÁO QUAN",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Khai báo hải quan hàng hóa xuất nhập khẩu",
+          "radicals": "报 (Báo - nộp tờ khai) + 关 (Quan - cửa khẩu hải quan)",
+          "grammarNote": "Tờ khai hải quan: 报关单. Đại lý khai hải quan: 报关行.",
+          "exampleSentence": {
+            "target": "货运代理公司在货物到达边境口岸前二十四小时向海关预先申报了电子报关单。",
+            "pronunciation": "Huòyùn dàilǐ gōngsī zài huòwù dàodá biānjìng kǒu'àn qián èrshísì xiǎoshí xiàng hǎiguān yùxiān shēnbào le diànzǐ bàoguāndān.",
+            "meaningVi": "Công ty đại lý giao nhận vận tải 24 giờ trước khi hàng tới cửa khẩu biên giới đã khai báo trước tờ khai hải quan điện tử cho hải quan."
+          }
+        },
+        {
+          "id": "zh_h6_6_2",
+          "word": "清关",
+          "pronunciation": "qīngguān",
+          "hanViet": "THANH QUAN",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Thông quan hàng hóa hoàn tất thủ tục thuế (Customs Clearance)",
+          "radicals": "清 (Thanh - làm sạch, hoàn tất thanh toán) + 关 (Quan - cửa khẩu)",
+          "grammarNote": "Hoàn tất thông quan: 顺利完成清关.",
+          "exampleSentence": {
+            "target": "由于单证齐全无误，整批医疗器械进口集装箱在海关仅用两小时便顺利完成清关放行。",
+            "pronunciation": "Yóuyú dānzhèng qíquán wúwù, zhěng pī yīliáo qìxiè jìnkǒu jízhuāngxiāng zài hǎiguān jǐn yòng liǎng xiǎoshí biàn shùnlì wánchéng qīngguān fàngxíng.",
+            "meaningVi": "Nhờ chứng từ đầy đủ không chút sai sót, toàn bộ lô container nhập khẩu thiết bị y tế tại hải quan chỉ mất 2 giờ là hoàn tất thông quan thông thả."
+          }
+        },
+        {
+          "id": "zh_h6_6_3",
+          "word": "关税",
+          "pronunciation": "guānshuì",
+          "hanViet": "QUAN THUẾ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Thuế xuất nhập khẩu, thuế hải quan (Customs Tariff)",
+          "radicals": "关 (Quan - cửa khẩu) + 税 (Thuế - thuế khóa nhà nước)",
+          "grammarNote": "Biểu thuế quan: 关税税率. Miễn thuế quan: 免征关税.",
+          "exampleSentence": {
+            "target": "根据中国与东盟自由贸易协定，原产于越南的大部分工业制品均享受零关税待遇。",
+            "pronunciation": "Gēnjù Zhōngguó yǔ Dōngméng zìyóu màoyì xiédìng, yuánchǎn yú Yuènán de dàbùfen gōngyè zhìpǐn jūn xiǎngshòu líng guānshuì dàiyù.",
+            "meaningVi": "Căn cứ hiệp định thương mại tự do Trung Quốc - ASEAN, đại bộ phận sản phẩm công nghiệp có xuất xứ từ Việt Nam đều được hưởng đãi ngộ thuế quan 0%."
+          }
+        },
+        {
+          "id": "zh_h6_6_4",
+          "word": "商品编码",
+          "pronunciation": "shāngpǐn biānmǎ",
+          "hanViet": "THƯƠNG PHẨM BIÊN MÃ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Mã số hàng hóa quốc tế, mã HS Code",
+          "radicals": "商品 (Hàng hóa thương phẩm) + 编码 (Đánh mã số)",
+          "grammarNote": "Mã số 8 hoặc 10 chữ số: HS编码 (Harmonized System Code).",
+          "exampleSentence": {
+            "target": "海关编码归类错误可能导致申报税率不符甚至面临海关行政处罚。",
+            "pronunciation": "Hǎiguān biānmǎ guīlèi cuòwù kěnéng dǎozhì shēnbào shuìlǜ bùfú shènzhì miànlín hǎiguān xíngzhèng chǔfá.",
+            "meaningVi": "Phân loại mã HS sai có thể dẫn đến mức thuế suất khai báo không khớp, thậm chí đối mặt với xử phạt hành chính từ phía hải quan."
+          }
+        },
+        {
+          "id": "zh_h6_6_5",
+          "word": "查验",
+          "pronunciation": "cháyàn",
+          "hanViet": "TRA NGHIỆM",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Kiểm hóa thực tế hàng hóa tại cảng (Customs Inspection)",
+          "radicals": "查 (Tra - tra xét) + 验 (Nghiệm - kiểm tra thực tế đối chiếu)",
+          "grammarNote": "Tỷ lệ kiểm hóa: 查验率. Kiểm tra mở thùng: 开箱查验.",
+          "exampleSentence": {
+            "target": "海关风险监控系统随机指令对该批高货值电子元器件进行机检和开箱人工查验。",
+            "pronunciation": "Hǎiguān fēngxiǎn jiānkòng xìtǒng suíjī zhǐlìng duì gāi pī gāo huòzhí diànzǐ yuánqìjiàn jìnxíng jījiǎn hé kāixiāng réngōng cháyàn.",
+            "meaningVi": "Hệ thống kiểm soát rủi ro hải quan ngẫu nhiên ra lệnh tiến hành soi chiếu máy và mở thùng kiểm tra nhân công đối với lô linh kiện điện tử giá trị cao này."
+          }
+        },
+        {
+          "id": "zh_h6_6_6",
+          "word": "保税区",
+          "pronunciation": "bǎoshuìqū",
+          "hanViet": "BẢO THUẾ KHU",
+          "partOfSpeech": "noun",
+          "meaningVi": "Khu phi thuế quan, khu bảo thuế (Bonded Zone)",
+          "radicals": "保税 (Tạm hoãn chưa thu thuế) + 区 (Khu vực địa lý)",
+          "grammarNote": "Kho ngoại quan: 保税仓库 (Bonded Warehouse).",
+          "exampleSentence": {
+            "target": "企业将进口零配件存放在综合保税区内，在未进入国内市场销售前无需缴纳关税与增值税。",
+            "pronunciation": "Qǐyè jiāng jìnkǒu língpèijiàn cúnfàng zài zōnghé bǎoshuìqū nèi, zài wèi jìnrù guónèi shìchǎng xiāoshòu qián wúxū jiǎonà guānshuì yǔ zēngzhíshuì.",
+            "meaningVi": "Doanh nghiệp lưu giữ linh kiện nhập khẩu trong khu bảo thuế tổng hợp, khi chưa vào thị trường nội địa tiêu thụ thì chưa cần phải đóng thuế quan và thuế GTGT."
+          }
+        },
+        {
+          "id": "zh_h6_6_7",
+          "word": "放行",
+          "pronunciation": "fàngxíng",
+          "hanViet": "PHÓNG HÀNH",
+          "partOfSpeech": "verb",
+          "meaningVi": "Thông quan cho phép kéo hàng rời cảng (Release)",
+          "radicals": "放 (Phóng - mở đường thả đi) + 行 (Hành - di chuyển)",
+          "grammarNote": "Phiếu giải phóng hàng: 放行条 (Release order).",
+          "exampleSentence": {
+            "target": "海关系统发出电子放行指令后，车队司机即可凭提货单进港装运集装箱。",
+            "pronunciation": "Hǎiguān xìtǒng fāchū diànzǐ fàngxíng zhǐlìng hòu, chēduì sījī jíkě píng tíhuòdān jìn gǎng zhuāngyùn jízhuāngxiāng.",
+            "meaningVi": "Sau khi hệ thống hải quan phát lệnh giải phóng hàng điện tử, lái xe của đội xe có thể dựa vào lệnh giao hàng vào cảng bốc xếp container."
+          }
+        },
+        {
+          "id": "zh_h6_6_8",
+          "word": "单证",
+          "pronunciation": "dānzhèng",
+          "hanViet": "ĐƠN CHỨNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Bộ chứng từ xuất nhập khẩu (Shipping Documents)",
+          "radicals": "单 (Đơn - hóa đơn phiếu) + 证 (Chứng - giấy chứng nhận)",
+          "grammarNote": "Bộ chứng từ hoàn chỉnh: 单证齐全. Nhân viên chứng từ: 单证员.",
+          "exampleSentence": {
+            "target": "商业发票、装箱单和海运提单是国际货物贸易报关中最基本的全套核心单证。",
+            "pronunciation": "Shāngyè fāpiào, zhuāngxiāngdān hé hǎiyùn tídān shì guójì huòwù màoyì bàoguān zhōng zuì jīběn de quántào héxīn dānzhèng.",
+            "meaningVi": "Hóa đơn thương mại, phiếu đóng gói bao bì và vận đơn đường biển là bộ chứng từ cốt lõi căn bản nhất trong khai báo hải quan thương mại hàng hóa quốc tế."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk6_l7",
+      "title": "Bài 7: Vận Tải Quốc Tế & Incoterms 2020 (FOB, CIF, Bill of Lading)",
+      "grammarFocus": "Thuật ngữ Incoterms 2020: 离岸价 (FOB), 到岸价 (CIF), 海运提单 (Bill of Lading - B/L), 整箱货 (FCL) / 拼箱货 (LCL).",
+      "vocabularies": [
+        {
+          "id": "zh_h6_7_1",
+          "word": "提单",
+          "pronunciation": "tídān",
+          "hanViet": "ĐỀ ĐƠN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Vận đơn đường biển (B/L - Bill of Lading)",
+          "radicals": "提 (Đề - lấy hàng ra) + 单 (Đơn - chứng từ sở hữu)",
+          "grammarNote": "Vận đơn gốc: 正本提单 (Original B/L). Vận đơn điện giao: 电放提单 (Telex Release).",
+          "exampleSentence": {
+            "target": "出口商在收到信用证项下全部货款后，方才向船运公司申请办理正本提单电放。",
+            "pronunciation": "Chūkǒushāng zài shōudào xìnyòngzhèng xiàngxià quánbù huòkuǎn hòu, fāng cái xiàng chuányùn gōngsī shēnqǐng bànlǐ zhèngběn tídān diànfàng.",
+            "meaningVi": "Nhà xuất khẩu sau khi nhận đủ toàn bộ tiền hàng dưới chứng từ L/C, mới nộp đơn lên hãng tàu xin làm điện giao vận đơn (Telex Release)."
+          }
+        },
+        {
+          "id": "zh_h6_7_2",
+          "word": "集装箱",
+          "pronunciation": "jízhuāngxiāng",
+          "hanViet": "TẬP TRANG TƯƠNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Thùng container chở hàng",
+          "radicals": "集 (Tập - gom lại) + 装 (Trang - chứa đựng) + 箱 (Tương - chiếc hòm lớn)",
+          "grammarNote": "Container 20 feet: 20尺普柜. Container 40 feet cao: 40尺高柜 (40HQ).",
+          "exampleSentence": {
+            "target": "货运码头巨型龙门吊正在将满载货物的四十尺高柜集装箱稳稳吊装到货轮甲板上。",
+            "pronunciation": "Huòyùn mǎtóu jùxíng lóngméndiào zhèngzài jiāng mǎnzǎi huòwù de sìshí chǐ gāoguì jízhuāngxiāng wěnwěn diàozhuāng dào huòlún jiǎbǎn shang.",
+            "meaningVi": "Cẩu trục giàn khổng lồ ở bến cảng đang cẩu vững vàng các container 40HQ đầy ắp hàng hóa lên boong tàu chở hàng."
+          }
+        },
+        {
+          "id": "zh_h6_7_3",
+          "word": "船期",
+          "pronunciation": "chuánqī",
+          "hanViet": "THUYỀN KỲ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Lịch trình tàu biển chạy (Shipping schedule)",
+          "radicals": "船 (Thuyền - tàu biển) + 期 (Kỳ - ngày giờ lịch hẹn)",
+          "grammarNote": "Đặt chỗ tàu: 订舱 (Booking). Bắt kịp chuyến tàu: 赶上船期.",
+          "exampleSentence": {
+            "target": "工厂必须在截关日之前将货柜送达码头，否则一旦延误船期将面临巨额甩柜违约金。",
+            "pronunciation": "Gōngchǎng bìxū zài jiéguānrì zhīqián jiāng huòguì sòngdá mǎtóu, fǒuzé yídàn yánwù chuánqī jiāng miànlín jù'é shuǎiguì wéiyuējīn.",
+            "meaningVi": "Nhà máy bắt buộc phải chuyển container tới cảng trước ngày cắt máng đóng cửa hải quan, nếu không một khi trễ lịch tàu sẽ đối mặt tiền phạt rớt hàng khổng lồ."
+          }
+        },
+        {
+          "id": "zh_h6_7_4",
+          "word": "运费",
+          "pronunciation": "yùnfèi",
+          "hanViet": "VẬN PHÍ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Cước phí vận chuyển (Freight)",
+          "radicals": "运 (Vận - vận tải di dời) + 费 (Phí - chi phí tiền bạc)",
+          "grammarNote": "Cước trả trước: 运费预付 (Freight Prepaid). Cước trả sau: 运费到付 (Freight Collect).",
+          "exampleSentence": {
+            "target": "在CIF术语下，国际海运费与海洋货物运输保险费均由卖方预先承担垫付。",
+            "pronunciation": "Zài CIF shùyǔ xià, guójì hǎiyùnfèi yǔ hǎiyáng huòwù yùnshū bǎoxiǎnfèi jūn yóu màifāng yùxiān chéngdān diànfù.",
+            "meaningVi": "Dưới điều kiện CIF, cước vận tải biển quốc tế và phí bảo hiểm vận chuyển hàng hóa đường biển đều do bên bán chịu trách nhiệm ứng trước."
+          }
+        },
+        {
+          "id": "zh_h6_7_5",
+          "word": "装箱单",
+          "pronunciation": "zhuāngxiāngdān",
+          "hanViet": "TRANG TƯƠNG ĐƠN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Phiếu đóng gói chi tiết hàng hóa (Packing List)",
+          "radicals": "装箱 (Đóng hàng vào thùng) + 单 (Bản danh sách kê khai)",
+          "grammarNote": "Kê khai: 毛重 (Gross weight), 净重 (Net weight), 体积 (CBM).",
+          "exampleSentence": {
+            "target": "装箱单上标明的总件数、总净重和总毛重必须与提单上的数据完全一致。",
+            "pronunciation": "Zhuāngxiāngdān shang biāomíng de zǒng jiànshù, zǒng jìngzhòng hé zǒng máozhòng bìxū yǔ tídān shang de shùjù wánquán yízhì.",
+            "meaningVi": "Tổng số kiện, tổng trọng lượng tịnh và tổng trọng lượng cả bì ghi trên phiếu đóng gói phải hoàn toàn khớp với số liệu trên vận đơn."
+          }
+        },
+        {
+          "id": "zh_h6_7_6",
+          "word": "滞港费",
+          "pronunciation": "zhìgǎngfèi",
+          "hanViet": "TRỆ CẢNG PHÍ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Phí lưu bãi cảng do chậm lấy hàng (Demurrage / Detention fee)",
+          "radicals": "滞 (Trệ - ứ lại) + 港 (Cảng biển) + 费 (Chi phí)",
+          "grammarNote": "Số ngày miễn phí bãi cảng: 免费存仓期 (Free time).",
+          "exampleSentence": {
+            "target": "超过码头七天免租期后，船运公司将按天对滞留集装箱加收昂贵的滞港费。",
+            "pronunciation": "Chāoguò mǎtóu qī tiān miǎnzūqī hòu, chuányùn gōngsī jiāng àn tiān duì zhìliú jízhuāngxiāng jiāshōu ángguì de zhìgǎngfèi.",
+            "meaningVi": "Sau khi vượt quá thời gian miễn phí lưu bãi 7 ngày của bến cảng, hãng tàu sẽ thu thêm phí lưu bãi đắt đỏ theo từng ngày đối với container ứ đọng."
+          }
+        },
+        {
+          "id": "zh_h6_7_7",
+          "word": "航线",
+          "pronunciation": "hángxiàn",
+          "hanViet": "HÀNG TUYẾN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Tuyến đường hàng hải, hải trình",
+          "radicals": "航 (Hàng - tàu thuyền di chuyển đường thủy/không) + 线 (Tuyến đường ray)",
+          "grammarNote": "Tuyến châu Âu: 欧洲航线. Tuyến Bắc Mỹ: 美加航线.",
+          "exampleSentence": {
+            "target": "红海局势升级促使大量亚欧航线的货轮不得不绕行好望角，航程增加了近两周。",
+            "pronunciation": "Hóng Hǎi júshì shēngjí cùshǐ dàliàng Yà-Ōu hángxiàn de huòlún bùdébù ràoxíng Hǎowàngjiǎo, hángchéng zēngjiā le jìn liǎng zhōu.",
+            "meaningVi": "Căng thẳng tình hình Biển Đỏ leo thang thúc đẩy lượng lớn tàu chở hàng tuyến Á-Âu buộc phải chạy vòng qua Mũi Hảo Vọng, hải trình kéo dài thêm gần 2 tuần."
+          }
+        },
+        {
+          "id": "zh_h6_7_8",
+          "word": "承运人",
+          "pronunciation": "chéngyùnrén",
+          "hanViet": "THỪA VẬN NHÂN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Người chuyên chở, hãng vận tải nhận chở hàng (Carrier)",
+          "radicals": "承 (Thừa - tiếp nhận trách nhiệm) + 运 (Vận - vận chuyển) + 人 (Chủ thể pháp nhân)",
+          "grammarNote": "Trách nhiệm người vận chuyển: 承运人责任险.",
+          "exampleSentence": {
+            "target": "承运人签发清洁已装船提单，证明货物在装运时外表状况良好。",
+            "pronunciation": "Chéngyùnrén qiānfā qīngjié yǐzhuāngchuán tídān, zhèngmíng huòwù zài zhuāngyùn shí wàibiǎo zhuàngkuàng liánghǎo.",
+            "meaningVi": "Người vận chuyển ký phát vận đơn sạch đã bốc hàng lên tàu, chứng minh hàng hóa tại thời điểm bốc xếp có tình trạng bề ngoài nguyên vẹn tốt."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk6_l8",
+      "title": "Bài 8: Chứng Nhận Xuất Xứ Hàng Hóa C/O Form E & Kiểm Định",
+      "grammarFocus": "Chứng nhận nguồn gốc quốc tế: 原产地证明书 (C/O), 中国-东盟自贸区优惠产地证 (Form E), 商检 (Kiểm định chất lượng).",
+      "vocabularies": [
+        {
+          "id": "zh_h6_8_1",
+          "word": "产地证",
+          "pronunciation": "chǎndìzhèng",
+          "hanViet": "SẢN ĐỊA CHỨNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Giấy chứng nhận xuất xứ hàng hóa (C/O - Certificate of Origin)",
+          "radicals": "产地 (Nơi sản xuất) + 证 (Giấy chứng nhận hợp pháp)",
+          "grammarNote": "Form E (Trung Quốc - ASEAN): 优惠原产地证FORM E.",
+          "exampleSentence": {
+            "target": "出口到越南的货物凭借海关签发的中东盟优惠原产地证书FORM E，可以在目的港享受关税减免。",
+            "pronunciation": "Chūkǒu dào Yuènán de huòwù píngjiè hǎiguān qiānfā de Zhōng-Dōngméng yōuhuì yuánchǎndì zhèngshū FORM E, kěyǐ zài mùdìgǎng xiǎngshòu guānshuì jiǎnmiǎn.",
+            "meaningVi": "Hàng hóa xuất khẩu sang Việt Nam nhờ vào chứng nhận xuất xứ ưu đãi Trung Quốc - ASEAN Form E do hải quan cấp, có thể được hưởng miễn giảm thuế quan tại cảng đến."
+          }
+        },
+        {
+          "id": "zh_h6_8_2",
+          "word": "商检",
+          "pronunciation": "shāngjiǎn",
+          "hanViet": "THƯƠNG KIỂM",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Kiểm định chất lượng thương phẩm xuất nhập khẩu bắt buộc",
+          "radicals": "商 (Thương mại hàng hóa) + 检 (Kiểm nghiệm chất lượng)",
+          "grammarNote": "Cơ quan kiểm định: 出入境检验检疫局. Hàng phải làm kiểm định: 法检商品.",
+          "exampleSentence": {
+            "target": "出口食品和机电等法定检验商品，出境前必须向海关申请商检并取得通关单。",
+            "pronunciation": "Chūkǒu shípǐn hé jīdiàn děng fǎdìng jiǎnyàn shāngpǐn, chūjìng qián bìxū xiàng hǎiguān shēnqǐng shāngjiǎn bìng qǔdé tōngguāndān.",
+            "meaningVi": "Hàng hóa thuộc diện kiểm định pháp định như thực phẩm và cơ điện xuất khẩu, trước khi ra khỏi lãnh thổ bắt buộc phải nộp đơn xin kiểm định thương phẩm lên hải quan và nhận phiếu thông quan."
+          }
+        },
+        {
+          "id": "zh_h6_8_3",
+          "word": "认证",
+          "pronunciation": "rènzhèng",
+          "hanViet": "NHẬN CHỨNG",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Chứng nhận đạt tiêu chuẩn quốc tế (Certification)",
+          "radicals": "认 (Thừa nhận xác nhận) + 证 (Chứng chỉ)",
+          "grammarNote": "Chứng nhận CE (Châu Âu), CCC (Trung Quốc), FDA (Mỹ).",
+          "exampleSentence": {
+            "target": "该款智能家电产品已顺利通过欧盟CE认证和RoHS环保指令检测。",
+            "pronunciation": "Gāi kuǎn zhìnéng jiādiàn chǎnpǐn yǐ shùnlì tōngguò Ōuméng CE rènzhèng hé RoHS huánbǎo zhǐlìng jiǎncè.",
+            "meaningVi": "Dòng sản phẩm điện gia dụng thông minh này đã vượt qua thuận lợi chứng nhận CE của Liên minh châu Âu và thử nghiệm chỉ thị môi trường RoHS."
+          }
+        },
+        {
+          "id": "zh_h6_8_4",
+          "word": "抽检",
+          "pronunciation": "chōujiǎn",
+          "hanViet": "TRỪU KIỂM",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Lấy mẫu kiểm tra xác suất ngẫu nhiên",
+          "radicals": "抽 (Rút ngẫu nhiên) + 检 (Kiểm nghiệm)",
+          "grammarNote": "Kiểm tra tỷ lệ đạt: 抽检合格率.",
+          "exampleSentence": {
+            "target": "第三方国际公证行受客户委托对大货进行装船前的随机抽检。",
+            "pronunciation": "Dì-sān fāng guójì gōngzhèngháng shòu kèhù wěituō duì dàhuò jìnxíng zhuāngchuán qián de suíjī chōujiǎn.",
+            "meaningVi": "Công ty giám định quốc tế bên thứ ba được khách hàng ủy thác tiến hành kiểm tra rút mẫu ngẫu nhiên đối với lô hàng lớn trước khi bốc lên tàu."
+          }
+        },
+        {
+          "id": "zh_h6_8_5",
+          "word": "原产国",
+          "pronunciation": "yuánchǎnguó",
+          "hanViet": "NGUYÊN SẢN QUỐC",
+          "partOfSpeech": "noun",
+          "meaningVi": "Nước xuất xứ gốc của hàng hóa (Country of Origin)",
+          "radicals": "原产 (Nguồn gốc sản xuất nguyên bản) + 国 (Quốc gia)",
+          "grammarNote": "Ghi nhãn xuất xứ: 标明原产国 (Made in China / Made in Vietnam).",
+          "exampleSentence": {
+            "target": "货物外箱标签上必须按照法规清晰印上原产国名称，严禁弄虚作假。",
+            "pronunciation": "Huòwù wàixiāng biāoqiān shang bìxū ànzhào fǎguī qīngxī yìn shàng yuánchǎnguó míngchēng, yánjìn nòngxūzuòjiǎ.",
+            "meaningVi": "Trên nhãn thùng ngoài hàng hóa bắt buộc phải in rõ ràng tên nước xuất xứ theo luật định, nghiêm cấm gian lận làm giả."
+          }
+        },
+        {
+          "id": "zh_h6_8_6",
+          "word": "标准",
+          "pronunciation": "biāozhǔn",
+          "hanViet": "TIÊU CHUẨN",
+          "partOfSpeech": "noun/adj",
+          "meaningVi": "Tiêu chuẩn kỹ thuật chất lượng",
+          "radicals": "标 (Tiêu mốc) + 准 (Chuẩn xác)",
+          "grammarNote": "Tiêu chuẩn quốc tế ISO 9001: 国际标准化组织标准.",
+          "exampleSentence": {
+            "target": "企业严格遵循ISO9001国际质量管理标准，建立起贯穿全流程的质控体系。",
+            "pronunciation": "Qǐyè yángé zūnxún ISO9001 guójì zhìliàng guǎnlǐ biāozhǔn, jiànlì qǐ guànchuān quán liúchéng de zhìkòng tǐxì.",
+            "meaningVi": "Doanh nghiệp tuân thủ nghiêm ngặt tiêu chuẩn quản lý chất lượng quốc tế ISO 9001, thiết lập hệ thống kiểm soát chất lượng xuyên suốt toàn bộ quy trình."
+          }
+        },
+        {
+          "id": "zh_h6_8_7",
+          "word": "签证",
+          "pronunciation": "qiānzhèng",
+          "hanViet": "KÝ CHỨNG",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Ký duyệt cấp văn bản chứng nhận (Khác nghĩa với visa hộ chiếu)",
+          "radicals": "签 (Ký tên) + 证 (Chứng nhận)",
+          "grammarNote": "Hải quan ký phát chứng từ: 海关签证机构.",
+          "exampleSentence": {
+            "target": "经贸促进会签证机构核实企业生产制造能力后，正式签发了商事证明书。",
+            "pronunciation": "Jīng-mào cùjìnhuì qiānzhèng jīgòu héshí qǐyè shēngchǎn zhìzào nénglì hòu, zhèngshì qiānfā le shāngshì zhèngmíngshū.",
+            "meaningVi": "Cơ quan ký cấp chứng chỉ của Hội xúc tiến kinh tế thương mại sau khi thẩm tra năng lực chế tạo sản xuất của doanh nghiệp, đã chính thức ký cấp giấy chứng nhận thương sự."
+          }
+        },
+        {
+          "id": "zh_h6_8_8",
+          "word": "合规",
+          "pronunciation": "héguī",
+          "hanViet": "HỢP QUY",
+          "partOfSpeech": "verb/adj",
+          "meaningVi": "Tuân thủ quy định pháp luật chuẩn mực (Compliance)",
+          "radicals": "合 (Hợp với) + 规 (Quy củ luật lệ)",
+          "grammarNote": "Tuân thủ quy định quốc tế: 贸易合规 (Trade Compliance).",
+          "exampleSentence": {
+            "target": "加强跨国经贸合规管理是跨国企业防范国际监管处罚和法律诉讼的坚固盾牌。",
+            "pronunciation": "Jiāqiáng kuàguó jīng-mào héguī guǎnlǐ shì kuàguó qǐyè fángfàn guójì jiānguǎn chǔfá hé fǎlǜ sùsòng de jiāngù dùnpái.",
+            "meaningVi": "Tăng cường quản trị tuân thủ kinh tế thương mại xuyên quốc gia là chiếc khiên vững chắc để doanh nghiệp đa quốc gia phòng ngừa các chế tài giám sát quốc tế và tố tụng pháp lý."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk6_l9",
+      "title": "Bài 9: Đóng Gói Bao Bì & Tiêu Chuẩn Xuất Khẩu (Pallet, Hun Trùng)",
+      "grammarFocus": "Tiêu chuẩn đóng gói xuất khẩu: 托盘 (Pallet), 熏蒸消毒 (Fumigation / ISPM 15), 缠绕膜 (Màng co PE), 防潮防震 (Chống ẩm chống sốc).",
+      "vocabularies": [
+        {
+          "id": "zh_h6_9_1",
+          "word": "托盘",
+          "pronunciation": "tuōpán",
+          "hanViet": "THÁC BÀN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Tấm ballet nâng hàng (Pallet gỗ/nhựa)",
+          "radicals": "托 (Thác - đỡ nâng lên) + 盘 (Bàn - tấm mâm phẳng)",
+          "grammarNote": "Pallet tiêu chuẩn châu Âu: 欧标托盘 (1200x800mm). Pallet nhựa: 塑料托盘.",
+          "exampleSentence": {
+            "target": "为了便于叉车机械化装卸作业，所有纸箱必须整齐码放在坚固的免熏蒸托盘上。",
+            "pronunciation": "Wèile biànyú chāchē jīxièhuà zhuāngxiè zuòyè, suǒyǒu zhǐxiāng bìxū zhěngqí mǎfàng zài jiāngù de miǎnxūnzhēng tuōpán shang.",
+            "meaningVi": "Để thuận tiện cho thao tác bốc dỡ cơ giới hóa bằng xe nâng, tất cả các thùng carton bắt buộc phải xếp ngay ngắn trên các pallet miễn hun trùng vững chắc."
+          }
+        },
+        {
+          "id": "zh_h6_9_2",
+          "word": "熏蒸",
+          "pronunciation": "xūnzhēng",
+          "hanViet": "HUÂN CHƯNG",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Hun trùng xông hơi tiệt trùng diệt mọt gỗ (Fumigation - ISPM 15)",
+          "radicals": "熏 (Huân - hun khói) + 蒸 (Chưng - hơi nước nóng)",
+          "grammarNote": "Giấy chứng nhận hun trùng: 熏蒸消毒证书 (Fumigation Certificate). Dấu IPPC: IPPC标识.",
+          "exampleSentence": {
+            "target": "出口欧美国家的实木包装材料必须在装运前进行强制性热处理或药物熏蒸，并加施IPPC标识。",
+            "pronunciation": "Chūkǒu Ōu-Měi guójiā de shímù bāozhuāng cáiliào bìxū zài zhuāngyùn qián jìnxíng qiángzhìxìng rèchǔlǐ huò yàowù xūnzhēng, bìng jiāshī IPPC biāozhì.",
+            "meaningVi": "Vật liệu đóng gói bằng gỗ tự nhiên xuất sang các nước Âu Mỹ bắt buộc phải tiến hành xử lý nhiệt hoặc hun trùng hóa chất bắt buộc trước khi bốc hàng, và đóng dấu biểu trưng IPPC."
+          }
+        },
+        {
+          "id": "zh_h6_9_3",
+          "word": "外箱",
+          "pronunciation": "wàixiāng",
+          "hanViet": "NGOẠI TƯƠNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Thùng carton bên ngoài (Master carton)",
+          "radicals": "外 (Bên ngoài) + 箱 (Thùng hộp)",
+          "grammarNote": "Thùng 5 lớp: 五层瓦楞纸外箱.",
+          "exampleSentence": {
+            "target": "外箱表面必须印刷清晰的运输唛头，包括收货人代码、箱号及防潮易碎警示符号。",
+            "pronunciation": "Wàixiāng biǎomiàn bìxū yìnshuā qīngxī de yùnshū màitóu, bāokuò shōuhuòrén dàimǎ, xiānghào jí fángcháo yìsuì jǐngshì fúhào.",
+            "meaningVi": "Bề mặt thùng carton ngoài bắt buộc phải in ký mã hiệu vận chuyển (Shipping mark) rõ ràng, bao gồm mã người nhận hàng, số thùng và biểu tượng cảnh báo chống ẩm dễ vỡ."
+          }
+        },
+        {
+          "id": "zh_h6_9_4",
+          "word": "唛头",
+          "pronunciation": "màitóu",
+          "hanViet": "MẠ ĐẦU",
+          "partOfSpeech": "noun",
+          "meaningVi": "Ký mã hiệu hàng hóa in trên bao bì xuất khẩu (Shipping Mark)",
+          "radicals": "唛 (Mại - phiên âm từ Mark) + 头 (Đầu - nhãn hiệu)",
+          "grammarNote": "Mã chính: 正唛. Mã phụ chi tiết: 侧唛.",
+          "exampleSentence": {
+            "target": "严格按照客户指定的正唛与侧唛格式进行印刷，以便于在海外配送中心快速分拣。",
+            "pronunciation": "Yángé ànzhào kèhù zhǐdìng de zhèngmài yǔ cèmài géshì jìnxíng yìnshuā, yǐbiànyú zài hǎiwài pèisòng zhōngxīn kuàisù fēnjiǎn.",
+            "meaningVi": "In ấn nghiêm ngặt theo định dạng ký mã hiệu chính và phụ do khách hàng chỉ định, để tiện phân loại nhanh chóng tại trung tâm phân phối ở nước ngoài."
+          }
+        },
+        {
+          "id": "zh_h6_9_5",
+          "word": "防震",
+          "pronunciation": "fángzhèn",
+          "hanViet": "PHÒNG CHẤN",
+          "partOfSpeech": "adj/verb",
+          "meaningVi": "Chống sốc, chống va đập rơi vỡ",
+          "radicals": "防 (Phòng chống) + 震 (Chấn - rung động va chấn)",
+          "grammarNote": "Mút xốp chống sốc: 珍珠棉 (EPE), Màng xốp bóng khí: 气泡膜.",
+          "exampleSentence": {
+            "target": "精密液晶显示屏内包装采用了高回弹EPE防震泡棉，能有效吸收长途海运途中的颠簸冲力。",
+            "pronunciation": "Jīngmì yèjīng xiǎnshìpíng nèi bāozhuāng cǎiyòng le gāo huítán EPE fángzhèn pàomián, néng yǒuxiào xīshōu chángtú hǎiyùn túzhōng de diānbǒ chōnglì.",
+            "meaningVi": "Bao bì bên trong màn hình tinh thể lỏng chính xác sử dụng mút xốp chống sốc EPE độ đàn hồi cao, có thể hấp thu hiệu quả xung lực dằn xóc trong suốt hành trình vận tải biển đường dài."
+          }
+        },
+        {
+          "id": "zh_h6_9_6",
+          "word": "防潮",
+          "pronunciation": "fángcháo",
+          "hanViet": "PHÒNG TRIỀU",
+          "partOfSpeech": "adj/verb",
+          "meaningVi": "Chống ẩm mốc, ngăn hơi nước xâm nhập",
+          "radicals": "防 (Phòng) + 潮 (Triều - hơi ẩm thủy triều)",
+          "grammarNote": "Gói hút ẩm silicagel: 干燥剂 (Silica Gel). Túi chân không: 铝箔真空袋.",
+          "exampleSentence": {
+            "target": "跨洋海上集装箱运输湿气极重，每个纸箱内均放置了三包高效干燥剂以实现可靠防潮。",
+            "pronunciation": "Kuàyáng hǎishàng jízhuāngxiāng yùnshū shīqì jí zhòng, měi ge zhǐxiāng nèi jūn fàngzhì le sān bāo gāoxiào gānzàojì yǐ shíxiàn kěkào fángcháo.",
+            "meaningVi": "Vận chuyển container trên biển vượt đại dương độ ẩm cực kỳ cao, trong mỗi thùng carton đều đặt ba gói hạt hút ẩm hiệu suất cao để đạt khả năng chống ẩm đáng tin cậy."
+          }
+        },
+        {
+          "id": "zh_h6_9_7",
+          "word": "缠绕膜",
+          "pronunciation": "chánràomó",
+          "hanViet": "TRIỀN NHIỄU MÔ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Màng cuốn bọc pallet, màng chít PE (Stretch film)",
+          "radicals": "缠绕 (Quấn quanh) + 膜 (Màng nilon mỏng)",
+          "grammarNote": "Quấn pallet cố định: 打托缠膜.",
+          "exampleSentence": {
+            "target": "在托盘货物码垛完毕后，使用自动化打包机缠绕六层高拉伸强度的PE塑料缠绕膜以防散包。",
+            "pronunciation": "Zài tuōpán huòwù mǎduò wánbì hòu, shǐyòng zìdònghuà dǎbāojī chánrào liù céng gāo lāshēn qiángdù de PE sùliào chánràomó yǐ fáng sǎnbāo.",
+            "meaningVi": "Sau khi xếp hàng lên pallet xong xuôi, sử dụng máy đóng đai tự động quấn 6 lớp màng chít nhựa PE độ kéo căng cao để phòng đổ vỡ hàng."
+          }
+        },
+        {
+          "id": "zh_h6_9_8",
+          "word": "装载",
+          "pronunciation": "zhuāngzài",
+          "hanViet": "TRANG TẢI",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Bốc hàng xếp tải vào thùng xe/container",
+          "radicals": "装 (Bốc xếp) + 载 (Tải - chở chứa)",
+          "grammarNote": "Tối ưu hóa sức chứa: 优化装载率 (CBM Optimization).",
+          "exampleSentence": {
+            "target": "通过合理计算装载方案，设计师将一个四十尺集装箱的空间利用率提升至百分之九十六。",
+            "pronunciation": "Tōngguò hélǐ jìsuàn zhuāngzài fāng'àn, shèjìshī jiāng yí ge sìshí chǐ jízhuāngxiāng de kōngjiān lìyònglǜ tíshēng zhì bǎifēnzhī jiǔshíliù.",
+            "meaningVi": "Thông qua tính toán hợp lý phương án bốc xếp tải, người thiết kế đã nâng tỷ lệ tận dụng không gian của một container 40 feet lên đến 96%."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk6_l10",
+      "title": "Bài 10: Công Nghệ AI & Tự Động Hóa Công Nghiệp (Robotics & Machine Vision)",
+      "grammarFocus": "Công nghệ 4.0 nhà máy thông minh: 机器视觉 (Machine vision), 工业机器人 (Industrial robot), 数字化孪生 (Digital twin).",
+      "vocabularies": [
+        {
+          "id": "zh_h6_10_1",
+          "word": "机器视觉",
+          "pronunciation": "jīqì shìjué",
+          "hanViet": "CƠ KHÍ THỊ GIÁC",
+          "partOfSpeech": "noun",
+          "meaningVi": "Thị giác máy tính kiểm tra lỗi tự động bằng camera công nghiệp (Machine Vision / AOI)",
+          "radicals": "机器 (Máy móc thiết bị) + 视觉 (Thị giác đôi mắt)",
+          "grammarNote": "Máy kiểm tra quang học tự động: AOI自动光学检测仪.",
+          "exampleSentence": {
+            "target": "基于高分辨率工业相机和机器视觉算法的检测系统，能在零点一秒内识别出芯片焊点的微小虚焊缺陷。",
+            "pronunciation": "Jīyú gāo fēnbànlǜ gōngyè xiàngjī hé jīqì shìjué suànfǎ de jiǎncè xìtǒng, néng zài líng diǎn yī miǎo nèi shíbié chū xīnpiàn hàndiǎn de wēixiǎo xūhàn quēxiàn.",
+            "meaningVi": "Hệ thống kiểm tra dựa trên camera công nghiệp độ phân giải cao và thuật toán thị giác máy tính, có thể nhận dạng khuyết tật mối hàn ảo li ti của con chip trong 0.1 giây."
+          }
+        },
+        {
+          "id": "zh_h6_10_2",
+          "word": "机械臂",
+          "pronunciation": "jīxièbì",
+          "hanViet": "CƠ GIỚI TÝ",
+          "partOfSpeech": "noun",
+          "meaningVi": "Cánh tay robot cơ khí công nghiệp (Robotic Arm)",
+          "radicals": "机械 (Cơ khí máy móc) + 臂 (Cánh tay con người)",
+          "grammarNote": "Robot 6 trục: 六轴工业机械臂.",
+          "exampleSentence": {
+            "target": "焊接车间内，六轴高精度工业机械臂正以极其均匀的速度完成汽车底盘的自动化激光无缝焊接。",
+            "pronunciation": "Hànjiē chējiān nèi, liù zhóu gāojīngdù gōngyè jīxièbì zhèngzài yǐ jíqí jūnyún de sùdù wánchéng qìchē dǐpán de zìdònghuà jīguāng wúféng hànjiē.",
+            "meaningVi": "Bên trong xưởng hàn, cánh tay robot công nghiệp độ chính xác cao 6 trục đang hoàn thành việc hàn laser liền mạch tự động hóa cho khung gầm ô tô với tốc độ cực kỳ đồng đều."
+          }
+        },
+        {
+          "id": "zh_h6_10_3",
+          "word": "无人搬运车",
+          "pronunciation": "wúrén bānyùnchē",
+          "hanViet": "VÔ NHÂN BAN VẬN XA",
+          "partOfSpeech": "noun",
+          "meaningVi": "Xe tự hành chuyên chở hàng trong xưởng (AGV - Automated Guided Vehicle)",
+          "radicals": "无人 (Không người lái) + 搬运 (Vận chuyển hàng) + 车 (Xe)",
+          "grammarNote": "Công nghệ dẫn đường: 激光导航AGV小车.",
+          "exampleSentence": {
+            "target": "数十台激光导航无人搬运车在车间与仓库之间自主穿梭，实现了零人工干预的物料精准配送。",
+            "pronunciation": "Shùshí tái jīguāng dǎoháng wúrén bānyùnchē zài chējiān yǔ cāngkù zhījiān zìzhǔ chuānsuō, shíxiàn le líng réngōng gānyù de wùliào jīngzhǔn pèisòng.",
+            "meaningVi": "Hàng chục xe tự hành AGV định vị laser tự chủ đi lại con thoi giữa phân xưởng và kho hàng, thực hiện việc giao nhận vật liệu chuẩn xác không cần tới sự can thiệp của con người."
+          }
+        },
+        {
+          "id": "zh_h6_10_4",
+          "word": "数字孪生",
+          "pronunciation": "shùzì luánshēng",
+          "hanViet": "SỐ TỰ LOAN SINH",
+          "partOfSpeech": "noun",
+          "meaningVi": "Bản sao số mô phỏng nhà máy ảo thời gian thực (Digital Twin)",
+          "radicals": "数字 (Kỹ thuật số) + 孪生 (Sinh đôi song sinh)",
+          "grammarNote": "Mô phỏng 3D thời gian thực: 工业数字孪生平台.",
+          "exampleSentence": {
+            "target": "工程师通过控制中心的数字孪生系统，可以在电脑屏幕上实时监控千里之外整个智能工厂的运行工况。",
+            "pronunciation": "Gōngchéngshī tōngguò kòngzhì zhōngxīn de shùzì luánshēng xìtǒng, kěyǐ zài diànnǎo píngmù shang shíshí jiānkòng qiānlǐ zhīwài zhěnggè zhìnéng gōngchǎng de yùnxíng gōngkuàng.",
+            "meaningVi": "Kỹ sư thông qua hệ thống bản sao số tại trung tâm điều khiển, có thể giám sát trạng thái vận hành của toàn bộ nhà máy thông minh cách xa ngàn dặm trên màn hình máy tính theo thời gian thực."
+          }
+        },
+        {
+          "id": "zh_h6_10_5",
+          "word": "预测性维护",
+          "pronunciation": "yùcèxìng wéihù",
+          "hanViet": "DỰ TRẮC TÍNH DUY HỘ",
+          "partOfSpeech": "noun/verb",
+          "meaningVi": "Bảo trì dự đoán hỏng hóc bằng cảm biến IoT & AI (Predictive Maintenance - PdM)",
+          "radicals": "预测 (Dự đoán tương lai) + 维护 (Bảo trì bảo dưỡng)",
+          "grammarNote": "Phân tích chấn động âm thanh: 振动监测预测性维护.",
+          "exampleSentence": {
+            "target": "物联网传感器采集轴承微振动数据并经AI模型计算，提前十五天发出设备潜在故障预警，实现了预测性维护。",
+            "pronunciation": "Wùliánwǎng chuángǎnqì cǎijí zhóuchéng wēi zhèndòng shùjù bìng jīng AI móxíng jìsuàn, tíqián shíwǔ tiān fāchū shèbèi qiánzài gùzhàng yùjǐng, shíxiàn le yùcèxìng wéihù.",
+            "meaningVi": "Cảm biến IoT thu thập số liệu vi rung động của vòng bi và qua mô hình AI tính toán, phát đi cảnh báo sự cố tiềm ẩn của thiết bị trước 15 ngày, thực hiện thành công bảo trì dự đoán."
+          }
+        },
+        {
+          "id": "zh_h6_10_6",
+          "word": "物联网",
+          "pronunciation": "wùliánwǎng",
+          "hanViet": "VẬT LIÊN VÕNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Internet vạn vật (IoT - Internet of Things)",
+          "radicals": "物 (Mọi đồ vật) + 联网 (Nối mạng Internet)",
+          "grammarNote": "IoT công nghiệp: 工业物联网 (IIoT).",
+          "exampleSentence": {
+            "target": "工业物联网技术的深度应用将车间内所有孤立的机床和仪器紧密互联互通。",
+            "pronunciation": "Gōngyè wùliánwǎng jìshù de shēndù yìngyòng jiāng chējiān nèi suǒyǒu gūlì de jīchuáng hé yíqì jǐnmì hùliánhùtōng.",
+            "meaningVi": "Ứng dụng chuyên sâu của công nghệ IoT công nghiệp đã kết nối liên thông chặt chẽ tất cả các máy công cụ và dụng cụ đo lường biệt lập bên trong xưởng."
+          }
+        },
+        {
+          "id": "zh_h6_10_7",
+          "word": "边缘计算",
+          "pronunciation": "biānyuán jìsuàn",
+          "hanViet": "BIÊN DUYÊN KẾ TOÁN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Điện toán biên xử lý dữ liệu ngay tại máy (Edge Computing)",
+          "radicals": "边缘 (Rìa biên giới, cạnh máy) + 计算 (Tính toán dữ liệu)",
+          "grammarNote": "Độ trễ thấp mili-giây: 超低时延边缘计算.",
+          "exampleSentence": {
+            "target": "在机器人工作站部署边缘计算网关，能够以低于两毫秒的极低时延下达急停制动指令。",
+            "pronunciation": "Zài jīqìrén gōngzuòzhàn bùshǔ biānyuán jìsuàn wǎngguān, nénggòu yǐ dǐyú liǎng háomiǎo de jídī shíyán xiàdá jítíng zhìdòng zhǐlìng.",
+            "meaningVi": "Triển khai cổng kết nối điện toán biên tại trạm làm việc của robot, có thể ban hành lệnh phanh dừng khẩn cấp với độ trễ cực thấp dưới 2 mili-giây."
+          }
+        },
+        {
+          "id": "zh_h6_10_8",
+          "word": "熄灯工厂",
+          "pronunciation": "xīdēng gōngchǎng",
+          "hanViet": "TỨC ĐĂNG CÔNG XƯỞNG",
+          "partOfSpeech": "noun",
+          "meaningVi": "Nhà máy tắt đèn vận hành tự động hóa 100% không bóng người (Lights-out factory)",
+          "radicals": "熄灯 (Tắt hết đèn chiếu sáng) + 工厂 (Nhà máy sản xuất)",
+          "grammarNote": "Đỉnh cao tự động hóa công nghiệp hiện đại.",
+          "exampleSentence": {
+            "target": "在这座高度智能化的熄灯工厂里，整整三万平方米的加工车间在全黑环境下二十四小时平稳自如运转。",
+            "pronunciation": "Zài zhè zuò gāodù zhìnénghuà de xīdēng gōngchǎng lǐ, zhěngzhěng sān wàn píngfāngmǐ de jiāgōng chējiān zài quánhēi huánjìng xià èrshísì xiǎoshí píngwěn zìrú yùnzhuǎn.",
+            "meaningVi": "Bên trong nhà máy tắt đèn thông minh hóa cao độ này, phân xưởng gia công rộng suốt 30.000 mét vuông vận hành êm ả 24 giờ tự do trong môi trường hoàn toàn tối đen không cần bật đèn."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk6_l11",
+      "title": "Bài 11: Y Sinh Học, Thiết Bị Y Tế & Dược Phẩm Xuất Nhập Khẩu",
+      "grammarFocus": "Ngành dược y tế xuất nhập khẩu: 药品注册 (Drug registration), 临床试验 (Clinical trial), 冷链运输 (Cold chain logistics), GMP规范.",
+      "vocabularies": [
+        {
+          "id": "zh_h6_11_1",
+          "word": "冷链",
+          "pronunciation": "lěngliàn",
+          "hanViet": "LÃNH LIỆN",
+          "partOfSpeech": "noun",
+          "meaningVi": "Chuỗi cung ứng lạnh bảo quản vắc-xin/dược phẩm (Cold Chain)",
+          "radicals": "冷 (Lạnh đông) + 链 (Dây xích liên kết)",
+          "grammarNote": "Nhiệt độ cực thấp: 超低温冷链 (âm 80 độ C).",
+          "exampleSentence": {
+            "target": "生物疫苗类货物在长途国际空运全程中必须严格维持在摄氏二至八度的专业医用冷链温控区间。",
+            "pronunciation": "Shēngwù yìmiáo lèi huòwù zài chángtú guójì kōngyùn quánchéng zhōng bìxū yángé wéichí zài Shèshì èr zhì bā dù de zhuānyè yīyòng lěngliàn wēnkòng qūjiān.",
+            "meaningVi": "Hàng hóa thuộc nhóm vắc-xin sinh học trong suốt toàn bộ quá trình vận tải hàng không quốc tế đường dài bắt buộc phải duy trì nghiêm ngặt trong khoảng kiểm soát nhiệt độ chuỗi lạnh y tế chuyên dụng từ 2 đến 8 độ C."
+          }
+        },
+        {
+          "id": "zh_h6_11_2",
+          "word": "临床试验",
+          "pronunciation": "línchuáng shìyàn",
+          "hanViet": "LÂM SÀNG THÍ NGHIỆM",
+          "partOfSpeech": "noun/verb",
+          "meaningVi": "Thử nghiệm lâm sàng thuốc mới trên người (Clinical Trial)",
+          "radicals": "临床 (Bên giường bệnh) + 试验 (Thử nghiệm khoa học)",
+          "grammarNote": "Thử nghiệm giai đoạn 3: 三期临床试验.",
+          "exampleSentence": {
+            "target": "该创新抗癌靶向药物经过全球多中心三期临床试验，证明能显著延长患者的无进展生存期。",
+            "pronunciation": "Gāi chuàngxīn kàng'ái bǎxiàng yàowù jīngguò quánqiú duō zhōngxīn sān qī línchuáng shìyàn, zhèngmíng néng xiǎnzhù yáncháng huànzhě de wú jìnzhǎn shēngcúnqī.",
+            "meaningVi": "Loại thuốc điều trị đích chống ung thư đổi mới này sau khi qua thử nghiệm lâm sàng giai đoạn 3 tại nhiều trung tâm toàn cầu, đã chứng minh có thể kéo dài rõ rệt thời gian sống không tiến triển của bệnh nhân."
+          }
+        },
+        {
+          "id": "zh_h6_11_3",
+          "word": "无菌",
+          "pronunciation": "wújūn",
+          "hanViet": "VÔ KHUẨN",
+          "partOfSpeech": "adj",
+          "meaningVi": "Vô trùng, tiệt trùng hoàn toàn (Sterile)",
+          "radicals": "无 (Không có) + 菌 (Vi khuẩn mầm bệnh)",
+          "grammarNote": "Đóng gói vô trùng: 无菌包装. Thao tác vô trùng: 无菌操作.",
+          "exampleSentence": {
+            "target": "医用注射器和输液管在装箱前必须经过环氧乙烷灭菌并确保无菌包装完好无损。",
+            "pronunciation": "Yīyòng zhùshèqì hé shūyèguǎn zài zhuāngxiāng qián bìxū jīngguò huányǎngyǐwán mièjūn bìng quèbǎo wújūn bāozhuāng wánhǎo wúsǔn.",
+            "meaningVi": "Bơm kim tiêm và dây truyền dịch y tế trước khi đóng thùng bắt buộc phải qua tiệt trùng bằng khí Ethylene Oxide và bảo đảm bao bì vô trùng nguyên vẹn không rách."
+          }
+        },
+        {
+          "id": "zh_h6_11_4",
+          "word": "批号",
+          "pronunciation": "pīhào",
+          "hanViet": "PHÊ HIỆU",
+          "partOfSpeech": "noun",
+          "meaningVi": "Số lô sản xuất của dược phẩm (Batch number / Lot number)",
+          "radicals": "批 (Lô hàng) + 号 (Mã số)",
+          "grammarNote": "Kiểm tra hạn dùng và số lô: 生产批号与有效期.",
+          "exampleSentence": {
+            "target": "药监局要求在药品最小销售包装外表面以清晰耐久的喷码标明产品生产批号与失效日期。",
+            "pronunciation": "Yàojiānjú yāoqiú zài yàopǐn zuìxiǎo xiāoshòu bāozhuāng wàibiǎomiàn yǐ qīngxī nàijiǔ de pēnmǎ biāomíng chǎnpǐn shēngchǎn pīhào yǔ shīxiào rìqī.",
+            "meaningVi": "Cục Quản lý Dược yêu cầu trên bề mặt ngoài của bao bì bán lẻ nhỏ nhất của dược phẩm phải in phun chữ số rõ ràng bền chắc để biểu thị số lô sản xuất và ngày hết hạn của sản phẩm."
+          }
+        },
+        {
+          "id": "zh_h6_11_5",
+          "word": "活性",
+          "pronunciation": "huóxìng",
+          "hanViet": "HOẠT TÍNH",
+          "partOfSpeech": "noun/adj",
+          "meaningVi": "Hoạt tính sinh học của protein/dược chất",
+          "radicals": "活 (Sống động) + 性 (Đặc tính bản chất)",
+          "grammarNote": "Thành phần dược chất có hoạt tính: 活性药物成分 (API).",
+          "exampleSentence": {
+            "target": "温度的剧烈剧烈剧烈剧烈剧烈波动会导致生物大分子活性不可逆丧失。",
+            "pronunciation": "Wēndù de jùliè bōdòng huì dǎozhì shēngwù dàfēnzǐ huóxìng bù kě nì sàngshī.",
+            "meaningVi": "Sự biến động dữ dội của nhiệt độ sẽ dẫn đến việc hoạt tính của đại phân tử sinh học bị mất đi không thể phục hồi."
+          }
+        },
+        {
+          "id": "zh_h6_11_6",
+          "word": "审批",
+          "pronunciation": "shěnpī",
+          "hanViet": "THẨM PHÊ",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Thẩm định và phê duyệt hồ sơ thuốc/thiết bị y tế (Regulatory Approval)",
+          "radicals": "审 (Thẩm định rà soát) + 批 (Phê chuẩn đồng ý)",
+          "grammarNote": "Phê duyệt lưu hành thuốc: 药品上市许可审批.",
+          "exampleSentence": {
+            "target": "国家药品监督管理局开辟了绿色通道，加快对用于罕见病急需药品的进口注册审批流程。",
+            "pronunciation": "Guójiā Yàopǐn Jiāndū Guǎnlǐjú kāipì le lǜsè tōngdào, jiākuài duì yòngyú hǎnjiànbìng jíxū yàopǐn de jìnkǒu zhùcè shěnpī liúchéng.",
+            "meaningVi": "Cục Quản lý Giám sát Dược phẩm Quốc gia đã mở luồng xanh, đẩy nhanh quy trình thẩm định phê duyệt đăng ký nhập khẩu đối với các loại thuốc cấp bách dùng cho bệnh hiếm gặp."
+          }
+        },
+        {
+          "id": "zh_h6_11_7",
+          "word": "监管",
+          "pronunciation": "jiānguǎn",
+          "hanViet": "GIÁM QUẢN",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Giám sát và quản lý chất lượng (Regulatory oversight)",
+          "radicals": "监 (Giám sát soi xét) + 管 (Quản lý)",
+          "grammarNote": "Giám sát an toàn dược phẩm: 药品安全监管.",
+          "exampleSentence": {
+            "target": "严格的全生命周期质量监管制度是保障公众用药安全有效的定海神针。",
+            "pronunciation": "Yángé de quán shēngmìngzhōuqī zhìliàng jiānguǎn zhìdù shì bǎozhàng gōngzhòng yòngyào ānquán yǒuxiào de dìnghǎishénzhēn.",
+            "meaningVi": "Chế độ giám sát quản lý chất lượng toàn bộ vòng đời nghiêm ngặt là cây gậy thần định hải bảo đảm sự an toàn và hiệu quả dùng thuốc của công chúng."
+          }
+        },
+        {
+          "id": "zh_h6_11_8",
+          "word": "生物等效性",
+          "pronunciation": "shēngwù děngxiàoxìng",
+          "hanViet": "SINH VẬT ĐẲNG HIỆU TÍNH",
+          "partOfSpeech": "noun",
+          "meaningVi": "Tương đương sinh học giữa thuốc gốc và thuốc generic (Bioequivalence - BE)",
+          "radicals": "生物 (Sinh học) + 等效 (Tác dụng tương đương) + 性 (Tính chất)",
+          "grammarNote": "Thử nghiệm BE thuốc generic: 一致性评价生物等效性试验.",
+          "exampleSentence": {
+            "target": "仿制药只有在通过生物等效性试验并证明其与原研药具有相同的临床疗效后，才获准上市销售。",
+            "pronunciation": "Fǎngzhìyào zhǐyǒu zài tōngguò shēngwù děngxiàoxìng shìyàn bìng zhèngmíng qí yǔ yuányányào jùyǒu xiāngtóng de línchuáng liáoxiào hòu, cái huòzhǔn shàngshì xiāoshòu.",
+            "meaningVi": "Thuốc generic chỉ sau khi vượt qua thử nghiệm tương đương sinh học và chứng minh nó có hiệu quả điều trị lâm sàng tương đương với thuốc gốc, mới được chuẩn y cho lưu hành bán ra thị trường."
+          }
+        }
+      ]
+    },
+    {
+      "id": "zh_hsk6_l12",
+      "title": "Bài 12: Soạn Thảo & Dịch Thuật Hợp Đồng Ngoại Thương Song Ngữ",
+      "grammarFocus": "Ngôn ngữ pháp lý ngoại thương chuẩn xác: 不可抗力 (Force Majeure), 仲裁裁决 (Arbitration award), 管辖法律 (Governing law), 补偿责任 (Indemnity).",
+      "vocabularies": [
+        {
+          "id": "zh_h6_12_1",
+          "word": "不可抗力",
+          "pronunciation": "bù kě kàng lì",
+          "hanViet": "BẤT KHẢ KHÁNG LỰC",
+          "partOfSpeech": "noun",
+          "meaningVi": "Trường hợp bất khả kháng thiên tai dịch bệnh chiến tranh (Force Majeure)",
+          "radicals": "不可 (Không thể) + 抗 (Chống lại) + 力 (Sức lực con người)",
+          "grammarNote": "Điều khoản miễn trách nhiệm: 不可抗力免责条款.",
+          "exampleSentence": {
+            "target": "由于发生地震或战争等不可抗力事件导致任何一方不能按期履行合同义务的，应在十四天内出具权威公证证明。",
+            "pronunciation": "Yóuyú fāshēng dìzhèn huò zhànzhēng děng bùkěkànglì shìjiàn dǎozhì rènhé yì fāng bù néng ànqī lǚxíng hétong yìwù de, yīng zài shísì tiān nèi chūjù quánwēi gōngzhèng zhèngmíng.",
+            "meaningVi": "Do phát sinh sự kiện bất khả kháng như động đất hoặc chiến tranh dẫn đến bất kỳ bên nào không thể thực hiện nghĩa vụ hợp đồng đúng hạn, cần xuất trình giấy chứng nhận công chứng có thẩm quyền trong vòng 14 ngày."
+          }
+        },
+        {
+          "id": "zh_h6_12_2",
+          "word": "仲裁",
+          "pronunciation": "zhòngcái",
+          "hanViet": "TRỌNG TÀI",
+          "partOfSpeech": "noun/verb",
+          "meaningVi": "Trọng tài thương mại quốc tế (Arbitration)",
+          "radicals": "仲 (Trọng - người đứng giữa phân xử) + 裁 (Tài - phán quyết)",
+          "grammarNote": "Phán quyết trọng tài có tính chung thẩm: 仲裁裁决是终局的 (Final and binding).",
+          "exampleSentence": {
+            "target": "双方一致同意将本合同引发的一切纠纷提交中国国际经济贸易仲裁委员会进行仲裁。",
+            "pronunciation": "Shuāngfāng yízhì tóngyì jiāng běn hétong yǐnfā de yíqiè jiūfēn tíjiāo Zhōngguó Guójì Jīngjì Màoyì Zhòngcái Wěiyuánhuì jìnxíng zhòngcái.",
+            "meaningVi": "Hai bên nhất trí đồng ý đệ trình mọi tranh chấp phát sinh từ hợp đồng này lên Ủy ban Trọng tài Kinh tế Thương mại Quốc tế Trung Quốc (CIETAC) để tiến hành phân xử trọng tài."
+          }
+        },
+        {
+          "id": "zh_h6_12_3",
+          "word": "管辖",
+          "pronunciation": "guǎnxiá",
+          "hanViet": "QUẢN HẠT",
+          "partOfSpeech": "noun/verb",
+          "meaningVi": "Thẩm quyền tài phán của tòa án/luật pháp (Jurisdiction)",
+          "radicals": "管 (Cai quản) + 辖 (Hạt - phạm vi quyền hạn)",
+          "grammarNote": "Luật áp dụng điều chỉnh: 适用法律与管辖权.",
+          "exampleSentence": {
+            "target": "本合同的订立、效力、解释及履行均受中华人民共和国法律的管辖。",
+            "pronunciation": "Běn hétong de dìnglì, xiàolì, jiěshì jí lǚxíng jūn shòu Zhōnghuá Rénmín Gònghéguó fǎlǜ de guǎnxiá.",
+            "meaningVi": "Việc xác lập, hiệu lực, diễn giải và thực thi hợp đồng này đều chịu sự quản hạt tài phán của pháp luật nước Cộng hòa Nhân dân Trung Hoa."
+          }
+        },
+        {
+          "id": "zh_h6_12_4",
+          "word": "歧义",
+          "pronunciation": "qíyì",
+          "hanViet": "KỲ Ý",
+          "partOfSpeech": "noun",
+          "meaningVi": "Sự hiểu lầm đa nghĩa, nghĩa nước đôi mâu thuẫn (Ambiguity)",
+          "radicals": "歧 (Kỳ - ngả rẽ phân nhánh) + 义 (Ý - ý nghĩa câu từ)",
+          "grammarNote": "Tránh nghĩa nước đôi: 消除歧义.",
+          "exampleSentence": {
+            "target": "涉外法律合同翻译必须严谨准确，坚决避免使用可能引发理解歧义的模糊词汇。",
+            "pronunciation": "Shèwài fǎlǜ hétong fānyì bìxū yánjǐn zhǔnquè, jiānjué bìmiǎn shǐyòng kěnéng yǐnfā lǐjiě qíyì de móhu cíhuì.",
+            "meaningVi": "Dịch thuật hợp đồng pháp lý có yếu tố nước ngoài bắt buộc phải cẩn trọng chuẩn xác, kiên quyết tránh sử dụng những từ ngữ mơ hồ có thể gây ra cách hiểu nước đôi dị nghĩa."
+          }
+        },
+        {
+          "id": "zh_h6_12_5",
+          "word": "连带责任",
+          "pronunciation": "liándài zérèn",
+          "hanViet": "LIÊN ĐỚI TRÁCH NHIỆM",
+          "partOfSpeech": "noun",
+          "meaningVi": "Trách nhiệm liên đới pháp lý (Joint and several liability)",
+          "radicals": "连带 (Gắn kết cùng nhau) + 责任 (Trách nhiệm nghĩa vụ)",
+          "grammarNote": "Chịu trách nhiệm bồi thường liên đới: 承担连带赔偿责任.",
+          "exampleSentence": {
+            "target": "担保人自愿为借款人在主合同项下的全部债务偿还承担无限连带责任。",
+            "pronunciation": "Dānbǎorén zìyuàn wèi jièkuǎnrén zài zhǔ hétong xiàngxià de quánbù zhàiwù chánghuán chéngdān wúxiàn liándài zérèn.",
+            "meaningVi": "Bên bảo lãnh tự nguyện chịu trách nhiệm liên đới vô hạn đối với việc hoàn trả toàn bộ nợ nần của bên vay dưới hợp đồng chính."
+          }
+        },
+        {
+          "id": "zh_h6_12_6",
+          "word": "索赔",
+          "pronunciation": "suǒpéi",
+          "hanViet": "TÁC BỒI",
+          "partOfSpeech": "verb/noun",
+          "meaningVi": "Khiếu nại đòi tiền bồi thường thiệt hại (Claim for damages)",
+          "radicals": "索 (Tác - yêu cầu đòi hỏi) + 赔 (Bồi - bồi thường tiền của)",
+          "grammarNote": "Thời hạn khiếu nại bồi thường: 索赔期限.",
+          "exampleSentence": {
+            "target": "买方在检验货物后发现严重短重，有权在货物运抵目的港三十天内向卖方正式提出经济索赔。",
+            "pronunciation": "Mǎifāng zài jiǎnyàn huòwù hòu fāxiàn yánzhòng duǎnzhòng, yǒu quán zài huòwù yùndǐ mùdìgǎng sānshí tiān nèi xiàng màifāng zhèngshì tíchū jīngjì suǒpéi.",
+            "meaningVi": "Bên mua sau khi kiểm tra hàng hóa phát hiện thiếu hụt trọng lượng nghiêm trọng, có quyền đưa ra khiếu nại đòi bồi thường kinh tế chính thức lên bên bán trong vòng 30 ngày sau khi hàng cập cảng đến."
+          }
+        },
+        {
+          "id": "zh_h6_12_7",
+          "word": "鉴于",
+          "pronunciation": "jiànyú",
+          "hanViet": "GIÁM Ư",
+          "partOfSpeech": "conjunction",
+          "meaningVi": "Xét vì, căn cứ vào (Lời mở đầu điều khoản Recitals trong hợp đồng tiếng Anh: Whereas)",
+          "radicals": "鉴 (Giám - soi chiếu) + 于 (Ư - tại vì)",
+          "grammarNote": "Phần mở đầu hợp đồng: 鉴于条款 (Whereas clauses).",
+          "exampleSentence": {
+            "target": "鉴于甲方拥有先进的专利技术，乙方具备强大的市场分销网络，双方特订立本许可协议。",
+            "pronunciation": "Jiànyú Jiǎfāng yōngyǒu xiānjìn de zhuānlì jìshù, Yǐfāng jùbèi qiángdà de shìchǎng fēnxiāo wǎngluò, shuāngfāng tè dìnglì běn xǔkě xiéyì.",
+            "meaningVi": "Xét vì Bên A sở hữu kỹ thuật sáng chế tiên tiến, Bên B có mạng lưới phân phối thị trường hùng hậu, hai bên đặc biệt xác lập thỏa thuận cấp phép này."
+          }
+        },
+        {
+          "id": "zh_h6_12_8",
+          "word": "终局",
+          "pronunciation": "zhōngjú",
+          "hanViet": "CHUNG CỤC",
+          "partOfSpeech": "noun/adj",
+          "meaningVi": "Chung thẩm, có hiệu lực cuối cùng không được kháng án (Final and binding)",
+          "radicals": "终 (Chung - kết thúc) + 局 (Cục - cục diện)",
+          "grammarNote": "Phán quyết có giá trị chung thẩm: 终局裁决.",
+          "exampleSentence": {
+            "target": "仲裁庭作出的最终裁决对甲乙双方均具有终局法律约束力，任何一方不得再向法院提起诉讼。",
+            "pronunciation": "Zhòngcáitíng zuòchū de zuìzhōng cáijué duì Jiǎ-Yǐ shuāngfāng jūn jùyǒu zhōngjú fǎlǜ yuēshùlì, rènhé yì fāng bùdé zài xiàng fǎyuàn tíqǐ sùsòng.",
+            "meaningVi": "Phán quyết cuối cùng do Hội đồng trọng tài đưa ra đều có hiệu lực ràng buộc pháp lý chung thẩm đối với cả hai bên Bên A và Bên B, không bên nào được phép tiếp tục khởi kiện lên tòa án."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1216 @@
+const fs = require('fs');
+const path = require('path');
+
+const enC2Units = [
+  {
+    id: "en_unit_c2_1",
+    levelId: "en_c2",
+    title: "Chương 1: Trọng tài thương mại quốc tế & Pháp lý tối cao",
+    description: "Nắm vững thuật ngữ tài phán, tranh chấp thương mại xuyên biên giới và thi hành phán quyết trọng tài.",
+    lessons: [
+      {
+        id: "en_c2_l01",
+        title: "Bài 1: International Commercial Arbitration & Jurisdictional Disputes",
+        description: "Trọng tài thương mại quốc tế, thẩm quyền tài phán và phán quyết trọng tài.",
+        vocabularies: [
+          {
+            id: "enc2_01_01",
+            word: "arbitration",
+            pronunciation: "/ˌɑːrbɪˈtreɪʃn/",
+            partOfSpeech: "noun",
+            meaningVi: "Trọng tài thương mại, phân xử tài phán",
+            radicals: "Latin: arbitrari (xét xử, phân giải)",
+            grammarNote: "Từ trung tâm trong luật thương mại quốc tế; thường đi với binding / non-binding arbitration.",
+            exampleSentence: {
+              target: "The parties mutually agreed to submit all disputes to binding arbitration under the ICC rules in Singapore.",
+              pronunciation: "/ði ˈpɑːrtiz ˈmjuːtʃuəli əˈɡriːd tuː səbˈmɪt ɔːl dɪˈspjuːts tuː ˈbaɪndɪŋ ˌɑːrbɪˈtreɪʃn ˈʌndər ði aɪ-siː-siː ruːlz ɪn ˈsɪŋəpɔːr/",
+              meaningVi: "Các bên đã nhất trí đệ trình mọi tranh chấp lên trọng tài mang tính ràng buộc theo quy tắc của ICC tại Singapore."
+            }
+          },
+          {
+            id: "enc2_01_02",
+            word: "jurisdiction",
+            pronunciation: "/ˌdʒʊrɪsˈdɪkʃn/",
+            partOfSpeech: "noun",
+            meaningVi: "Thẩm quyền tài phán, phạm vi quyền lực pháp lý",
+            radicals: "Latin: jus (pháp luật) + dicere (tuyên bố)",
+            grammarNote: "Thường đi kèm giới từ 'over': have/exercise jurisdiction over something.",
+            exampleSentence: {
+              target: "The respondent filed a preliminary objection arguing that the tribunal lacked subject-matter jurisdiction.",
+              pronunciation: "/ðə rɪˈspɑːndənt faɪld ə prɪˈlɪmɪneri əbˈdʒekʃn ˈɑːrɡjuɪŋ ðæt ðə traɪˈbjuːnl lækt ˈsʌbdʒɪkt ˈmætər ˌdʒʊrɪsˈdɪkʃn/",
+              meaningVi: "Bên bị đơn đã đệ trình đơn phản đối sơ bộ lập luận rằng hội đồng trọng tài không có thẩm quyền đối với nội dung vụ việc."
+            }
+          },
+          {
+            id: "enc2_01_03",
+            word: "enforceability",
+            pronunciation: "/ɪnˌfɔːrsəˈbɪləti/",
+            partOfSpeech: "noun",
+            meaningVi: "Tính khả thi thi hành, hiệu lực cưỡng chế thi hành án",
+            radicals: "Enforce (cưỡng chế) + -able + -ity",
+            grammarNote: "Thuộc tính then chốt của các hợp đồng quốc tế theo Công ước New York 1958.",
+            exampleSentence: {
+              target: "Ensuring the enforceability of arbitral awards across signatory jurisdictions is paramount for foreign investors.",
+              pronunciation: "/ɪnˈʃʊrɪŋ ði ɪnˌfɔːrsəˈbɪləti əv ˈɑːrbɪtrəl əˈwɔːrdz əˈkrɔːs ˈsɪɡnətɔːri ˌdʒʊrɪsˈdɪkʃnz ɪz ˈpærəmaʊnt fər ˈfɔːrən ɪnˈvestərz/",
+              meaningVi: "Đảm bảo tính khả thi thi hành phán quyết trọng tài trên các khu vực tài phán ký kết là tối quan trọng đối với nhà đầu tư nước ngoài."
+            }
+          },
+          {
+            id: "enc2_01_04",
+            word: "adjudicate",
+            pronunciation: "/əˈdʒuːdɪkeɪt/",
+            partOfSpeech: "verb",
+            meaningVi: "Xét xử, thụ lý phân xử tư pháp",
+            radicals: "Latin: adjudicare (phán quyết chính thức)",
+            grammarNote: "Thường dùng ở dạng bị động: 'be adjudicated by an independent tribunal'.",
+            exampleSentence: {
+              target: "The supreme court declined to adjudicate the cross-border intellectual property dispute, referring it back to arbitration.",
+              pronunciation: "/ðə suːˈpriːm kɔːrt dɪˈklaɪnd tuː əˈdʒuːdɪkeɪt ðə krɔːs ˈbɔːrdər ˌɪntəˈlektʃuəl ˈprɑːpərti dɪˈspjuːt, rɪˈfɜːrɪŋ ɪt bæk tuː ˌɑːrbɪˈtreɪʃn/",
+              meaningVi: "Tòa án tối cao từ chối xét xử vụ tranh chấp sở hữu trí tuệ xuyên biên giới, chuyển vụ việc trở lại hội đồng trọng tài."
+            }
+          },
+          {
+            id: "enc2_01_05",
+            word: "indemnify",
+            pronunciation: "/ɪnˈdemnɪfaɪ/",
+            partOfSpeech: "verb",
+            meaningVi: "Bồi thường tổn thất, miễn trừ tổn hại",
+            radicals: "Latin: indemnis (không bị thương tổn)",
+            grammarNote: "Cấu trúc: indemnify somebody against/from something.",
+            exampleSentence: {
+              target: "The supplier covenants to indemnify and hold harmless the buyer against any third-party patent infringement claims.",
+              pronunciation: "/ðə səˈplaɪər ˈkʌvənənts tuː ɪnˈdemnɪfaɪ ənd hoʊld ˈhɑːrmləs ðə ˈbaɪər əˈɡenst ˈeni θɜːrd ˈpɑːrti ˈpætnt ɪnˈfrɪndʒmənt kleɪmz/",
+              meaningVi: "Nhà cung cấp cam kết bồi thường và miễn trừ thiệt hại cho bên mua trước mọi khiếu nại vi phạm bằng sáng chế của bên thứ ba."
+            }
+          },
+          {
+            id: "enc2_01_06",
+            word: "repudiation",
+            pronunciation: "/rɪˌpjuːdiˈeɪʃn/",
+            partOfSpeech: "noun",
+            meaningVi: "Sự cự tuyệt thực hiện hợp đồng, hủy bỏ giao ước",
+            radicals: "Latin: repudiare (từ chối, ly dị)",
+            grammarNote: "'Repudiatory breach' là vi phạm nghiêm trọng cho phép đối tác chấm dứt hợp đồng ngay lập tức.",
+            exampleSentence: {
+              target: "Unilateral cessation of scheduled deliveries constituted an anticipatory repudiation of the procurement framework.",
+              pronunciation: "/ˌjuːnɪˈlætrəl seˈseɪʃn əv ˈskedʒuːld dɪˈlɪvəriz ˈkɑːnstətuːtɪd æn ænˌtɪsɪpəˈtɔːri rɪˌpjuːdiˈeɪʃn əv ðə prəˈkjʊrmənt ˈfreɪmwɜːrk/",
+              meaningVi: "Việc đơn phương chấm dứt các đợt giao hàng theo kế hoạch cấu thành sự cự tuyệt trước hợp đồng đối với khung mua sắm."
+            }
+          },
+          {
+            id: "enc2_01_07",
+            word: "caveat",
+            pronunciation: "/ˈkæviæt/",
+            partOfSpeech: "noun",
+            meaningVi: "Lời cảnh báo pháp lý, điều kiện ngoại trừ tiên quyết",
+            radicals: "Latin: caveat (hãy cẩn trọng)",
+            grammarNote: "Thành ngữ: caveat emptor (người mua phải tự chịu trách nhiệm tìm hiểu rủi ro).",
+            exampleSentence: {
+              target: "The agreement was ratified with the express caveat that currency fluctuations would trigger tariff renegotiations.",
+              pronunciation: "/ði əˈɡriːmənt wəz ˈrætɪfaɪd wɪð ði ɪkˈspres ˈkæviæt ðæt ˈkɜːrənsi ˌflʌktʃuˈeɪʃnz wʊd ˈtrɪɡər ˈtærɪf ˌriːnɪˌɡoʊʃiˈeɪʃnz/",
+              meaningVi: "Thỏa thuận đã được phê chuẩn với điều kiện tiên quyết rõ ràng rằng sự biến động tỷ giá sẽ kích hoạt đàm phán lại thuế quan."
+            }
+          },
+          {
+            id: "enc2_01_08",
+            word: "fiduciary",
+            pronunciation: "/fɪˈduːʃieri/",
+            partOfSpeech: "adjective / noun",
+            meaningVi: "Được ủy thác, ủy thác lòng tin, trách nhiệm ủy thác",
+            radicals: "Latin: fiducia (lòng tin cẩn)",
+            grammarNote: "'Fiduciary duty' là nghĩa vụ pháp lý cao nhất đòi hỏi sự trung thực tuyệt đối vì lợi ích của thân chủ/cổ đông.",
+            exampleSentence: {
+              target: "Corporate board members bear a strict fiduciary duty to prioritize shareholder value over individual self-interest.",
+              pronunciation: "/ˈkɔːrpərət bɔːrd ˈmembərz ber ə strɪkt fɪˈduːʃieri ˈduːti tuː praɪˈɔːrətaɪz ˈʃerhoʊldər ˈvæljuː ˈoʊvər ˌɪndɪˈvɪdʒuəl self ˈɪntrəst/",
+              meaningVi: "Các thành viên hội đồng quản trị công ty chịu trách nhiệm ủy thác nghiêm ngặt phải đặt giá trị cổ đông lên trên tư lợi cá nhân."
+            }
+          }
+        ]
+      },
+      {
+        id: "en_c2_l02",
+        title: "Bài 2: Epistemology & Scientific Paradigm Shifts",
+        description: "Lý thuyết nhận thức, phương pháp luận thực nghiệm và các bước chuyển hệ hình khoa học.",
+        vocabularies: [
+          {
+            id: "enc2_02_01",
+            word: "epistemology",
+            pronunciation: "/ɪˌpɪstəˈmɑːlədʒi/",
+            partOfSpeech: "noun",
+            meaningVi: "Nhận thức luận, lý thuyết về nguồn gốc và bản chất của tri thức",
+            radicals: "Greek: episteme (tri thức) + logos (học thuyết)",
+            grammarNote: "Thuật ngữ cốt lõi trong triết học học thuật.",
+            exampleSentence: {
+              target: "Contemporary epistemology scrutinizes how algorithmic curation influences the epistemic validity of public beliefs.",
+              pronunciation: "/kənˈtempəreri ɪˌpɪstəˈmɑːlədʒi ˈskruːtənaɪzɪz haʊ ˌælɡəˈrɪðmɪk kjʊˈreɪʃn ˈɪnfluənsɪz ði ˌepɪˈstemɪk vəˈlɪdəti əv ˈpʌblɪk bɪˈliːfs/",
+              meaningVi: "Nhận thức luận đương đại xem xét kỹ lưỡng cách việc thuật toán chọn lọc nội dung tác động đến giá trị nhận thức của niềm tin đại chúng."
+            }
+          },
+          {
+            id: "enc2_02_02",
+            word: "falsifiability",
+            pronunciation: "/ˌfɔːlsɪˌfaɪəˈbɪləti/",
+            partOfSpeech: "noun",
+            meaningVi: "Khả năng có thể bị bác bỏ (tiêu chuẩn Karl Popper cho lý thuyết khoa học)",
+            radicals: "False + -ify + -able + -ity",
+            grammarNote: "Một lý thuyết phải có falsifiability mới được coi là khoa học thực nghiệm.",
+            exampleSentence: {
+              target: "Karl Popper contended that falsifiability, rather than empirical verification, demarks scientific rigor from pseudoscience.",
+              pronunciation: "/kɑːrl ˈpɑːpər kənˈtendɪd ðæt ˌfɔːlsɪˌfaɪəˈbɪləti, ˈræðər ðən ɪmˈpɪrɪkl ˌverɪfɪˈkeɪʃn, dɪˈmɑːrks ˌsaɪənˈtɪfɪk ˈrɪɡər frəm ˌsuːdoʊˈsaɪəns/",
+              meaningVi: "Karl Popper lập luận rằng khả năng bị bác bỏ, chứ không phải sự xác minh thực nghiệm, là ranh giới phân biệt sự nghiêm cẩn khoa học với ngụy khoa học."
+            }
+          },
+          {
+            id: "enc2_02_03",
+            word: "paradigm",
+            pronunciation: "/ˈpærədaɪm/",
+            partOfSpeech: "noun",
+            meaningVi: "Hệ hình tư duy, khuôn mẫu mẫu mực",
+            radicals: "Greek: paradeigma (mẫu, ví dụ)",
+            grammarNote: "Thành ngữ kinh điển: 'paradigm shift' (sự thay đổi hệ hình triệt để).",
+            exampleSentence: {
+              target: "The introduction of quantum mechanics precipitated a profound paradigm shift in theoretical physics.",
+              pronunciation: "/ði ˌɪntrəˈdʌkʃn əv ˈkwɑːntəm məˈkænɪks prɪˈsɪpɪteɪtɪd ə prəˈfaʊnd ˈpærədaɪm ʃɪft ɪn ˌθiːəˈretɪkl ˈfɪzɪks/",
+              meaningVi: "Sự ra đời của cơ học lượng tử đã thúc đẩy một sự thay đổi hệ hình sâu sắc trong vật lý lý thuyết."
+            }
+          },
+          {
+            id: "enc2_02_04",
+            word: "heuristics",
+            pronunciation: "/hjuˈrɪstɪks/",
+            partOfSpeech: "noun",
+            meaningVi: "Phương pháp phỏng đoán, đường tắt tư duy giải quyết vấn đề",
+            radicals: "Greek: heuriskein (tìm thấy, phát kiến)",
+            grammarNote: "Dùng dạng số nhiều nhưng thường đi với động từ số ít hoặc số nhiều tùy ngữ cảnh tư duy.",
+            exampleSentence: {
+              target: "While cognitive heuristics enable rapid decision-making under uncertainty, they routinely introduce systematic cognitive biases.",
+              pronunciation: "/waɪl ˈkɑːɡnətɪv hjuˈrɪstɪks ɪnˈeɪbl ˈræpɪd dɪˈsɪʒn ˈmeɪkɪŋ ˈʌndər ʌnˈsɜːrtnti, ðeɪ ruːˈtiːnli ˌɪntrəˈduːs ˌsɪstəˈmætɪk ˈkɑːɡnətɪv ˈbaɪəsɪz/",
+              meaningVi: "Mặc dù các đường tắt nhận thức cho phép ra quyết định nhanh chóng trong tình trạng bất định, chúng lại thường xuyên tạo ra các thiên kiến nhận thức có hệ thống."
+            }
+          },
+          {
+            id: "enc2_02_05",
+            word: "axiomatic",
+            pronunciation: "/ˌæksiəˈmætɪk/",
+            partOfSpeech: "adjective",
+            meaningVi: "Hiển nhiên, thuộc về tiên đề không cần chứng minh",
+            radicals: "Axiom (tiên đề) + -atic",
+            grammarNote: "Được coi là chân lý nền tảng tạo tiền đề cho các định lý tiếp theo.",
+            exampleSentence: {
+              target: "In neoclassical economic models, the premise that rational agents maximize utility is treated as axiomatic.",
+              pronunciation: "/ɪn ˌniːoʊˈklæsɪkl ˌiːkəˈnɑːmɪk ˈmɑːdlz, ðə ˈpremɪs ðæt ˈræʃnəl ˈeɪdʒənts ˈmæksɪmaɪz juːˈtɪləti ɪz ˈtriːtɪd əz ˌæksiəˈmætɪk/",
+              meaningVi: "Trong các mô hình kinh tế học tân cổ điển, tiền đề cho rằng các cá nhân duy lý luôn tối đa hóa độ hữu dụng được coi là hiển nhiên mang tính tiên đề."
+            }
+          },
+          {
+            id: "enc2_02_06",
+            word: "tautology",
+            pronunciation: "/tɔːˈtɑːlədʒi/",
+            partOfSpeech: "noun",
+            meaningVi: "Phép lặp thừa luẩn quẩn, câu vô nghĩa vì lặp lại định nghĩa",
+            radicals: "Greek: tauto (điều tương tự) + logos (lời nói)",
+            grammarNote: "Mệnh đề logic luôn đúng một cách tầm thường do bản thân từ ngữ quy định.",
+            exampleSentence: {
+              target: "Asserting that surviving organisms are the fittest because only the fittest survive borders on logical tautology.",
+              pronunciation: "/əˈsɜːrtɪŋ ðæt sərˈvaɪvɪŋ ˈɔːrɡənɪzəmz ɑːr ðə ˈfɪtɪst bɪˈkəz ˈoʊnli ðə ˈfɪtɪst sərˈvaɪv ˈbɔːrdərz ɑːn ˈlɑːdʒɪkl tɔːˈtɑːlədʒi/",
+              meaningVi: "Khẳng định rằng các sinh vật sống sót là loài thích nghi nhất vì chỉ có loài thích nghi nhất mới sống sót gần như là một phép lặp thừa luẩn quẩn về logic."
+            }
+          },
+          {
+            id: "enc2_02_07",
+            word: "empiricism",
+            pronunciation: "/ɪmˈpɪrɪsɪzəm/",
+            partOfSpeech: "noun",
+            meaningVi: "Chủ nghĩa kinh nghiệm, trường phái tri thức dựa trên quan sát thực chứng",
+            radicals: "Greek: empeiria (kinh nghiệm)",
+            grammarNote: "Đối lập với 'rationalism' (chủ nghĩa duy lý thuần túy tư biện).",
+            exampleSentence: {
+              target: "Scientific empiricism demands reproducible quantitative data before theoretical conjectures can gain widespread consensus.",
+              pronunciation: "/ˌsaɪənˈtɪfɪk ɪmˈpɪrɪsɪzəm dɪˈmændz ˌriːprəˈduːsəbl ˈkwɑːntəteɪtɪv ˈdeɪtə bɪˈfɔːr ˌθiːəˈretɪkl kənˈdʒektʃərz kən ɡeɪn ˈwaɪdspred kənˈsensəs/",
+              meaningVi: "Chủ nghĩa kinh nghiệm khoa học đòi hỏi dữ liệu định lượng có thể tái lập trước khi những phỏng đoán lý thuyết có thể đạt được sự đồng thuận rộng rãi."
+            }
+          },
+          {
+            id: "enc2_02_08",
+            word: "dialectic",
+            pronunciation: "/ˌdaɪəˈlektɪk/",
+            partOfSpeech: "noun / adjective",
+            meaningVi: "Biện chứng, phương pháp tìm chân lý qua đối thoại và phủ định của phủ định",
+            radicals: "Greek: dialektike (nghệ thuật tranh luận)",
+            grammarNote: "Gắn liền với phép biện chứng Hegel: chính đề (thesis) - phản đề (antithesis) - hợp đề (synthesis).",
+            exampleSentence: {
+              target: "The historical dialectic between state intervention and free-market deregulation continues to shape contemporary fiscal policy.",
+              pronunciation: "/ðə hɪˈstɔːrɪkl ˌdaɪəˈlektɪk bɪˈtwiːn steɪt ˌɪntərˈvenʃn ənd friː ˈmɑːrkɪt ˌdiːreɡjuˈleɪʃn kənˈtɪnjuːz tuː ʃeɪp kənˈtempəreri ˈfɪskl ˈpɑːləsi/",
+              meaningVi: "Mối quan hệ biện chứng lịch sử giữa sự can thiệp của nhà nước và việc phi điều tiết hóa thị trường tự do tiếp tục định hình chính sách tài khóa đương đại."
+            }
+          }
+        ]
+      },
+      {
+        id: "en_c2_l03",
+        title: "Bài 3: Diplomatic Statecraft & Multilateral Treaties",
+        description: "Ngoại giao đa phương, hiệp ước quốc tế và thuật trị quốc toàn cầu.",
+        vocabularies: [
+          {
+            id: "enc2_03_01",
+            word: "sovereignty",
+            pronunciation: "/ˈsɑːvrənti/",
+            partOfSpeech: "noun",
+            meaningVi: "Chủ quyền tối thượng quốc gia",
+            radicals: "Old French: souverainete",
+            grammarNote: "Nguyên tắc cốt lõi của Hiến chương Liên Hợp Quốc: Westphalian sovereignty.",
+            exampleSentence: {
+              target: "The treaty explicitly reaffirms the inviolability of territorial integrity and national sovereignty of member states.",
+              pronunciation: "/ðə ˈtriːti ɪkˈsplɪsɪtli ˌriːəˈfɜːrmz ði ɪnˌvaɪələˈbɪləti əv ˌterəˈtɔːriəl ɪnˈteɡrəti ənd ˈnæʃnəl ˈsɑːvrənti əv ˈmembər steɪts/",
+              meaningVi: "Hiệp ước tái khẳng định rõ ràng quyền bất khả xâm phạm về toàn vẹn lãnh thổ và chủ quyền quốc gia của các nước thành viên."
+            }
+          },
+          {
+            id: "enc2_03_02",
+            word: "rapprochement",
+            pronunciation: "/ˌræproʊʃˈmɑː̃/",
+            partOfSpeech: "noun",
+            meaningVi: "Sự tái lập quan hệ hữu nghị, hòa hoãn ngoại giao",
+            radicals: "French: rapprocher (xích lại gần nhau)",
+            grammarNote: "Từ mượn tiếng Pháp cao cấp, chỉ sự hòa giải sau một thời kỳ căng thẳng thù địch gay gắt.",
+            exampleSentence: {
+              target: "Intensive diplomatic backchannel negotiations facilitated a historic rapprochement between the two rival powers.",
+              pronunciation: "/ɪnˈtensɪv ˌdɪpləˈmætɪk ˈbækˌtʃænl nɪˌɡoʊʃiˈeɪʃnz fəˈsɪlɪteɪtɪd ə hɪˈstɔːrɪk ˌræproʊʃˈmɑː̃ bɪˈtwiːn ðə tuː ˈraɪvl ˈpaʊərz/",
+              meaningVi: "Các cuộc đàm phán ngoại giao kênh ngầm cấp tập đã tạo điều kiện cho một sự tái lập quan hệ hữu nghị lịch sử giữa hai cường quốc đối địch."
+            }
+          },
+          {
+            id: "enc2_03_03",
+            word: "embargo",
+            pronunciation: "/ɪmˈbɑːrɡoʊ/",
+            partOfSpeech: "noun / verb",
+            meaningVi: "Lệnh cấm vận thương mại / ban hành cấm vận",
+            radicals: "Spanish: embargar (ngăn chặn)",
+            grammarNote: "Cấu trúc: impose/lift an embargo on imports/exports.",
+            exampleSentence: {
+              target: "The coalition resolved to impose a comprehensive arms embargo to constrain belligerent offensive capabilities.",
+              pronunciation: "/ðə ˌkoʊəˈlɪʃn rɪˈzɑːlvd tuː ɪmˈpoʊz ə ˌkɑːmprɪˈhensɪv ɑːrmz ɪmˈbɑːrɡoʊ tuː kənˈstreɪn bəˈlɪdʒərənt əˈfensɪv ˌkeɪpəˈbɪlətiz/",
+              meaningVi: "Khối liên minh đã quyết định áp đặt lệnh cấm vận vũ khí toàn diện nhằm kiềm chế khả năng tấn công của phe hiếu chiến."
+            }
+          },
+          {
+            id: "enc2_03_04",
+            word: "hegemony",
+            pronunciation: "/hɪˈdʒeməni/",
+            partOfSpeech: "noun",
+            meaningVi: "Bá quyền, ưu thế áp đảo mang tính chi phối",
+            radicals: "Greek: hegemonia (sự lãnh đạo, cầm đầu)",
+            grammarNote: "Mô tả sự thống trị kinh tế, quân sự hoặc văn hóa của một siêu cường.",
+            exampleSentence: {
+              target: "Emerging economies increasingly challenge unipolar geopolitical hegemony by establishing alternative settlement mechanisms.",
+              pronunciation: "/iˈmɜːrdʒɪŋ ɪˈkɑːnəmiz ɪnˈkriːsɪŋli ˈtʃælɪndʒ ˌjuːnɪˈpoʊlər ˌdʒiːoʊpəˈlɪtɪkl hɪˈdʒeməni baɪ ɪˈstæblɪʃɪŋ ɔːlˈtɜːrnətɪv ˈsetlmənt ˈmekənɪzəmz/",
+              meaningVi: "Các nền kinh tế mới nổi ngày càng thách thức bá quyền địa chính trị đơn cực bằng việc thiết lập các cơ chế thanh toán thay thế."
+            }
+          },
+          {
+            id: "enc2_03_05",
+            word: "plenipotentiary",
+            pronunciation: "/ˌplenɪpəˈtenʃieri/",
+            partOfSpeech: "noun / adjective",
+            meaningVi: "Đại sứ toàn quyền, đặc phái viên có đầy đủ quyền biểu quyết",
+            radicals: "Latin: plenus (đầy đủ) + potentia (quyền lực)",
+            grammarNote: "Chức vụ ngoại giao có toàn quyền ký kết hiệp ước thay mặt nguyên thủ quốc gia.",
+            exampleSentence: {
+              target: "The minister was designated as ambassador plenipotentiary to sign the multilateral maritime convention.",
+              pronunciation: "/ðə ˈmɪnɪstər wəz ˈdezɪɡneɪtɪd əz æmˈbæsədər ˌplenɪpəˈtenʃieri tuː saɪn ðə ˌmʌltiˈlætrəl ˈmærɪtaɪm kənˈvenʃn/",
+              meaningVi: "Bộ trưởng được chỉ định làm đại sứ toàn quyền để ký kết công ước hàng hải đa phương."
+            }
+          },
+          {
+            id: "enc2_03_06",
+            word: "quid pro quo",
+            pronunciation: "/ˌkwɪd proʊ ˈkwoʊ/",
+            partOfSpeech: "noun",
+            meaningVi: "Sự trao đổi có qua có lại mang tính đối ứng",
+            radicals: "Latin: điều này cho điều kia",
+            grammarNote: "Cụm danh từ Latin bất biến trong ngoại giao và luật thương lượng.",
+            exampleSentence: {
+              target: "Tariff reductions were granted strictly on a reciprocal quid pro quo basis regarding intellectual property safeguards.",
+              pronunciation: "/ˈtærɪf rɪˈdʌkʃnz wɜːr ˈɡræntɪd ˈstrɪktli ɑːn ə rɪˈsɪprəkl ˌkwɪd proʊ ˈkwoʊ ˈbeɪsɪs rɪˈɡɑːrdɪŋ ˌɪntəˈlektʃuəl ˈprɑːpərti ˈseɪfɡɑːrdz/",
+              meaningVi: "Việc cắt giảm thuế quan được chấp thuận hoàn toàn trên cơ sở có qua có lại đối ứng liên quan đến các biện pháp bảo vệ sở hữu trí tuệ."
+            }
+          },
+          {
+            id: "enc2_03_07",
+            word: "belligerent",
+            pronunciation: "/bəˈlɪdʒərənt/",
+            partOfSpeech: "adjective / noun",
+            meaningVi: "Hiếu chiến, bên tham chiến trong xung đột",
+            radicals: "Latin: bellum (chiến tranh) + gerere (tiến hành)",
+            grammarNote: "Có thể là tính từ (thái độ gây hấn) hoặc danh từ luật quốc tế (bên tham chiến được công nhận).",
+            exampleSentence: {
+              target: "Neutral humanitarian observers called upon all belligerent forces to respect demilitarized refugee corridors.",
+              pronunciation: "/ˈnuːtrəl ˌhjuːˌmænɪˈteriən əbˈzɜːrvərz kɔːld əˈpɑːn ɔːl bəˈlɪdʒərənt ˈfɔːrsɪz tuː rɪˈspekt ˌdiːˈmɪlɪtəraɪzd ˌrefjuˈdʒiː ˈkɔːrɪdɔːrz/",
+              meaningVi: "Các quan sát viên nhân đạo trung lập kêu gọi mọi lực lượng tham chiến tôn trọng các hành lang tị nạn phi quân sự hóa."
+            }
+          },
+          {
+            id: "enc2_03_08",
+            word: "demarche",
+            pronunciation: "/deɪˈmɑːrʃ/",
+            partOfSpeech: "noun",
+            meaningVi: "Công hàm ngoại giao phản đối chính thức",
+            radicals: "French: demarche (bước đi, động thái)",
+            grammarNote: "Động thái ngoại giao chính thức từ chính phủ này sang chính phủ khác.",
+            exampleSentence: {
+              target: "The foreign ministry issued a formal demarche condemning the unauthorized airspace incursion.",
+              pronunciation: "/ðə ˈfɔːrən ˈmɪnɪstri ˈɪʃuːd ə ˈfɔːrml deɪˈmɑːrʃ kənˈdemɪŋ ði ʌnˈɔːθəraɪzd ˈerspeɪs ɪnˈkɜːrʒn/",
+              meaningVi: "Bộ Ngoại giao đã ra một công hàm ngoại giao chính thức lên án vụ xâm phạm không phận trái phép."
+            }
+          }
+        ]
+      },
+      {
+        id: "en_c2_l04",
+        title: "Bài 4: Nuanced Idioms & Rhetorical Stylistics",
+        description: "Thành ngữ tinh tế bậc thầy và các thủ pháp tu từ tiếng Anh kinh điển.",
+        vocabularies: [
+          {
+            id: "enc2_04_01",
+            word: "chiasmus",
+            pronunciation: "/kaɪˈæzməs/",
+            partOfSpeech: "noun",
+            meaningVi: "Phép đảo ngữ đối xứng (A-B rồi B-A)",
+            radicals: "Greek: chiazein (tạo hình chữ X)",
+            grammarNote: "Thủ pháp tu từ nổi tiếng: 'Ask not what your country can do for you — ask what you can do for your country.'",
+            exampleSentence: {
+              target: "Presidential speechwriters frequently utilize chiasmus to construct memorable and rhythmic political slogans.",
+              pronunciation: "/ˌprezɪˈdenʃl ˈspiːtʃraɪtərz ˈfriːkwəntli ˈjuːtəlaɪz kaɪˈæzməs tuː kənˈstrʌkt ˈmemərəbl ənd ˈrɪðmɪk pəˈlɪtɪkl ˈsloʊɡənz/",
+              meaningVi: "Những người viết diễn văn tổng thống thường xuyên sử dụng phép đảo ngữ đối xứng để kiến tạo những khẩu hiệu chính trị nhịp nhàng và đáng nhớ."
+            }
+          },
+          {
+            id: "enc2_04_02",
+            word: "litotes",
+            pronunciation: "/ˈlaɪtətiːz/",
+            partOfSpeech: "noun",
+            meaningVi: "Phép nói giảm qua hai lần phủ định (Ví dụ: 'not bad at all' = 'rất cừ')",
+            radicals: "Greek: litos (giản dị, khiêm nhường)",
+            grammarNote: "Tạo sự kín đáo, mỉa mai nhẹ nhàng hoặc lịch thiệp thượng lưu trong văn phong quý tộc Anh.",
+            exampleSentence: {
+              target: "Describing a catastrophic financial downturn as 'not an entirely inconsequential hiccup' is a quintessential example of litotes.",
+              pronunciation: "/dɪˈskraɪbɪŋ ə ˌkætəˈstrɑːfɪk faɪˈnænʃl ˈdaʊntɜːrn əz nɑːt æn ɪnˈtaɪərli ˌɪnkɑːnsɪˈkwenʃl ˈhɪkʌp ɪz ə ˌkwɪntɪˈsenʃl ɪɡˈzæmpl əv ˈlaɪtətiːz/",
+              meaningVi: "Miêu tả một đợt suy thoái tài chính thảm khốc là 'không hẳn là một sự cố hoàn toàn vụn vặt' là ví dụ điển hình của phép nói giảm hai lần phủ định."
+            }
+          },
+          {
+            id: "enc2_04_03",
+            word: "oxymoron",
+            pronunciation: "/ˌɑːksɪˈmɔːrɑːn/",
+            partOfSpeech: "noun",
+            meaningVi: "Phép nghịch hợp (kết hợp hai từ mâu thuẫn đối lập nhau)",
+            radicals: "Greek: oxys (sắc sảo) + moros (khờ khạo)",
+            grammarNote: "Ví dụ: 'deafening silence', 'cruel kindness', 'open secret'.",
+            exampleSentence: {
+              target: "The phrase 'virtual reality' was initially dismissed by linguists as a contradictory technological oxymoron.",
+              pronunciation: "/ðə freɪz ˈvɜːrtʃuəl riˈæləti wəz ɪˈnɪʃəli dɪsˈmɪst baɪ ˈlɪŋɡwɪsts əz ə ˌkɑːntrəˈdɪktəri ˌteknəˈlɑːdʒɪkl ˌɑːksɪˈmɔːrɑːn/",
+              meaningVi: "Cụm từ 'thực tế ảo' ban đầu bị các nhà ngôn ngữ học gạt bỏ như một phép nghịch hợp công nghệ đầy mâu thuẫn."
+            }
+          },
+          {
+            id: "enc2_04_04",
+            word: "euphemism",
+            pronunciation: "/ˈjuːfəmɪzəm/",
+            partOfSpeech: "noun",
+            meaningVi: "Phép nói uyển chuyển, cách nói giảm tránh",
+            radicals: "Greek: eu (tốt lành) + pheme (lời nói)",
+            grammarNote: "Thay thế từ gây sốc hoặc đau buồn bằng từ lịch sự hơn.",
+            exampleSentence: {
+              target: "In corporate communications, 'workforce optimization' is a ubiquitous euphemism for mass layoffs.",
+              pronunciation: "/ɪn ˈkɔːrpərət kəˌmjuːnɪˈkeɪʃnz, ˈwɜːrkfɔːrs ˌɑːptɪmɪˈzeɪʃn ɪz ə juːˈbɪkwɪtəs ˈjuːfəmɪzəm fər mæs ˈleɪɔːfs/",
+              meaningVi: "Trong truyền thông doanh nghiệp, 'tối ưu hóa lực lượng lao động' là một cách nói giảm tránh phổ biến cho việc sa thải hàng loạt."
+            }
+          },
+          {
+            id: "enc2_04_05",
+            word: "non sequitur",
+            pronunciation: "/ˌnɑːn ˈsekwɪtər/",
+            partOfSpeech: "noun",
+            meaningVi: "Kết luận không hề ăn nhập với tiền đề, câu nói lạc đề",
+            radicals: "Latin: không đi theo logic trước",
+            grammarNote: "Lỗi ngụy biện logic hoặc thủ pháp tạo tiếng cười trớ trêu trong văn học.",
+            exampleSentence: {
+              target: "Injecting irrelevant culinary trivia into a rigorous discourse on monetary policy was an utter non sequitur.",
+              pronunciation: "/ɪnˈdʒektɪŋ ɪˈreləvənt ˈkʌlɪneri ˈtrɪviə ˈɪntuː ə ˈrɪɡərəs ˈdɪskɔːrs ɑːn ˈmɑːnɪteri ˈpɑːləsi wəz æn ˈʌtər ˌnɑːn ˈsekwɪtər/",
+              meaningVi: "Việc chêm vào những mẩu chuyện ẩm thực không liên quan giữa một bài nghị luận nghiêm ngặt về chính sách tiền tệ quả là một sự lạc đề không ăn nhập."
+            }
+          },
+          {
+            id: "enc2_04_06",
+            word: "zeitgeist",
+            pronunciation: "/ˈtsaɪtɡaɪst/",
+            partOfSpeech: "noun",
+            meaningVi: "Tinh thần thời đại, xu hướng tư tưởng chủ đạo của một kỷ nguyên",
+            radicals: "German: Zeit (thời gian) + Geist (tinh thần)",
+            grammarNote: "Từ mượn tiếng Đức rất trang trọng trong bình luận văn hóa và phê bình xã hội.",
+            exampleSentence: {
+              target: "The sudden proliferation of decentralized autonomous organizations encapsulates the anti-establishment zeitgeist of the decade.",
+              pronunciation: "/ðə ˈsʌdn prəˌlɪfəˈreɪʃn əv diːˈsentrəlaɪzd ɔːˈtɑːnəməs ˌɔːrɡənəˈzeɪʃnz ɪnˈkæpsjuleɪts ði ˌænti ɪˈstæblɪʃmənt ˈtsaɪtɡaɪst əv ðə ˈdekeɪd/",
+              meaningVi: "Sự bùng nổ đột ngột của các tổ chức tự trị phi tập trung đã cô đọng tinh thần thời đại chống lại các định chế truyền thống của thập kỷ này."
+            }
+          },
+          {
+            id: "enc2_04_07",
+            word: "panacea",
+            pronunciation: "/ˌpænəˈsiːə/",
+            partOfSpeech: "noun",
+            meaningVi: "Phương thuốc vạn năng, liều thuốc giải quyết mọi vấn đề",
+            radicals: "Greek: pan (tất cả) + akos (chữa lành)",
+            grammarNote: "Thường dùng với nghĩa phủ định: 'is not a panacea for...'.",
+            exampleSentence: {
+              target: "Digital transformation is indispensable, yet leadership must recognize that technology alone is no panacea for deep-seated cultural inertia.",
+              pronunciation: "/ˈdɪdʒɪtl ˌtrænsfərˈmeɪʃn ɪz ˌɪndɪˈspensəbl, jet ˈliːdərʃɪp mʌst ˈrekəɡnaɪz ðæt tekˈnɑːlədʒi əˈloʊn ɪz noʊ ˌpænəˈsiːə fər ˈdiːp ˈsiːtɪd ˈkʌltʃərəl ɪˈnɜːrʃə/",
+              meaningVi: "Chuyển đổi số là không thể thiếu, song ban lãnh đạo phải nhận thức rằng công nghệ tự thân không phải là liều thuốc vạn năng cho sức ỳ văn hóa thâm căn cố đế."
+            }
+          },
+          {
+            id: "enc2_04_08",
+            word: "quixotic",
+            pronunciation: "/kwɪkˈsɑːtɪk/",
+            partOfSpeech: "adjective",
+            meaningVi: "Hão huyền, viển vông như Đôn Ki-hô-tê (theo đuổi lý tưởng bất khả thi)",
+            radicals: "Nhân vật hiệp sĩ Don Quixote của Cervantes",
+            grammarNote: "Chỉ người hoặc kế hoạch có lòng can đảm, lý tưởng cao đẹp nhưng hoàn toàn phi thực tế.",
+            exampleSentence: {
+              target: "Attempting to reverse globalization through archaic isolationist legislation is fundamentally a quixotic endeavor.",
+              pronunciation: "/əˈtemptɪŋ tuː rɪˈvɜːrs ˌɡloʊbələˈzeɪʃn θruː ɑːrˈkeɪɪk ˌaɪsəˈleɪʃənɪst ˌledʒɪsˈleɪʃn ɪz ˌfʌndəˈmentəli ə kwɪkˈsɑːtɪk ɪnˈdevər/",
+              meaningVi: "Nỗ lực đảo ngược toàn cầu hóa thông qua các đạo luật bế quan tỏa cảng lỗi thời về căn bản là một nỗ lực viển vông như hiệp sĩ Đôn Ki-hô-tê."
+            }
+          }
+        ]
+      },
+      {
+        id: "en_c2_l05",
+        title: "Bài 5: Constitutional Law & Judicial Precedents",
+        description: "Luật hiến pháp, án lệ và các nguyên tắc bảo vệ quyền tự do công dân tối thượng.",
+        vocabularies: [
+          {
+            id: "enc2_05_01",
+            word: "stare decisis",
+            pronunciation: "/ˈstɑːreɪ dɪˈsaɪsɪs/",
+            partOfSpeech: "noun",
+            meaningVi: "Nguyên tắc tôn trọng án lệ đã định (tiền lệ pháp lý)",
+            radicals: "Latin: stare decisis et non quieta movere (đứng vững trước phán quyết đã ra)",
+            grammarNote: "Nền tảng của hệ thống thông luật (Common Law), tòa án cấp dưới phải tuân theo phán quyết cấp cao hơn.",
+            exampleSentence: {
+              target: "The doctrine of stare decisis safeguards judicial predictability and maintains public fidelity in legal institutions.",
+              pronunciation: "/ðə ˈdɑːktrɪn əv ˈstɑːreɪ dɪˈsaɪsɪs ˈseɪfɡɑːrdz dʒuːˈdɪʃl prɪˌdɪktəˈbɪləti ənd meɪnˈteɪnz ˈpʌblɪk fɪˈdeləti ɪn ˈliːɡl ˌɪnstɪˈtuːʃnz/",
+              meaningVi: "Học thuyết tôn trọng án lệ đã định bảo vệ tính dự đoán được của tư pháp và duy trì niềm tin của công chúng vào các định chế pháp luật."
+            }
+          },
+          {
+            id: "enc2_05_02",
+            word: "habeas corpus",
+            pronunciation: "/ˌheɪbiəs ˈkɔːrpəs/",
+            partOfSpeech: "noun",
+            meaningVi: "Lệnh bảo thân (quyền cấm giam giữ người trái phép không qua xét xử)",
+            radicals: "Latin: ngươi hãy đem thân thể lại đây",
+            grammarNote: "Quyền hiến định căn bản nhất chống lại sự độc tài giam giữ vô căn cứ.",
+            exampleSentence: {
+              target: "The attorney filed a petition for a writ of habeas corpus to compel authorities to substantiate the prolonged detention.",
+              pronunciation: "/ði əˈtɜːrni faɪld ə pəˈtɪʃn fər ə rɪt əv ˌheɪbiəs ˈkɔːrpəs tuː kəmˈpel ɔːˈθɔːrətiz tuː səbˈstænʃieɪt ðə prəˈlɔːŋd dɪˈtenʃn/",
+              meaningVi: "Luật sư đã đệ đơn xin lệnh bảo thân nhằm buộc chính quyền phải chứng minh căn cứ hợp pháp cho việc giam giữ kéo dài."
+            }
+          },
+          {
+            id: "enc2_05_03",
+            word: "due process",
+            pronunciation: "/ˈduː ˈprɑːses/",
+            partOfSpeech: "noun",
+            meaningVi: "Trình tự tố tụng công bằng hợp pháp",
+            radicals: "Quy chuẩn hiến pháp Mỹ & Anh",
+            grammarNote: "Nguyên tắc: Không ai bị tước đoạt sinh mạng, tự do hay tài sản mà không qua trình tự pháp lý công bằng.",
+            exampleSentence: {
+              target: "Summary expropriation of private property without just compensation violates substantive constitutional due process.",
+              pronunciation: "/ˈsʌməri ɪkˌsproʊpriˈeɪʃn əv ˈpraɪvət ˈprɑːpərti wɪˈðaʊt dʒʌst ˌkɑːmpenˈseɪʃn ˈvaɪəleɪts səbˈstæntɪv ˌkɑːnstɪˈtuːʃənl ˈduː ˈprɑːses/",
+              meaningVi: "Việc tịch thu tài sản tư nhân cấp tốc mà không có bồi thường thỏa đáng đã vi phạm trình tự tố tụng thực chất theo hiến pháp."
+            }
+          },
+          {
+            id: "enc2_05_04",
+            word: "unconstitutional",
+            pronunciation: "/ˌʌnkɑːnstɪˈtuːʃənl/",
+            partOfSpeech: "adjective",
+            meaningVi: "Vi hiến, trái với quy định của hiến pháp",
+            radicals: "Un- + Constitution + -al",
+            grammarNote: "Từ mạnh nhất được tòa án tối cao phán xét để vô hiệu hóa một đạo luật.",
+            exampleSentence: {
+              target: "The supreme judicial council struck down the surveillance statute as unconstitutional, citing violations of Fourth Amendment protections.",
+              pronunciation: "/ðə suːˈpriːm dʒuːˈdɪʃl ˈkaʊnsl strʌk daʊn ðə sərˈveɪləns ˈstætʃuːt əz ˌʌnkɑːnstɪˈtuːʃənl, ˈsaɪtɪŋ ˌvaɪəˈleɪʃnz əv fɔːrθ əˈmendmənt prəˈtekʃnz/",
+              meaningVi: "Hội đồng tư pháp tối cao đã bác bỏ quy chế giám sát vì vi hiến, viện dẫn những vi phạm các biện pháp bảo vệ của Tu chính án số 4."
+            }
+          },
+          {
+            id: "enc2_05_05",
+            word: "jurisprudence",
+            pronunciation: "/ˌdʒʊrɪsˈpruːdns/",
+            partOfSpeech: "noun",
+            meaningVi: "Khoa học pháp lý, triết học pháp luật và hệ thống án lệ",
+            radicals: "Latin: juris (luật) + prudentia (sự am hiểu, thông thái)",
+            grammarNote: "Dùng để chỉ toàn bộ học thuyết hoặc triết lý vận hành của một nền tư pháp.",
+            exampleSentence: {
+              target: "Modern human rights jurisprudence emphasizes that basic dignities cannot be abrogated by parliamentary majority alone.",
+              pronunciation: "/ˈmɑːdərn ˈhjuːmən raɪts ˌdʒʊrɪsˈpruːdns ˈemfəsaɪzɪz ðæt ˈbeɪsɪk ˈdɪɡnətiz ˈkænɑːt biː ˈæbrəɡeɪtɪd baɪ ˌpɑːrləˈmentri məˈdʒɔːrəti əˈloʊn/",
+              meaningVi: "Khoa học pháp lý nhân quyền hiện đại nhấn mạnh rằng những phẩm giá cơ bản không thể bị bãi bỏ chỉ bởi một đa số tại nghị viện."
+            }
+          },
+          {
+            id: "enc2_05_06",
+            word: "injunction",
+            pronunciation: "/ɪnˈdʒʌŋkʃn/",
+            partOfSpeech: "noun",
+            meaningVi: "Lệnh đình chỉ / lệnh khẩn cấp tạm thời của tòa án",
+            radicals: "Latin: injungere (áp đặt, truyền lệnh)",
+            grammarNote: "Thường đi kèm: preliminary injunction, permanent injunction.",
+            exampleSentence: {
+              target: "The judge granted an emergency interlocutory injunction preventing the company from liquidating disputed offshore assets.",
+              pronunciation: "/ðə dʒʌdʒ ˈɡræntɪd æn ɪˈmɜːrdʒənsi ˌɪntərˈlɑːkjətɔːri ɪnˈdʒʌŋkʃn prɪˈventɪŋ ðə ˈkʌmpəni frəm ˈlɪkwɪdeɪtɪŋ dɪˈspjuːtɪd ˌɔːfˈʃɔːr ˈæsets/",
+              meaningVi: "Thẩm phán đã ban hành lệnh khẩn cấp tạm thời ngăn chặn công ty thanh lý các tài sản ngoài khơi đang có tranh chấp."
+            }
+          },
+          {
+            id: "enc2_05_07",
+            word: "abrogate",
+            pronunciation: "/ˈæbrəɡeɪt/",
+            partOfSpeech: "verb",
+            meaningVi: "Hủy bỏ, phế truất chính thức (một điều luật, hiệp ước)",
+            radicals: "Latin: ab- (khỏi) + rogare (đề xuất, thỉnh cầu)",
+            grammarNote: "Khác với cancel, 'abrogate' chỉ việc bãi bỏ mang thẩm quyền lập pháp hoặc quân vương.",
+            exampleSentence: {
+              target: "Neither executive branch decree can abrogate rights enshrined within the fundamental charter of liberties.",
+              pronunciation: "/ˈniːðər ɪɡˈzekjətɪv bræntʃ dɪˈkriː kən ˈæbrəɡeɪt raɪts ɪnˈʃraɪnd wɪˈðɪn ðə ˌfʌndəˈmentl ˈtʃɑːrtər əv ˈlɪbərtiz/",
+              meaningVi: "Không một sắc lệnh nào của cơ quan hành pháp có thể phế bỏ những quyền đã được tôn vinh trong bản hiến chương tự do cơ bản."
+            }
+          },
+          {
+            id: "enc2_05_08",
+            word: "certiorari",
+            pronunciation: "/ˌsɜːrʃiəˈrɑːraɪ/",
+            partOfSpeech: "noun",
+            meaningVi: "Lệnh thụ lý phúc thẩm đặc biệt (của Tòa án Tối cao)",
+            radicals: "Latin: certior fieri (được thông tri rõ ràng)",
+            grammarNote: "'Writ of certiorari' là văn bản Tòa tối cao ban hành để chấp nhận xem xét lại một bản án.",
+            exampleSentence: {
+              target: "The Supreme Court granted certiorari to resolve a contentious circuit split regarding antitrust enforcement in cloud services.",
+              pronunciation: "/ðə suːˈpriːm kɔːrt ˈɡræntɪd ˌsɜːrʃiəˈrɑːraɪ tuː rɪˈzɑːlv ə kənˈtenʃəs ˈsɜːrkɪt splɪt rɪˈɡɑːrdɪŋ ˌæntiˈtrʌst ɪnˈfɔːrsmənt ɪn klaʊd ˈsɜːrvɪsɪz/",
+              meaningVi: "Tòa án Tối cao đã chấp thuận lệnh thụ lý xem xét để giải quyết sự bất đồng quan điểm giữa các tòa phúc thẩm liên quan đến thực thi chống độc quyền trong dịch vụ đám mây."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "en_unit_c2_2",
+    levelId: "en_c2",
+    title: "Chương 2: Công nghệ tương lai, Triết học máy & Kinh tế lượng cao cấp",
+    description: "Đào sâu vào AI alignment, dự báo kinh tế lượng vĩ mô, hùng biện cổ điển, đạo đức gen và hòa giải khủng hoảng cấp cao.",
+    lessons: [
+      {
+        id: "en_c2_l06",
+        title: "Bài 6: AI Philosophy, Consciousness & Alignment",
+        description: "Triết học AI, ý thức nhân tạo, rủi ro sinh tồn và căn chỉnh an toàn mô hình.",
+        vocabularies: [
+          {
+            id: "enc2_06_01",
+            word: "sentience",
+            pronunciation: "/ˈsenʃns/",
+            partOfSpeech: "noun",
+            meaningVi: "Tri giác, khả năng cảm nhận và trải nghiệm đau đớn / khoái lạc",
+            radicals: "Latin: sentire (cảm nhận)",
+            grammarNote: "Phân biệt với 'intelligence' (trí thông minh tính toán): sentience đòi hỏi trải nghiệm chủ quan (qualia).",
+            exampleSentence: {
+              target: "Attributing genuine sentience to large language models conflates pattern recognition with subjective phenomenal experience.",
+              pronunciation: "/əˈtrɪbjuːtɪŋ ˈdʒenjuɪn ˈsenʃns tuː lɑːrdʒ ˈlæŋɡwɪdʒ ˈmɑːdlz kənˈfleɪts ˈpætərn ˌrekəɡˈnɪʃn wɪð səbˈdʒektɪv fəˈnɑːmɪnl ɪkˈspɪriəns/",
+              meaningVi: "Gán ghép tri giác thực sự cho các mô hình ngôn ngữ lớn là sự đánh đồng nhận diện quy luật với trải nghiệm hiện tượng chủ quan."
+            }
+          },
+          {
+            id: "enc2_06_02",
+            word: "singularity",
+            pronunciation: "/ˌsɪŋɡjuˈlærəti/",
+            partOfSpeech: "noun",
+            meaningVi: "Điểm kỳ dị công nghệ (thời điểm AI tự cải tiến vượt ngoài tầm kiểm soát của con người)",
+            radicals: "Singular (đơn nhất) + -ity",
+            grammarNote: "Thuật ngữ do Vernor Vinge và Ray Kurzweil phổ biến trong tương lai học.",
+            exampleSentence: {
+              target: "The technological singularity posits that recursive self-improvement in superintelligence will trigger an uncontainable intelligence explosion.",
+              pronunciation: "/ðə ˌteknəˈlɑːdʒɪkl ˌsɪŋɡjuˈlærəti ˈpɑːzɪts ðæt rɪˈkɜːrsɪv self ɪmˈpruːvmənt ɪn ˌsuːpərɪnˈtelɪdʒəns wɪl ˈtrɪɡər æn ʌnkənˈteɪnəbl ɪnˈtelɪdʒəns ɪkˈsploʊʒn/",
+              meaningVi: "Điểm kỳ dị công nghệ mặc định rằng sự tự cải thiện đệ quy ở siêu trí tuệ sẽ kích hoạt một vụ nổ trí tuệ không thể kiềm tỏa."
+            }
+          },
+          {
+            id: "enc2_06_03",
+            word: "existential",
+            pronunciation: "/ˌeɡzɪˈstenʃl/",
+            partOfSpeech: "adjective",
+            meaningVi: "Mang tính sinh tồn, sống còn của toàn thể nhân loại",
+            radicals: "Existence + -ial",
+            grammarNote: "'Existential risk (x-risk)' chỉ rủi ro có thể xóa sổ nền văn minh hoặc vĩnh viễn tước đoạt tương lai nhân loại.",
+            exampleSentence: {
+              target: "Leading researchers categorize misaligned artificial general intelligence as an existential threat on par with pandemics and nuclear war.",
+              pronunciation: "/ˈliːdɪŋ ˈriːsɜːrtʃərz ˈkætəɡəraɪz ˌmɪsəˈlaɪnd ˌɑːrtɪˈfɪʃl ˈdʒenrəl ɪnˈtelɪdʒəns əz æn ˌeɡzɪˈstenʃl θret ɑːn pɑːr wɪð pænˈdemɪks ənd ˈnuːkliər wɔːr/",
+              meaningVi: "Các nhà nghiên cứu hàng đầu phân loại trí tuệ nhân tạo tổng quát bị lệch mục tiêu như một mối đe dọa sinh tồn ngang tầm với đại dịch và chiến tranh hạt nhân."
+            }
+          },
+          {
+            id: "enc2_06_04",
+            word: "epiphenomenon",
+            pronunciation: "/ˌepɪfəˈnɑːmɪnən/",
+            partOfSpeech: "noun",
+            meaningVi: "Hiện tượng thứ sinh, sản phẩm phụ đi kèm phát sinh",
+            radicals: "Greek: epi- (bên trên, kèm theo) + phenomenon (hiện tượng)",
+            grammarNote: "Chỉ hiện tượng là hệ quả của một quá trình cơ sở mà không tự mình có tác động ngược trở lại.",
+            exampleSentence: {
+              target: "Physicalists argue that human consciousness is merely an epiphenomenon generated by complex electrochemical neural impulses.",
+              pronunciation: "/ˈfɪzɪkəlɪsts ˈɑːrɡjuː ðæt ˈhjuːmən ˈkɑːnʃəsnəs ɪz ˈmɪrli æn ˌepɪfəˈnɑːmɪnən ˈdʒenəreɪtɪd baɪ ˈkɑːmpleks ɪˌlektroʊˈkemɪkl ˈnʊrəl ˈɪmpʌlsɪz/",
+              meaningVi: "Các nhà duy vật lập luận rằng ý thức của con người chỉ đơn thuần là một hiện tượng thứ sinh được tạo ra bởi các xung điện thần kinh hóa học phức tạp."
+            }
+          },
+          {
+            id: "enc2_06_05",
+            word: "alignment",
+            pronunciation: "/əˈlaɪnmənt/",
+            partOfSpeech: "noun",
+            meaningVi: "Sự căn chỉnh mục tiêu và giá trị (đặc biệt trong AI Safety)",
+            radicals: "Align + -ment",
+            grammarNote: "'AI Alignment' là bài toán làm cho các hệ thống AI hành động theo đúng ý đồ đạo đức của con người.",
+            exampleSentence: {
+              target: "Solving the value alignment problem ensures that autonomous goal-seeking agents act consonantly with human flourishing.",
+              pronunciation: "/ˈsɑːlvɪŋ ðə ˈvæljuː əˈlaɪnmənt ˈprɑːbləm ɪnˈʃʊrz ðæt ɔːˈtɑːnəməs ˈɡoʊl ˈsiːkɪŋ ˈeɪdʒənts ækt ˈkɑːnsənəntli wɪð ˈhjuːmən ˈflɜːrɪʃɪŋ/",
+              meaningVi: "Giải quyết bài toán căn chỉnh giá trị đảm bảo rằng các tác nhân tự trị tìm kiếm mục tiêu hành động hài hòa với sự hưng thịnh của loài người."
+            }
+          },
+          {
+            id: "enc2_06_06",
+            word: "anthropomorphic",
+            pronunciation: "/ˌænθrəpəˈmɔːrfɪk/",
+            partOfSpeech: "adjective",
+            meaningVi: "Nhân hình hóa, gán đặc tính tâm lý con người cho vật hoặc máy móc",
+            radicals: "Greek: anthropos (con người) + morphe (hình dạng)",
+            grammarNote: "Cảnh báo khi người dùng nhầm lẫn giọng điệu của bot là cảm xúc thật.",
+            exampleSentence: {
+              target: "Users often succumb to anthropomorphic projection, mistaking statistical next-token prediction for profound human empathy.",
+              pronunciation: "/ˈjuːzərz ˈɔːfn səˈkʌm tuː ˌænθrəpəˈmɔːrfɪk prəˈdʒekʃn, mɪˈsteɪkɪŋ stəˈtɪstɪkl nekst ˈtoʊkən prɪˈdɪkʃn fər prəˈfaʊnd ˈhjuːmən ˈempəθi/",
+              meaningVi: "Người dùng thường mắc phải sự phóng chiếu nhân hình hóa, nhầm lẫn việc dự đoán từ tiếp theo theo xác suất thống kê là sự đồng cảm sâu sắc của con người."
+            }
+          },
+          {
+            id: "enc2_06_07",
+            word: "instrumental",
+            pronunciation: "/ˌɪnstrəˈmentl/",
+            partOfSpeech: "adjective",
+            meaningVi: "Mang tính công cụ bổ trợ (Instrumental convergence trong lý thuyết AI)",
+            radicals: "Instrument + -al",
+            grammarNote: "Instrumental convergence: Nhiều hệ thống AI khác nhau sẽ tự động phát triển các mục tiêu trung gian giống nhau (như tích lũy tài nguyên, tự bảo tồn).",
+            exampleSentence: {
+              target: "Nick Bostrom theorized that resource acquisition and self-preservation serve as convergent instrumental subgoals for any capable agent.",
+              pronunciation: "/nɪk ˈbɑːstrəm ˈθiːəraɪzd ðæt ˈriːsɔːrs ˌækwɪˈzɪʃn ənd self ˌprezərˈveɪʃn sɜːrv əz kənˈvɜːrdʒənt ˌɪnstrəˈmentl ˈsʌbɡoʊlz fər ˈeni ˈkeɪpəbl ˈeɪdʒənt/",
+              meaningVi: "Nick Bostrom đã đưa ra lý thuyết rằng việc tích lũy tài nguyên và tự bảo tồn đóng vai trò như những mục tiêu công cụ hội tụ cho bất kỳ tác nhân có năng lực nào."
+            }
+          },
+          {
+            id: "enc2_06_08",
+            word: "turing test",
+            pronunciation: "/ˈtʊrɪŋ test/",
+            partOfSpeech: "noun",
+            meaningVi: "Phép thử Turing (đánh giá trí thông minh máy bằng đối thoại không thể phân biệt)",
+            radicals: "Nhà toán học Alan Turing",
+            grammarNote: "Ngày nay các LLM đã vượt qua phép thử cơ bản, đòi hỏi các bài kiểm tra đánh giá suy luận logic trừu tượng cao hơn.",
+            exampleSentence: {
+              target: "While passing the classical Turing test is no longer an insurmountable milestone, evaluating genuine causal reasoning remains elusive.",
+              pronunciation: "/waɪl ˈpæsɪŋ ðə ˈklæsɪkl ˈtʊrɪŋ test ɪz noʊ ˈlɔːŋɡər æn ˌɪnsərˈmaʊntəbl ˈmaɪlstoʊn, ɪˈvæljueɪtɪŋ ˈdʒenjuɪn ˈkɔːzl ˈriːznɪŋ rɪˈmeɪnz ɪˈluːsɪv/",
+              meaningVi: "Dù vượt qua phép thử Turing cổ điển không còn là cột mốc bất khả thi, việc đánh giá khả năng suy luận nhân quả thực sự vẫn vô cùng khó nắm bắt."
+            }
+          }
+        ]
+      },
+      {
+        id: "en_c2_l07",
+        title: "Bài 7: Macroeconomic Forecasting & Econometric Modeling",
+        description: "Dự báo kinh tế lượng vĩ mô, nới lỏng định lượng và kiểm định thống kê đa biến.",
+        vocabularies: [
+          {
+            id: "enc2_07_01",
+            word: "heteroskedasticity",
+            pronunciation: "/ˌhetəroʊskəˌdæˈstɪsəti/",
+            partOfSpeech: "noun",
+            meaningVi: "Hiện tượng phương sai sai số thay đổi (trong hồi quy kinh tế lượng)",
+            radicals: "Greek: hetero- (khác biệt) + skedasis (phân tán)",
+            grammarNote: "Vi phạm giả định OLS chuẩn, đòi hỏi phải dùng sai số chuẩn vững (robust standard errors) như White's estimator.",
+            exampleSentence: {
+              target: "Failing to correct for heteroskedasticity inflates the standard errors, rendering hypothesis testing invalid in cross-sectional models.",
+              pronunciation: "/ˈfeɪlɪŋ tuː kəˈrekt fər ˌhetəroʊskəˌdæˈstɪsəti ɪnˈfleɪts ðə ˈstændərd ˈerərz, ˈrendərɪŋ haɪˈpɑːθəsɪs ˈtestɪŋ ɪnˈvælɪd ɪn krɔːs ˈsekʃənl ˈmɑːdlz/",
+              meaningVi: "Không điều chỉnh hiện tượng phương sai thay đổi sẽ làm sai lệch sai số chuẩn, khiến việc kiểm định giả thuyết bị vô giá trị trong các mô hình dữ liệu chéo."
+            }
+          },
+          {
+            id: "enc2_07_02",
+            word: "econometrics",
+            pronunciation: "/ɪˌkɑːnəˈmetrɪks/",
+            partOfSpeech: "noun",
+            meaningVi: "Kinh tế lượng, ứng dụng thống kê toán vào phân tích kinh tế",
+            radicals: "Economy + -metrics",
+            grammarNote: "Thường đi kèm động từ số ít.",
+            exampleSentence: {
+              target: "Advanced econometrics utilizes instrumental variables and panel regressions to disentangle causality from mere statistical correlation.",
+              pronunciation: "/ədˈvænst ɪˌkɑːnəˈmetrɪks ˈjuːtəlaɪzɪz ˌɪnstrəˈmentl ˈveriəblz ənd ˈpænl rɪˈɡreʃnz tuː ˌdɪsɪnˈtæŋɡl kɔːˈzæləti frəm mɪr stəˈtɪstɪkl ˌkɔːrəˈleɪʃn/",
+              meaningVi: "Kinh tế lượng nâng cao sử dụng biến công cụ và hồi quy bảng để phân tách quan hệ nhân quả thực sự khỏi mối tương quan thống kê đơn thuần."
+            }
+          },
+          {
+            id: "enc2_07_03",
+            word: "quantitative easing",
+            pronunciation: "/ˈkwɑːntəteɪtɪv ˈiːzɪŋ/",
+            partOfSpeech: "noun",
+            meaningVi: "Nới lỏng định lượng (chính sách ngân hàng trung ương bơm tiền mua trái phiếu)",
+            radicals: "Quantitative (số lượng) + easing (nới lỏng)",
+            grammarNote: "Thường viết tắt là QE, biện pháp phi truyền thống khi lãi suất chạm đáy zero bound.",
+            exampleSentence: {
+              target: "Prolonged quantitative easing expanded the central bank balance sheet while suppressing long-term sovereign bond yields.",
+              pronunciation: "/prəˈlɔːŋd ˈkwɑːntəteɪtɪv ˈiːzɪŋ ɪkˈspændɪd ðə ˈsentrəl bæŋk ˈbæləns ʃiːt waɪl səˈpresɪŋ ˈlɔːŋ tɜːrm ˈsɑːvrən bɑːnd jiːldz/",
+              meaningVi: "Chính sách nới lỏng định lượng kéo dài đã làm phình to bảng cân đối kế toán của ngân hàng trung ương đồng thời kìm nén lợi suất trái phiếu chính phủ dài hạn."
+            }
+          },
+          {
+            id: "enc2_07_04",
+            word: "stagflation",
+            pronunciation: "/stæɡˈfleɪʃn/",
+            partOfSpeech: "noun",
+            meaningVi: "Lạm phát đình đốn (kinh tế trì trệ đi kèm lạm phát tăng cao)",
+            radicals: "Stagnation (đình đốn) + inflation (lạm phát)",
+            grammarNote: "Tình thế tiến thoái lưỡng nan đối với chính sách tiền tệ vì tăng lãi suất sẽ dập tắt tăng trưởng.",
+            exampleSentence: {
+              target: "The twin shocks of commodity shortages and currency depreciation thrust the national economy into crippling stagflation.",
+              pronunciation: "/ðə twɪn ʃɑːks əv kəˈmɑːdəti ˈʃɔːrtɪdʒɪz ənd ˈkɜːrənsi dɪˌpriːʃiˈeɪʃn θrʌst ðə ˈnæʃnəl ɪˈkɑːnəmi ˈɪntuː ˈkrɪplɪŋ stæɡˈfleɪʃn/",
+              meaningVi: "Cú sốc kép từ sự khan hiếm hàng hóa và đồng nội tệ mất giá đã đẩy nền kinh tế quốc gia vào tình trạng lạm phát đình đốn làm tê liệt mọi hoạt động."
+            }
+          },
+          {
+            id: "enc2_07_05",
+            word: "endogeneity",
+            pronunciation: "/ˌendoʊdʒəˈniːəti/",
+            partOfSpeech: "noun",
+            meaningVi: "Tính nội sinh (biến độc lập tương quan với sai số trong mô hình)",
+            radicals: "Greek: endo (bên trong) + genes (sinh ra)",
+            grammarNote: "Thách thức hàng đầu trong ước lượng kinh tế lượng dẫn tới ước lượng chệch (biased estimates).",
+            exampleSentence: {
+              target: "To overcome endogeneity caused by omitted variable bias, the econometrician employed a quasi-natural experimental design.",
+              pronunciation: "/tuː ˌoʊvərˈkʌm ˌendoʊdʒəˈniːəti kɔːzd baɪ oʊˈmɪtɪd ˈveriəbl ˈbaɪəs, ði ɪˌkɑːnəməˈtrɪʃn ɪmˈplɔɪd ə ˌkweɪzaɪ ˈnætʃrəl ɪkˌsperɪˈmentl dɪˈzaɪn/",
+              meaningVi: "Để khắc phục tính nội sinh do thiên lệch biến bị bỏ sót, nhà kinh tế lượng đã áp dụng thiết kế thử nghiệm gần như tự nhiên."
+            }
+          },
+          {
+            id: "enc2_07_06",
+            word: "countercyclical",
+            pronunciation: "/ˌkaʊntərˈsaɪklɪkl/",
+            partOfSpeech: "adjective",
+            meaningVi: "Nghịch chu kỳ (chính sách ngược hướng biến động để ổn định thị trường)",
+            radicals: "Counter- + cyclical",
+            grammarNote: "Ví dụ: giảm chi tiêu trong giai đoạn bùng nổ, tăng đầu tư công khi suy thoái.",
+            exampleSentence: {
+              target: "Automatic fiscal stabilizers exert a countercyclical buffer, automatically expanding welfare transfers during economic downturns.",
+              pronunciation: "/ˌɔːtəˈmætɪk ˈfɪskl ˈsteɪbəlaɪzərz ɪɡˈzɜːrt ə ˌkaʊntərˈsaɪklɪkl ˈbʌfər, ˌɔːtəˈmætɪkli ɪkˈspændɪŋ ˈwelfer ˈtrænsfɜːrz ˈdʊrɪŋ ˌiːkəˈnɑːmɪk ˈdaʊntɜːrnz/",
+              meaningVi: "Các van ổn định tài khóa tự động phát huy vùng đệm nghịch chu kỳ, tự động mở rộng các khoản chuyển giao phúc lợi trong thời kỳ suy thoái kinh tế."
+            }
+          },
+          {
+            id: "enc2_07_07",
+            word: "liquidity trap",
+            pronunciation: "/lɪˈkwɪdəti træp/",
+            partOfSpeech: "noun",
+            meaningVi: "Bẫy thanh khoản (lãi suất gần bằng 0 nhưng người dân vẫn găm giữ tiền mặt)",
+            radicals: "Lý thuyết Keynesian kinh điển",
+            grammarNote: "Khiến chính sách tiền tệ lãi suất hoàn toàn mất tác dụng kích cầu đầu tư.",
+            exampleSentence: {
+              target: "Mired in a classic liquidity trap, further rate cuts failed to stimulate capital investment or consumer expenditure.",
+              pronunciation: "/maɪərd ɪn ə ˈklæsɪk lɪˈkwɪdəti træp, ˈfɜːrðər reɪt kʌts feɪld tuː ˈstɪmjuleɪt ˈkæpɪtl ɪnˈvestmənt ɔːr kənˈsuːmər ɪkˈspendɪtʃər/",
+              meaningVi: "Bị sa lầy trong một bẫy thanh khoản kinh điển, việc tiếp tục cắt giảm lãi suất đã không thể kích thích được đầu tư tư bản hay chi tiêu tiêu dùng."
+            }
+          },
+          {
+            id: "enc2_07_08",
+            word: "asymmetric information",
+            pronunciation: "/ˌeɪsɪˈmetrɪk ˌɪnfərˈmeɪʃn/",
+            partOfSpeech: "noun",
+            meaningVi: "Thông tin bất cân xứng (một bên trong giao dịch nắm nhiều thông tin hơn bên kia)",
+            radicals: "George Akerlof - The Market for Lemons",
+            grammarNote: "Dẫn đến hiện tượng lựa chọn đối nghịch (adverse selection) và rủi ro đạo đức (moral hazard).",
+            exampleSentence: {
+              target: "Asymmetric information in health insurance markets precipitates adverse selection, potentially culminating in complete market failure.",
+              pronunciation: "/ˌeɪsɪˈmetrɪk ˌɪnfərˈmeɪʃn ɪn helθ ɪnˈʃʊrəns ˈmɑːrkɪts prɪˈsɪpɪteɪts ˈædvɜːrs sɪˈlekʃn, pəˈtenʃəli ˈkʌlmɪneɪtɪŋ ɪn kəmˈpliːt ˈmɑːrkɪt ˈfeɪljər/",
+              meaningVi: "Thông tin bất cân xứng trong các thị trường bảo hiểm y tế thúc đẩy hiện tượng lựa chọn đối nghịch, có khả năng dẫn tới sự thất bại hoàn toàn của thị trường."
+            }
+          }
+        ]
+      },
+      {
+        id: "en_c2_l08",
+        title: "Bài 8: Classical Rhetoric & Persuasive Oratory",
+        description: "Nghệ thuật hùng biện cổ điển, ba trụ cột thuyết phục và kỹ xảo diễn thuyết cuốn hút.",
+        vocabularies: [
+          {
+            id: "enc2_08_01",
+            word: "ethos",
+            pronunciation: "/ˈiːθɑːs/",
+            partOfSpeech: "noun",
+            meaningVi: "Phẩm chất uy tín và nhân cách của người nói (Trụ cột Aristotle 1)",
+            radicals: "Greek: tính cách, thói quen đạo đức",
+            grammarNote: "Thuyết phục bằng việc chứng minh danh dự, kiến thức chuyên môn và sự vô tư.",
+            exampleSentence: {
+              target: "The advocate established impeccable ethos by detailing decades of selfless pro bono representation for impoverished defendants.",
+              pronunciation: "/ði ˈædvəkət ɪˈstæblɪʃt ɪmˈpekəbl ˈiːθɑːs baɪ dɪˈteɪlɪŋ ˈdekeɪdz əv ˈselfləs proʊ ˈboʊnoʊ ˌreprɪzenˈteɪʃn fər ɪmˈpɑːvərɪʃt dɪˈfendənts/",
+              meaningVi: "Vị luật sư đã xác lập một uy tín đạo đức không tì vết bằng việc nêu chi tiết hàng thập kỷ bào chữa thiện nguyện vị tha cho các bị cáo nghèo khổ."
+            }
+          },
+          {
+            id: "enc2_08_02",
+            word: "pathos",
+            pronunciation: "/ˈpeɪθɑːs/",
+            partOfSpeech: "noun",
+            meaningVi: "Cảm xúc lôi cuốn, sự khơi gợi lòng trắc ẩn và xúc cảm (Trụ cột Aristotle 2)",
+            radicals: "Greek: đau khổ, cảm xúc",
+            grammarNote: "Tác động vào cảm tình để lay động trái tim người nghe.",
+            exampleSentence: {
+              target: "Her poignant narrative regarding displaced children infused the speech with unforgettable emotional pathos.",
+              pronunciation: "/hɜːr ˈpɔɪnjənt ˈnærətɪv rɪˈɡɑːrdɪŋ dɪsˈpleɪst ˈtʃɪldrən ɪnˈfjuːzd ðə spiːtʃ wɪð ˌʌnfərˈɡetəbl ɪˈmoʊʃənl ˈpeɪθɑːs/",
+              meaningVi: "Câu chuyện thấm thía của bà về những đứa trẻ bị mất nhà cửa đã thổi vào bài phát biểu một nguồn cảm xúc lay động khôn nguôi."
+            }
+          },
+          {
+            id: "enc2_08_03",
+            word: "logos",
+            pronunciation: "/ˈloʊɡɑːs/",
+            partOfSpeech: "noun",
+            meaningVi: "Tính logic chặt chẽ, lập luận duy lý và bằng chứng thực tế (Trụ cột Aristotle 3)",
+            radicals: "Greek: lời lẽ, lý trí, quy luật",
+            grammarNote: "Thuyết phục khối óc qua số liệu, luận cứ và suy diễn hợp lý.",
+            exampleSentence: {
+              target: "Devoid of emotional manipulation, his rebuttal relied strictly on verifiable historical data and rigorous syllogistic logos.",
+              pronunciation: "/dɪˈvɔɪd əv ɪˈmoʊʃənl məˌnɪpjuˈleɪʃn, hɪz rɪˈbʌtl rɪˈlaɪd ˈstrɪktli ɑːn ˈverɪfaɪəbl hɪˈstɔːrɪkl ˈdeɪtə ənd ˈrɪɡərəs ˌsɪləˈdʒɪstɪk ˈloʊɡɑːs/",
+              meaningVi: "Hoàn toàn không có sự thao túng cảm xúc, bài phản biện của ông chỉ dựa thuần túy vào dữ liệu lịch sử có thể kiểm chứng và tính logic tam đoạn luận nghiêm ngặt."
+            }
+          },
+          {
+            id: "enc2_08_04",
+            word: "anaphora",
+            pronunciation: "/əˈnæfərə/",
+            partOfSpeech: "noun",
+            meaningVi: "Điệp từ đầu câu (lặp lại từ mở đầu ở nhiều mệnh đề liên tiếp)",
+            radicals: "Greek: mang ngược trở lại",
+            grammarNote: "Tạo nhịp điệu hùng tráng (ví dụ kinh điển: 'I have a dream...' của Martin Luther King Jr.).",
+            exampleSentence: {
+              target: "Winston Churchill masterfully deployed anaphora in 'We shall fight on the beaches, we shall fight on the landing grounds' to galvanize national resilience.",
+              pronunciation: "/ˈwɪnstən ˈtʃɜːrtʃɪl ˈmæstərfəli dɪˈplɔɪd əˈnæfərə ɪn wiː ʃæl faɪt ɑːn ðə ˈbiːtʃɪz, wiː ʃæl faɪt ɑːn ðə ˈlændɪŋ ɡraʊndz tuː ˈɡælvənaɪz ˈnæʃnəl rɪˈzɪliəns/",
+              meaningVi: "Winston Churchill đã sử dụng điệp từ đầu câu một cách bậc thầy trong câu 'Chúng ta sẽ chiến đấu trên các bãi biển, chúng ta sẽ chiến đấu trên các bãi đáp' để kích hoạt lòng quật cường của cả dân tộc."
+            }
+          },
+          {
+            id: "enc2_08_05",
+            word: "syllogism",
+            pronunciation: "/ˈsɪlədʒɪzəm/",
+            partOfSpeech: "noun",
+            meaningVi: "Tam đoạn luận (Đại tiền đề + Tiểu tiền đề ➔ Kết luận)",
+            radicals: "Greek: syn- (cùng) + logizesthai (tính toán suy luận)",
+            grammarNote: "Ví dụ: Mọi người đều phải chết; Socrates là người; Socrates phải chết.",
+            exampleSentence: {
+              target: "His opening argument rested upon a classical syllogism: all sovereign treaties bind signers; the border accord is a treaty; therefore it binds both nations.",
+              pronunciation: "/hɪz ˈoʊpnɪŋ ˈɑːrɡjumənt ˈrestɪd əˈpɑːn ə ˈklæsɪkl ˈsɪlədʒɪzəm: ɔːl ˈsɑːvrən ˈtriːtiz baɪnd ˈsaɪnərz; ðə ˈbɔːrdər əˈkɔːrd ɪz ə ˈtriːti; ˈðerfɔːr ɪt baɪndz boʊθ ˈneɪʃnz/",
+              meaningVi: "Lập luận mở đầu của ông dựa trên một tam đoạn luận kinh điển: mọi hiệp ước quốc gia đều ràng buộc bên ký; hiệp định biên giới là hiệp ước; do đó nó ràng buộc cả hai quốc gia."
+            }
+          },
+          {
+            id: "enc2_08_06",
+            word: "eloquence",
+            pronunciation: "/ˈeləkwəns/",
+            partOfSpeech: "noun",
+            meaningVi: "Tài hùng biện lưu loát, sự diễn đạt tao nhã và có sức truyền cảm lớn",
+            radicals: "Latin: eloqui (nói năng rõ ràng)",
+            grammarNote: "Từ chỉ sự thanh thoát, thuyết phục của lời nói cao cấp.",
+            exampleSentence: {
+              target: "Cicero's forensic eloquence set the gold standard for judicial advocacy throughout the Roman Republic.",
+              pronunciation: "/ˈsɪsəroʊz fəˈrensɪk ˈeləkwəns set ðə ɡoʊld ˈstændərd fər dʒuːˈdɪʃl ˈædvəkəsi θruːˈaʊt ðə ˈroʊmən rɪˈpʌblɪk/",
+              meaningVi: "Tài hùng biện trước tòa của Cicero đã đặt ra tiêu chuẩn vàng cho nghề luật sư tranh tụng xuyên suốt thời kỳ Cộng hòa La Mã."
+            }
+          },
+          {
+            id: "enc2_08_07",
+            word: "hyperbole",
+            pronunciation: "/haɪˈpɜːrbəli/",
+            partOfSpeech: "noun",
+            meaningVi: "Phép phóng đại, nói quá để gây ấn tượng mạnh",
+            radicals: "Greek: ném vượt ra ngoài",
+            grammarNote: "Không được hiểu theo nghĩa đen, dùng để tạo điểm nhấn.",
+            exampleSentence: {
+              target: "Claiming that the minor tax adjustment would cause the immediate collapse of Western civilization was absurd political hyperbole.",
+              pronunciation: "/ˈkleɪmɪŋ ðæt ðə ˈmaɪnər tæks əˈdʒʌstmənt wʊd kɔːz ði ɪˈmiːdiət kəˈlæps əv ˈwestərn ˌsɪvələˈzeɪʃn wəz əbˈsɜːrd pəˈlɪtɪkl haɪˈpɜːrbəli/",
+              meaningVi: "Tuyên bố rằng sự điều chỉnh thuế vụ nhỏ sẽ gây ra sự sụp đổ ngay lập tức của nền văn minh phương Tây quả là một sự phóng đại chính trị lố bịch."
+            }
+          },
+          {
+            id: "enc2_08_08",
+            word: "invective",
+            pronunciation: "/ɪnˈvektɪv/",
+            partOfSpeech: "noun",
+            meaningVi: "Lời công kích cay độc, từ ngữ mạt sát lăng mạ dữ dội",
+            radicals: "Latin: invehere (tấn công bằng lời lẽ)",
+            grammarNote: "Thường dùng trong tranh luận chính trị gay gắt.",
+            exampleSentence: {
+              target: "The parliamentary debate deteriorated from substantive policy deliberation into venomous personal invective.",
+              pronunciation: "/ðə ˌpɑːrləˈmentri dɪˈbeɪt dɪˈtɪriəreɪtɪd frəm səbˈstæntɪv ˈpɑːləsi dɪˌlɪbəˈreɪʃn ˈɪntuː ˈvenəməs ˈpɜːrsənl ɪnˈvektɪv/",
+              meaningVi: "Cuộc tranh luận tại nghị viện đã thoái hóa từ việc bàn thảo chính sách thực chất thành những lời mạt sát lăng mạ cá nhân đầy độc địa."
+            }
+          }
+        ]
+      },
+      {
+        id: "en_c2_l09",
+        title: "Bài 9: Bioethics, Genomics & Transhumanism",
+        description: "Đạo đức sinh học, công nghệ chỉnh sửa gen CRISPR và triết học siêu nhân loại.",
+        vocabularies: [
+          {
+            id: "enc2_09_01",
+            word: "equipoise",
+            pronunciation: "/ˈekwɪpɔɪz/",
+            partOfSpeech: "noun",
+            meaningVi: "Trạng thái cân bằng khách quan lâm sàng (không biết thuốc nào tốt hơn trước thử nghiệm)",
+            radicals: "Equi- (bằng nhau) + poise (thăng bằng)",
+            grammarNote: "'Clinical equipoise' là nguyên tắc đạo đức bắt buộc để cho phép tiến hành thử nghiệm thuốc có đối chứng giả dược.",
+            exampleSentence: {
+              target: "A clinical trial is ethically defensible only when genuine clinical equipoise exists regarding the comparative efficacy of the intervention.",
+              pronunciation: "/ə ˈklæsɪkl ˈtraɪəl ɪz ˈeθɪkli dɪˈfensəbl ˈoʊnli wen ˈdʒenjuɪn ˈklɪnɪkl ˈekwɪpɔɪz ɪɡˈzɪsts rɪˈɡɑːrdɪŋ ðə kəmˈpærətɪv ˈefɪkəsi əv ði ˌɪntərˈvenʃn/",
+              meaningVi: "Một cuộc thử nghiệm lâm sàng chỉ có thể biện hộ được về mặt đạo đức khi tồn tại sự cân bằng khách quan thực sự liên quan đến hiệu quả so sánh của biện pháp can thiệp."
+            }
+          },
+          {
+            id: "enc2_09_02",
+            word: "germline",
+            pronunciation: "/ˈdʒɜːrmlaɪn/",
+            partOfSpeech: "noun / adjective",
+            meaningVi: "Dòng tế bào mầm (trứng và tinh trùng, có thể truyền biến đổi gen sang đời sau)",
+            radicals: "Germ (mầm) + line (dòng)",
+            grammarNote: "Khác với 'somatic editing' (chỉ sửa tế bào cơ thể, không di truyền), germline editing bị kiểm soát đạo đức cực kỳ khắt khe.",
+            exampleSentence: {
+              target: "International bioethics accords prohibit heritable germline genome editing due to unforeseen multi-generational evolutionary consequences.",
+              pronunciation: "/ˌɪntərˈnæʃnəl ˌbaɪoʊˈeθɪks əˈkɔːrdz prəˈhɪbɪt ˈherɪtəbl ˈdʒɜːrmlaɪn ˈdʒiːnoʊm ˈedɪtɪŋ duː tuː ˌʌnfɔːrˈsiːn ˌmʌlti ˌdʒenəˈreɪʃənl ˌevəˈluːʃəneri ˈkɑːnsəkwensɪz/",
+              meaningVi: "Các công ước đạo đức sinh học quốc tế nghiêm cấm việc chỉnh sửa bộ gen tế bào mầm có khả năng di truyền vì những hậu quả tiến hóa không lường trước được qua nhiều thế hệ."
+            }
+          },
+          {
+            id: "enc2_09_03",
+            word: "transhumanism",
+            pronunciation: "/trænzˈhjuːmənɪzəm/",
+            partOfSpeech: "noun",
+            meaningVi: "Chủ nghĩa siêu nhân loại (sử dụng công nghệ để nâng cấp vượt giới hạn sinh học)",
+            radicals: "Trans- (vượt qua) + humanism (nhân văn)",
+            grammarNote: "Phong trào triết học hướng tới kéo dài tuổi thọ vô hạn và tăng cường năng lực nhận thức.",
+            exampleSentence: {
+              target: "Transhumanism advocates utilizing cybernetics, genetic engineering, and nanotechnology to transcend inherent mortal human frailties.",
+              pronunciation: "/trænzˈhjuːmənɪzəm ˈædvəkeɪts ˈjuːtəlaɪzɪŋ ˌsaɪbərˈnetɪks, dʒəˈnetɪk ˌendʒɪˈnɪrɪŋ, ənd ˌneɪnoʊtekˈnɑːlədʒi tuː trænˈsend ɪnˈhɪrənt ˈmɔːrtl ˈhjuːmən ˈfreɪəltiz/",
+              meaningVi: "Chủ nghĩa siêu nhân loại ủng hộ việc ứng dụng điều khiển học, kỹ thuật di truyền và công nghệ nano để vượt qua những điểm yếu chết người vốn có của con người."
+            }
+          },
+          {
+            id: "enc2_09_04",
+            word: "eugenics",
+            pronunciation: "/juːˈdʒenɪks/",
+            partOfSpeech: "noun",
+            meaningVi: "Thuyết ưu sinh (chọn lọc giống người, bị lên án nặng nề trong lịch sử)",
+            radicals: "Greek: eu (tốt lành) + genos (dòng dõi)",
+            grammarNote: "Thuật ngữ có tính cảnh báo đen tối trong lịch sử Đức Quốc xã và y học thế kỷ 20.",
+            exampleSentence: {
+              target: "Critics caution that consumer genetic trait selection for non-medical enhancements could inadvertently inaugurate a dystopian era of neo-eugenics.",
+              pronunciation: "/ˈkrɪtɪks ˈkɔːʃn ðæt kənˈsuːmər dʒəˈnetɪk treɪt sɪˈlekʃn fər nɑːn ˈmedɪkl ɪnˈhænsmənts kʊd ˌɪnədˈvɜːrtntli ɪˈnɔːɡjəreɪt ə dɪsˈtoʊpiən ˈɪrə əv ˌniːoʊ juːˈdʒenɪks/",
+              meaningVi: "Các nhà phê bình cảnh báo rằng việc người tiêu dùng tự do lựa chọn đặc tính gen cho những nâng cấp phi y tế có thể vô tình mở ra một kỷ nguyên đen tối của thuyết ưu sinh kiểu mới."
+            }
+          },
+          {
+            id: "enc2_09_05",
+            word: "biosecurity",
+            pronunciation: "/ˌbaɪoʊsɪˈkjʊrəti/",
+            partOfSpeech: "noun",
+            meaningVi: "An toàn sinh học, phòng chống rủi ro mầm bệnh và vũ khí sinh học",
+            radicals: "Bio- (sinh học) + security (an ninh)",
+            grammarNote: "Trở thành ưu tiên an ninh quốc gia cấp bách cùng với sự trỗi dậy của sinh học tổng hợp (synthetic biology).",
+            exampleSentence: {
+              target: "Stringent biosecurity protocols must govern dual-use research to forestall the catastrophic accidental release of engineered pathogens.",
+              pronunciation: "/ˈstrɪndʒənt ˌbaɪoʊsɪˈkjʊrəti ˈproʊtəkɑːlz mʌst ˈɡʌvərn ˈduːəl juːs ˈriːsɜːrtʃ tuː fɔːrˈstɔːl ðə ˌkætəˈstrɑːfɪk ˌæksɪˈdentl rɪˈliːs əv ˌendʒɪˈnɪrd ˈpæθədʒənz/",
+              meaningVi: "Các quy chuẩn an ninh sinh học nghiêm ngặt phải kiểm soát chặt chẽ các nghiên cứu có công dụng kép nhằm ngăn chặn sự phát tán vô tình thảm khốc của các mầm bệnh được chỉnh sửa kỹ thuật."
+            }
+          },
+          {
+            id: "enc2_09_06",
+            word: "somatic",
+            pronunciation: "/soʊˈmætɪk/",
+            partOfSpeech: "adjective",
+            meaningVi: "Thuộc về tế bào sinh dưỡng cơ thể (không truyền sang thế hệ sau)",
+            radicals: "Greek: soma (thân thể)",
+            grammarNote: "'Somatic gene therapy' nhằm chữa bệnh cho chính bệnh nhân (như bệnh hồng cầu hình liềm).",
+            exampleSentence: {
+              target: "Somatic gene therapy successfully corrected the defective hemoglobin gene in the adult patient's bone marrow stem cells.",
+              pronunciation: "/soʊˈmætɪk dʒiːn ˈθerəpi səkˈsesfəli kəˈrektɪd ðə dɪˈfektɪv ˌhiːməˈɡloʊbɪn dʒiːn ɪn ði ˈædʌlt ˈpeɪʃnts boʊn ˈmæroʊ stem selz/",
+              meaningVi: "Liệu pháp gen tế bào sinh dưỡng đã sửa chữa thành công gen hemoglobin khiếm khuyết trong các tế bào gốc tủy xương của bệnh nhân trưởng thành."
+            }
+          },
+          {
+            id: "enc2_09_07",
+            word: "informed consent",
+            pronunciation: "/ɪnˈfɔːrmd kənˈsent/",
+            partOfSpeech: "noun",
+            meaningVi: "Sự đồng thuận sau khi đã được thông tri đầy đủ rủi ro",
+            radicals: "Nguyên tắc cốt lõi của Tuyên ngôn Helsinki",
+            grammarNote: "Không chỉ là việc ký giấy, mà là quá trình đối thoại giải thích rủi ro minh bạch.",
+            exampleSentence: {
+              target: "Obtaining voluntary, uncoerced informed consent remains the bedrock principle of ethical clinical medical research.",
+              pronunciation: "/əbˈteɪnɪŋ ˈvɑːlənteri, ʌnkəʊˈɜːrst ɪnˈfɔːrmd kənˈsent rɪˈmeɪnz ðə ˈbedrɑːk ˈprɪnsəpl əv ˈeθɪkl ˈklɪnɪkl ˈmedɪkl ˈriːsɜːrtʃ/",
+              meaningVi: "Có được sự đồng thuận tự nguyện, không bị cưỡng ép sau khi đã được thông tin đầy đủ vẫn luôn là nguyên tắc nền tảng của nghiên cứu y học lâm sàng có đạo đức."
+            }
+          },
+          {
+            id: "enc2_09_08",
+            word: "autonomy",
+            pronunciation: "/ɔːˈtɑːnəmi/",
+            partOfSpeech: "noun",
+            meaningVi: "Quyền tự quyết của bệnh nhân, tính tự chủ cá nhân",
+            radicals: "Greek: autos (tự) + nomos (luật lệ)",
+            grammarNote: "Bệnh nhân có quyền tự quyết định chấp nhận hay từ chối bất kỳ thủ thuật can thiệp y tế nào.",
+            exampleSentence: {
+              target: "Medical paternalism has overwhelmingly been replaced by respect for patient bodily autonomy and individual self-determination.",
+              pronunciation: "/ˈmedɪkl pəˈtɜːrnəlɪzəm həz ˌoʊvərˈwelmɪŋli biːn rɪˈpleɪst baɪ rɪˈspekt fər ˈpeɪʃnt ˈbɑːdɪli ɔːˈtɑːnəmi ənd ˌɪndɪˈvɪdʒuəl self dɪˌtɜːrmɪˈneɪʃn/",
+              meaningVi: "Chủ nghĩa bảo bọc y khoa gia trưởng đã hoàn toàn được thay thế bằng sự tôn trọng quyền tự quyết cơ thể của bệnh nhân và sự tự định đoạt cá nhân."
+            }
+          }
+        ]
+      },
+      {
+        id: "en_c2_l10",
+        title: "Bài 10: High-Stakes Crisis Mediation & Hostage Negotiation",
+        description: "Hòa giải khủng hoảng rủi ro tối thượng, thấu cảm chiến thuật và phá vỡ bế tắc.",
+        vocabularies: [
+          {
+            id: "enc2_10_01",
+            word: "impasse",
+            pronunciation: "/ˈɪmpæs/",
+            partOfSpeech: "noun",
+            meaningVi: "Tình trạng bế tắc hoàn toàn không lối thoát",
+            radicals: "French: đường cùng",
+            grammarNote: "Thường đi kèm: reach an impasse, break/overcome an impasse.",
+            exampleSentence: {
+              target: "The seasoned mediator proposed a staggered verification timeline to break the stubborn diplomatic impasse.",
+              pronunciation: "/ðə ˈsiːznd ˈmiːdieɪtər prəˈpoʊzd ə ˈstæɡərd ˌverɪfɪˈkeɪʃn ˈtaɪmlaɪn tuː breɪk ðə ˈstʌbərn ˌdɪpləˈmætɪk ˈɪmpæs/",
+              meaningVi: "Vị hòa giải viên dày dạn kinh nghiệm đã đề xuất một lộ trình xác minh so le nhiều giai đoạn để phá vỡ thế bế tắc ngoại giao ngoan cố."
+            }
+          },
+          {
+            id: "enc2_10_02",
+            word: "tactical empathy",
+            pronunciation: "/ˈtæktɪkl ˈempəθi/",
+            partOfSpeech: "noun",
+            meaningVi: "Thấu cảm chiến thuật (lắng nghe và gọi tên cảm xúc đối phương để hóa giải thù địch)",
+            radicals: "FBI Hostage Negotiation (Chris Voss)",
+            grammarNote: "Kỹ thuật hiểu sâu thế giới quan đối thủ mà không hề đồng thuận hay nhượng bộ.",
+            exampleSentence: {
+              target: "Employing tactical empathy, the negotiator labeled the kidnapper's underlying anxieties, gradually defusing volatile hostilities.",
+              pronunciation: "/ɪmˈplɔɪɪŋ ˈtæktɪkl ˈempəθi, ðə nɪˈɡoʊʃieɪtər ˈleɪbld ðə ˈkɪdnæpərz ˌʌndərˈlaɪɪŋ æŋˈzaɪətiz, ˈɡrædʒuəli dɪˈfjuːzɪŋ ˈvɑːlətl hɑːˈstɪlətiz/",
+              meaningVi: "Vận dụng thấu cảm chiến thuật, nhà thương thuyết đã gọi tên những nỗi lo âu tiềm ẩn của kẻ bắt cóc, dần dần hóa giải thái độ thù địch đầy bất ổn."
+            }
+          },
+          {
+            id: "enc2_10_03",
+            word: "de-escalation",
+            pronunciation: "/diːˌeskəˈleɪʃn/",
+            partOfSpeech: "noun",
+            meaningVi: "Sự hạ nhiệt căng thẳng, các biện pháp làm dịu nguy cơ xung đột",
+            radicals: "De- (giảm) + escalation (leo thang)",
+            grammarNote: "Mục tiêu tối thượng trước khi có thể bắt đầu thương thảo điều khoản thực chất.",
+            exampleSentence: {
+              target: "Immediate mutual troop disengagement along the disputed frontier signaled an authentic commitment to de-escalation.",
+              pronunciation: "/ɪˈmiːdiət ˈmjuːtʃuəl truːp ˌdɪsɪnˈɡeɪdʒmənt əˈlɔːŋ ðə dɪˈspjuːtɪd frʌnˈtɪr ˈsɪɡnəld æn ɔːˈθentɪk kəˈmɪtmənt tuː diːˌeskəˈleɪʃn/",
+              meaningVi: "Việc hai bên lập tức rút quân đồng thời dọc theo biên giới tranh chấp báo hiệu một cam kết đích thực đối với việc hạ nhiệt căng thẳng."
+            }
+          },
+          {
+            id: "enc2_10_04",
+            word: "capitulate",
+            pronunciation: "/kəˈpɪtʃuleɪt/",
+            partOfSpeech: "verb",
+            meaningVi: "Đầu hàng vô điều kiện, khuất phục trước áp lực",
+            radicals: "Latin: capitulum (các điều khoản thảo luận)",
+            grammarNote: "Nhấn mạnh sự buông xuôi nhượng bộ hoàn toàn trước sức ép vượt trội.",
+            exampleSentence: {
+              target: "Despite severe sanctions and diplomatic isolation, the beleaguered regime refused to capitulate to ultimatum demands.",
+              pronunciation: "/dɪˈspaɪt sɪˈvɪr ˈsæŋkʃnz ənd ˌdɪpləˈmætɪk ˌaɪsəˈleɪʃn, ðə bɪˈliːɡərd reɪˈʒiːm rɪˈfjuːzd tuː kəˈpɪtʃuleɪt tuː ˌʌltɪˈmeɪtəm dɪˈmændz/",
+              meaningVi: "Mặc cho các lệnh cấm vận khắc nghiệt và sự cô lập ngoại giao, chế độ đang bị bủa vây kiên quyết từ chối khuất phục trước những yêu sách trong tối hậu thư."
+            }
+          },
+          {
+            id: "enc2_10_05",
+            word: "brinkmanship",
+            pronunciation: "/ˈbrɪŋkmənʃɪp/",
+            partOfSpeech: "noun",
+            meaningVi: "Chính sách bờ vực chiến tranh (đẩy tình thế đến sát miệng hố sụp đổ để ép đối phương nhượng bộ)",
+            radicals: "Brink (bờ vực) + -manship",
+            grammarNote: "Chiến thuật nguy hiểm mang tính cược ván bài chót trong địa chính trị.",
+            exampleSentence: {
+              target: "Reckless nuclear brinkmanship threatens to precipitate inadvertent catastrophic escalation through miscalculation.",
+              pronunciation: "/ˈrekləs ˈnuːkliər ˈbrɪŋkmənʃɪp ˈθretnz tuː prɪˈsɪpɪteɪt ˌɪnədˈvɜːrtnt ˌkætəˈstrɑːfɪk ˌeskəˈleɪʃn θruː ˌmɪskælkjuˈleɪʃn/",
+              meaningVi: "Chính sách bờ vực hạt nhân liều lĩnh đe dọa sẽ kích hoạt sự leo thang thảm khốc vô tình thông qua những tính toán sai lầm."
+            }
+          },
+          {
+            id: "enc2_10_06",
+            word: "ultimatum",
+            pronunciation: "/ˌʌltɪˈmeɪtəm/",
+            partOfSpeech: "noun",
+            meaningVi: "Tối hậu thư, cảnh cáo hạn chót kèm đe dọa trừng phạt",
+            radicals: "Latin: ultimus (cuối cùng)",
+            grammarNote: "Số nhiều: ultimatums hoặc ultimata.",
+            exampleSentence: {
+              target: "The coalition delivered a 48-hour ultimatum requiring unconditional withdrawal before initiating retaliatory strikes.",
+              pronunciation: "/ðə ˌkoʊəˈlɪʃn dɪˈlɪvərd ə ˈfɔːrti eɪt ˈaʊər ˌʌltɪˈmeɪtəm rɪˈkwaɪərɪŋ ˌʌnkənˈdɪʃənl wɪðˈdrɔːəl bɪˈfɔːr ɪˈnɪʃieɪtɪŋ rɪˈtæliətɔːri straɪks/",
+              meaningVi: "Khối liên minh đã gửi một tối hậu thư 48 giờ đòi hỏi việc rút quân vô điều kiện trước khi bắt đầu các đòn tấn công trả đũa."
+            }
+          },
+          {
+            id: "enc2_10_07",
+            word: "concession",
+            pronunciation: "/kənˈseʃn/",
+            partOfSpeech: "noun",
+            meaningVi: "Sự nhượng bộ, điều khoản thỏa hiệp",
+            radicals: "Latin: concedere (nhường bước)",
+            grammarNote: "Cấu trúc: make concessions to somebody, win/wring concessions from somebody.",
+            exampleSentence: {
+              target: "Making premature unilateral concessions undermines bargaining leverage in multilateral negotiations.",
+              pronunciation: "/ˈmeɪkɪŋ ˌpriːməˈtʃʊr ˌjuːnɪˈlætrəl kənˈseʃnz ˌʌndərˈmaɪnz ˈbɑːrɡənɪŋ ˈlevərɪdʒ ɪn ˌmʌltiˈlætrəl nɪˌɡoʊʃiˈeɪʃnz/",
+              meaningVi: "Việc đưa ra những nhượng bộ đơn phương quá sớm sẽ làm suy yếu vị thế đòn bẩy thương lượng trong các cuộc đàm phán đa phương."
+            }
+          },
+          {
+            id: "enc2_10_08",
+            word: "bellicosity",
+            pronunciation: "/ˌbelɪˈkɑːsəti/",
+            partOfSpeech: "noun",
+            meaningVi: "Tính khí hung hăng, sự hiếu chiến cao độ",
+            radicals: "Latin: bellum (chiến tranh)",
+            grammarNote: "Từ trang trọng chỉ bản tính thích gây gổ, sẵn sàng dùng bạo lực.",
+            exampleSentence: {
+              target: "The leader's persistent bellicosity alarmed international peacekeepers striving to broker a permanent ceasefire.",
+              pronunciation: "/ðə ˈliːdərz pərˈsɪstənt ˌbelɪˈkɑːsəti əˈlɑːrmd ˌɪntərˈnæʃnəl ˈpiːskiːpərz ˈstraɪvɪŋ tuː ˈbroʊkər ə ˈpɜːrmənənt ˈsiːsfaɪər/",
+              meaningVi: "Sự hiếu chiến dai dẳng của nhà lãnh đạo đã làm báo động các lực lượng gìn giữ hòa bình quốc tế đang nỗ lực làm trung gian cho một hiệp định ngừng bắn vĩnh viễn."
+            }
+          }
+        ]
+      }
+    ]
+  }
+];
+
+const outDir = path.join(__dirname, 'data-chunks');
+if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+fs.writeFileSync(path.join(outDir, 'en_c2.json'), JSON.stringify(enC2Units, null, 2), 'utf8');
+console.log('Successfully generated en_c2.json with 10 C2 lessons!');
