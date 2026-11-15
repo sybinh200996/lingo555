@@ -5,7 +5,11 @@ const aiService = require('../services/aiService');
 // Middleware to extract API key & model from headers or body
 const extractAiParams = (req, res, next) => {
   req.apiKey = req.headers['x-gemini-api-key'] || (req.body && req.body.apiKey) || null;
-  req.model = req.headers['x-gemini-model'] || (req.body && req.body.model) || process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  let rawModel = req.headers['x-gemini-model'] || (req.body && req.body.model) || process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  if (rawModel === 'gemini-3.8-flash' || rawModel === 'gemini-2.5-flash') {
+    rawModel = 'gemini-3.5-flash-lite';
+  }
+  req.model = rawModel;
   next();
 };
 
@@ -19,8 +23,7 @@ router.get('/status', (req, res) => {
     currentModel: status.defaultModel || 'gemini-3.5-flash-lite',
     defaultProvider: process.env.DEFAULT_AI_PROVIDER || 'auto',
     availableModels: [
-      { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite', desc: 'Siêu tốc, độ trễ thấp nhất (Khuyên Dùng)' },
-      { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash', desc: 'Chuyên sâu, năng lực sư phạm học thuật' }
+      { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite', desc: 'Siêu tốc, độ trễ thấp nhất (< 0.5s)' }
     ]
   });
 });

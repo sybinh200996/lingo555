@@ -92,8 +92,15 @@ class GeminiKeyPool {
 class AIService {
   constructor() {
     this.defaultModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
-    this.candidateModels = ['gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+    this.candidateModels = ['gemini-3.5-flash-lite'];
     this.keyPool = new GeminiKeyPool();
+  }
+
+  normalizeModel(m) {
+    if (!m || m === 'gemini-3.8-flash' || m === 'gemini-2.5-flash') {
+      return 'gemini-3.5-flash-lite';
+    }
+    return m;
   }
 
   getClient(apiKey) {
@@ -186,8 +193,8 @@ class AIService {
       const client = currentInfo.client || currentInfo;
       const key = currentInfo.key || 'custom';
 
-      const modelsToTry = [];
-      if (model && !modelsToTry.includes(model)) modelsToTry.push(model);
+      const targetModel = this.normalizeModel(model);
+      const modelsToTry = [targetModel];
       for (const cm of this.candidateModels) {
         if (!modelsToTry.includes(cm)) modelsToTry.push(cm);
       }
@@ -757,23 +764,34 @@ Khi trả lời tiếng Trung, luôn kèm Pinyin và dịch nghĩa. Khi trả l�
     if (clientInfo) {
       const isCustom = clientInfo.isCustom;
       const maxTries = isCustom ? 1 : Math.max(1, this.keyPool.keys.length);
+      const targetModel = this.normalizeModel(model);
 
       for (let attempt = 0; attempt < maxTries; attempt++) {
         const info = attempt === 0 ? clientInfo : this.keyPool.getNextClient();
         if (!info || !info.client) break;
 
-        const modelsToTry = [model, ...this.candidateModels].filter(Boolean);
+        const modelsToTry = [targetModel];
+        for (const cm of this.candidateModels) {
+          if (!modelsToTry.includes(cm)) modelsToTry.push(cm);
+        }
         let keyFailed = false;
 
         for (const m of modelsToTry) {
           try {
-            const stream = await info.client.models.generateContentStream({
+            const streamPromise = info.client.models.generateContentStream({
               model: m,
               contents,
               config: {
                 systemInstruction: systemPrompt
               }
             });
+
+            // Fast-Failover: 8s connect timeout to prevent any hangs
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('AI stream connection timeout (>8s)')), 8000)
+            );
+
+            const stream = await Promise.race([streamPromise, timeoutPromise]);
 
             for await (const chunk of stream) {
               if (chunk.text) {

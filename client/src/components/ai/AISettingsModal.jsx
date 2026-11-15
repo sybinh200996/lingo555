@@ -28,7 +28,8 @@ export const AISettingsModal = () => {
   useEffect(() => {
     if (isAiSettingsOpen) {
       setApiKey(ai.getApiKey());
-      setModel(ai.getModel());
+      setModel('gemini-3.5-flash-lite');
+      ai.setModel('gemini-3.5-flash-lite');
       setTestResult(null);
       setSavedSuccess(false);
 
@@ -77,7 +78,7 @@ export const AISettingsModal = () => {
   const handleSave = () => {
     sounds.playTap();
     ai.setApiKey(apiKey.trim());
-    ai.setModel(model);
+    ai.setModel('gemini-3.5-flash-lite');
     setSavedSuccess(true);
     setTimeout(() => {
       closeAiSettings();
@@ -158,53 +159,24 @@ export const AISettingsModal = () => {
         {/* AI Model Selection */}
         <div className="space-y-2">
           <label className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase flex items-center gap-1.5">
-            <Cpu className="w-3.5 h-3.5 text-sky-500" />
-            <span>Mô Hình AI (AI Model)</span>
+            <Cpu className="w-3.5 h-3.5 text-emerald-500" />
+            <span>Mô Hình AI Tiêu Chuẩn (AI Model)</span>
           </label>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => setModel('gemini-3.5-flash-lite')}
-              className={`p-3 rounded-xl border-2 text-left transition-all ${
-                model === 'gemini-3.5-flash-lite'
-                  ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40'
-                  : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-black text-sm text-slate-800 dark:text-white">
-                  Gemini 3.5 Flash Lite
+          <div className="p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-left transition-all">
+            <div className="flex items-center justify-between mb-1">
+              <span className="font-black text-sm text-slate-800 dark:text-white flex items-center gap-2">
+                <span>Google Gemini 3.5 Flash Lite</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500 text-white font-extrabold uppercase">
+                  Siêu Tốc &bull; Ổn Định
                 </span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-emerald-500 text-white font-extrabold uppercase">
-                  Mặc Định
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400">
-                Phản hồi siêu tốc, độ trễ cực thấp &amp; phân tích tức thì
-              </p>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModel('gemini-3.8-flash')}
-              className={`p-3 rounded-xl border-2 text-left transition-all ${
-                model === 'gemini-3.8-flash'
-                  ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/40'
-                  : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-black text-sm text-slate-800 dark:text-white">
-                  Gemini 3.8 Flash
-                </span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-sky-500 text-white font-extrabold uppercase">
-                  Chuyên Sâu
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400">
-                Tư duy ngôn ngữ học thuật, chấm bài viết cực sâu
-              </p>
-            </button>
+              </span>
+              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                Active &bull; Đã tối ưu
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Phản hồi tức thì (&lt; 0.5s), tự động luân phiên 3 API Key chống nghẽn và chống quá tải.
+            </p>
           </div>
         </div>
 

@@ -59,13 +59,16 @@ class AIClient {
   getModel() {
     if (typeof window === 'undefined') return 'gemini-3.5-flash-lite';
     const stored = localStorage.getItem(this.modelStorageKey);
-    if (!stored || stored === 'gemini-2.5-flash') return 'gemini-3.5-flash-lite';
-    return stored;
+    if (!stored || stored === 'gemini-2.5-flash' || stored === 'gemini-3.8-flash') {
+      localStorage.setItem(this.modelStorageKey, 'gemini-3.5-flash-lite');
+      return 'gemini-3.5-flash-lite';
+    }
+    return 'gemini-3.5-flash-lite';
   }
 
   setModel(model) {
     if (typeof window === 'undefined') return;
-    localStorage.setItem(this.modelStorageKey, model);
+    localStorage.setItem(this.modelStorageKey, 'gemini-3.5-flash-lite');
   }
 
   async getStatus() {
