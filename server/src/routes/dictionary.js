@@ -189,31 +189,6 @@ router.get('/linguistic/:id', (req, res) => {
   }
 });
 
-    // Fast indexed query with limit and offset
-    const querySql = `
-      SELECT * FROM vocabularies 
-      WHERE ${whereClause}
-      ORDER BY ${orderClause}
-      LIMIT ? OFFSET ?
-    `;
-
-    const queryParams = [...params, ...orderParams, limitNum, offset];
-    const items = db.prepare(querySql).all(...queryParams);
-
-    res.json({
-      items,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total,
-        totalPages: Math.ceil(total / limitNum)
-      }
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // GET /api/dictionary/word/:id
 router.get('/word/:id', (req, res) => {
   try {
