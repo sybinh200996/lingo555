@@ -6,6 +6,7 @@ import { ai } from '../../services/aiClient';
 import { speech } from '../../services/speechService';
 import { proSpeech } from '../../utils/proSpeechRecognizer';
 import { sounds } from '../../services/soundEffects';
+import { UserAvatar } from '../common/UserAvatar';
 import { 
   MessageSquare, 
   Volume2, 
@@ -395,8 +396,13 @@ export const SpeakHub = () => {
                   </div>
 
                   {!isBot && (
-                    <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-                      {userProfile.avatar || '👤'}
+                    <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs overflow-hidden">
+                      <UserAvatar 
+                        avatar={userProfile.avatar || '👤'} 
+                        name="User" 
+                        className="w-full h-full rounded-full" 
+                        textClassName="text-xs" 
+                      />
                     </div>
                   )}
                 </div>

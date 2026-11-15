@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { sounds } from '../../services/soundEffects';
+import { UserAvatar } from '../common/UserAvatar';
 import { Flame, Heart, Gem, Sparkles, User } from 'lucide-react';
 
 export const MobileHeader = () => {
@@ -149,7 +150,14 @@ export const MobileHeader = () => {
             className="p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative cursor-pointer"
             title="Hồ sơ tài khoản"
           >
-            <span className="text-base leading-none">{user?.avatar_url || '🐼'}</span>
+            <div className="w-6 h-6 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
+              <UserAvatar 
+                avatar={user?.avatar_url || '🐼'} 
+                name={user?.full_name} 
+                className="w-full h-full rounded-lg" 
+                textClassName="text-base" 
+              />
+            </div>
             <span 
               className={`w-2 h-2 rounded-full absolute -top-0.5 -right-0.5 ${
                 isSyncing ? 'bg-amber-400 animate-spin' : 'bg-emerald-500 ring-2 ring-white dark:ring-slate-900'

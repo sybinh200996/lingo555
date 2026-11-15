@@ -10,6 +10,7 @@ import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import { sounds } from '../../services/soundEffects';
+import { UserAvatar } from '../common/UserAvatar';
 import { 
   User, 
   Upload, 
@@ -212,9 +213,14 @@ export const ProfileHub = () => {
       <div className="duo-card p-5 sm:p-6 space-y-4">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5">
           {/* Avatar with Change Option */}
-          <div className="relative group">
-            <div className="w-20 h-20 rounded-3xl bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-4xl shadow-sm border-2 border-emerald-400">
-              {user?.avatar_url || userProfile.avatar || '🐼'}
+          <div className="relative group shrink-0">
+            <div className="w-20 h-20 rounded-3xl bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center shadow-sm border-2 border-emerald-400 overflow-hidden">
+              <UserAvatar 
+                avatar={user?.avatar_url || userProfile.avatar || '🐼'} 
+                name={user?.full_name || userProfile.username}
+                className="w-full h-full rounded-3xl"
+                textClassName="text-4xl"
+              />
             </div>
             {isAuthenticated && (
               <button

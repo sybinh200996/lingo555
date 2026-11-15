@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { sounds } from '../../services/soundEffects';
+import { UserAvatar } from '../common/UserAvatar';
 import { Flame, Heart, Gem, Sparkles, Bot, Moon, Sun, Settings, User } from 'lucide-react';
 
 export const AppHeader = () => {
@@ -170,7 +171,14 @@ export const AppHeader = () => {
             className="flex items-center gap-1.5 p-1 sm:px-2 sm:py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer relative"
             title="Hồ sơ tài khoản - Đã đồng bộ Cloud"
           >
-            <span className="text-base sm:text-lg leading-none">{user?.avatar_url || '🐼'}</span>
+            <div className="w-6 h-6 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
+              <UserAvatar 
+                avatar={user?.avatar_url || '🐼'} 
+                name={user?.full_name} 
+                className="w-full h-full rounded-lg" 
+                textClassName="text-base sm:text-lg" 
+              />
+            </div>
             <span className="hidden sm:inline font-bold text-xs text-slate-800 dark:text-slate-200 max-w-[80px] truncate">
               {user?.full_name?.split(' ')[0] || 'Tôi'}
             </span>
