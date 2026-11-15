@@ -153,6 +153,31 @@ export const SkillTree = () => {
     }
   };
 
+  // Calculate academic vs ESP tracks
+  const localLevels = getCurriculumLevels(currentLanguage);
+  const serverLevels = (levels || []).filter(l => l.language_id === currentLanguage);
+  const serverLevelIds = new Set(serverLevels.map(l => l.id));
+  const currentLangLevels = (
+    serverLevels.length > 0
+      ? [...serverLevels, ...localLevels.filter(l => !serverLevelIds.has(l.id))]
+      : localLevels
+  ).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+
+  const isEspLevel = (l) => Boolean(
+    l?.category === 'esp' ||
+    l?.id?.includes('_it') ||
+    l?.id?.includes('_accounting') ||
+    l?.id?.includes('_office') ||
+    l?.id?.includes('_hr') ||
+    l?.id?.includes('_logistics') ||
+    l?.id?.includes('_medical') ||
+    l?.id?.includes('_tourism')
+  );
+
+  const academicLevels = currentLangLevels.filter(l => !isEspLevel(l));
+  const espLevels = currentLangLevels.filter(l => isEspLevel(l));
+  const isEspActive = isEspLevel(currentLevel);
+
   const currentUnit = units.find(u => u.id === selectedUnitId) || units[0] || null;
 
   return (
@@ -219,6 +244,97 @@ export const SkillTree = () => {
         </div>
       )}
 
+      {/* 1. Track Mode Switcher: 🎓 Chuẩn Quốc Tế vs 💼 Chuyên Ngành (7 Ngành) */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-1.5 sm:gap-2 p-1.5 bg-slate-100 dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+          <button
+            onClick={() => {
+              sounds.playTap?.();
+              if (isEspActive && academicLevels.length > 0) {
+                setCurrentLevel(academicLevels[0]);
+              }
+            }}
+            className={`flex-1 py-2 sm:py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              !isEspActive
+                ? 'bg-white dark:bg-slate-700 text-[#58CC02] shadow-sm border border-slate-200/80 dark:border-slate-600'
+                : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+            }`}
+          >
+            <GraduationCap className="w-4 h-4 stroke-[2.5]" />
+            <span>{currentLanguage === 'zh' ? '🎓 Lộ Trình HSK Chuẩn' : '🎓 Chuẩn CEFR Quốc Tế'}</span>
+          </button>
+
+          <button
+            onClick={() => {
+              sounds.playTap?.();
+              if (!isEspActive && espLevels.length > 0) {
+                setCurrentLevel(espLevels[0]);
+              }
+            }}
+            className={`flex-1 py-2 sm:py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              isEspActive
+                ? 'bg-white dark:bg-slate-700 text-sky-500 dark:text-sky-400 shadow-sm border border-slate-200/80 dark:border-slate-600'
+                : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+            }`}
+          >
+            <Briefcase className="w-4 h-4 stroke-[2.5]" />
+            <span className="flex items-center gap-1.5">
+              <span>💼 Chuyên Ngành</span>
+              <span className="px-1.5 py-0.5 bg-rose-500 text-white text-[10px] rounded-full font-black animate-pulse">7 Ngành</span>
+            </span>
+          </button>
+        </div>
+
+        {/* 2. Horizontal Quick Track Selector Ribbon */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 px-0.5">
+          {isEspActive ? (
+            espLevels.map((lvl) => {
+              const isSelected = currentLevel?.id === lvl.id;
+              return (
+                <button
+                  key={lvl.id}
+                  onClick={() => {
+                    sounds.playTap?.();
+                    setCurrentLevel(lvl);
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all cursor-pointer shrink-0 border ${
+                    isSelected
+                      ? 'bg-sky-500 text-white border-sky-600 shadow-md scale-102 ring-2 ring-sky-300 dark:ring-sky-700'
+                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60'
+                  }`}
+                >
+                  <span className="text-sm">{lvl.icon || '💼'}</span>
+                  <span>{lvl.code}</span>
+                  <span className="hidden sm:inline font-bold opacity-80 text-[11px]">({lvl.title.split(' ')[0]})</span>
+                </button>
+              );
+            })
+          ) : (
+            academicLevels.map((lvl) => {
+              const isSelected = currentLevel?.id === lvl.id;
+              return (
+                <button
+                  key={lvl.id}
+                  onClick={() => {
+                    sounds.playTap?.();
+                    setCurrentLevel(lvl);
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all cursor-pointer shrink-0 border ${
+                    isSelected
+                      ? 'bg-[#58CC02] text-white border-[#46A302] shadow-md scale-102 ring-2 ring-emerald-300 dark:ring-emerald-700'
+                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60'
+                  }`}
+                >
+                  <span className="text-xs">⭐</span>
+                  <span>{lvl.code}</span>
+                  <span className="hidden sm:inline font-bold opacity-80 text-[11px]">{lvl.title}</span>
+                </button>
+              );
+            })
+          )}
+        </div>
+      </div>
+
       {/* Level Summary & Control Bar */}
       <div className="duo-card p-4 sm:p-5 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
         <div 
@@ -227,11 +343,13 @@ export const SkillTree = () => {
             openLevelModal();
           }}
           className="cursor-pointer group flex-1 min-w-0"
-          title="Bấm để mở danh sách chọn lộ trình HSK / CEFR"
+          title="Bấm để mở danh sách chọn lộ trình chi tiết"
         >
           <div className="flex items-center gap-1.5">
             <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">
-              {currentLanguage === 'zh' ? 'Lộ Trình HSK Chuẩn Quốc Tế' : 'Lộ Trình CEFR Quốc Tế'}
+              {isEspActive 
+                ? `💼 Tiếng ${currentLanguage === 'zh' ? 'Trung' : 'Anh'} Chuyên Ngành Thực Chiến`
+                : (currentLanguage === 'zh' ? 'Lộ Trình HSK Chuẩn Quốc Tế' : 'Lộ Trình CEFR Quốc Tế')}
             </span>
             <span className="text-[11px] text-sky-500 font-extrabold flex items-center gap-0.5 group-hover:underline">
               • Đổi cấp độ ▾

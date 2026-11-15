@@ -210,6 +210,26 @@ class AIClient {
     }
   }
 
+  async safeParseResponse(res) {
+    const text = await res.text();
+    const trimmed = text.trim();
+    if (trimmed.startsWith('<')) {
+      const is504 = res.status === 504 || trimmed.includes('504 Gateway Time-out');
+      const is502 = res.status === 502 || trimmed.includes('502 Bad Gateway');
+      return {
+        success: false,
+        error: is504 || is502
+          ? 'Máy chủ AI đang bận xử lý (Gateway Timeout). Hệ thống đang kích hoạt nội dung tự động.'
+          : `Máy chủ phản hồi HTTP ${res.status}`
+      };
+    }
+    try {
+      return JSON.parse(text);
+    } catch (err) {
+      return { success: false, error: 'Dữ liệu phản hồi từ AI không đúng định dạng JSON' };
+    }
+  }
+
   async reviewWriting({ prompt, text, level, language }) {
     try {
       const res = await fetch('/api/ai/review-writing', {
@@ -217,15 +237,7 @@ class AIClient {
         headers: this.getHeaders(),
         body: JSON.stringify({ prompt, text, level, language })
       });
-      if (!res.ok) {
-        let msg = `Máy chủ phản hồi ${res.status}`;
-        try {
-          const errData = await res.json();
-          msg = errData.error || errData.message || msg;
-        } catch (_) {}
-        return { success: false, error: msg };
-      }
-      return await res.json();
+      return await this.safeParseResponse(res);
     } catch (err) {
       console.warn('reviewWriting fetch error:', err);
       return { success: false, error: err.message };
@@ -239,15 +251,7 @@ class AIClient {
         headers: this.getHeaders(),
         body: JSON.stringify({ words, topic, level, language })
       });
-      if (!res.ok) {
-        let msg = `Máy chủ phản hồi ${res.status}`;
-        try {
-          const errData = await res.json();
-          msg = errData.error || errData.message || msg;
-        } catch (_) {}
-        return { success: false, error: msg };
-      }
-      return await res.json();
+      return await this.safeParseResponse(res);
     } catch (err) {
       console.warn('generateReading fetch error:', err);
       return { success: false, error: err.message };
@@ -261,15 +265,7 @@ class AIClient {
         headers: this.getHeaders(),
         body: JSON.stringify({ words, level, language, currentExercises })
       });
-      if (!res.ok) {
-        let msg = `Máy chủ phản hồi ${res.status}`;
-        try {
-          const errData = await res.json();
-          msg = errData.error || errData.message || msg;
-        } catch (_) {}
-        return { success: false, error: msg };
-      }
-      return await res.json();
+      return await this.safeParseResponse(res);
     } catch (err) {
       console.warn('generateLessonVariation fetch error:', err);
       return { success: false, error: err.message };
