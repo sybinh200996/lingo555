@@ -8,6 +8,7 @@ import { getCurriculumUnitsForLevel, getCurriculumLessonById } from './fullCurri
 import { AUTHENTIC_ZH_DATA, AUTHENTIC_EN_DATA, getAuthenticLesson } from './authenticCurriculumData.js';
 import { getAdvancedUnitsForLevel, getAdvancedLesson } from './advancedCurriculumData.js';
 import { buildScaffoldedLessonFlow } from '../utils/smartLessonBuilder.js';
+import { ESP_LEVELS, ESP_ZH_DATA, ESP_EN_DATA } from './espCurriculumData.js';
 
 export const CURRICULUM_LEVELS = [
   {
@@ -144,7 +145,8 @@ export const CURRICULUM_LEVELS = [
     "subtitle": "Trình độ bản ngữ, văn học, pháp lý, y khoa",
     "color": "#dc2626",
     "order_index": 7
-  }
+  },
+  ...ESP_LEVELS
 ];
 
 export const CURRICULUM_UNITS_BY_LEVEL = {
@@ -9595,15 +9597,15 @@ export const getCurriculumLevels = (lang = 'zh') => {
 
 export const getAuthenticUnitsForLevel = (levelId) => {
   const isZh = levelId.startsWith('zh');
-  const dataset = isZh ? AUTHENTIC_ZH_DATA[levelId] : AUTHENTIC_EN_DATA[levelId];
+  const dataset = isZh ? (AUTHENTIC_ZH_DATA[levelId] || ESP_ZH_DATA[levelId]) : (AUTHENTIC_EN_DATA[levelId] || ESP_EN_DATA[levelId]);
   if (!dataset || !dataset.lessons || dataset.lessons.length === 0) return [];
 
   return [
     {
       id: `unit_auth_${levelId}`,
       level_id: levelId,
-      unit_number: 0,
-      title: `Chuyên Sâu Thực Chiến: ${dataset.title}`,
+      unit_number: 1,
+      title: `${dataset.title}`,
       description: `Lộ trình 5 giai đoạn: Khởi động ➔ Phản xạ nghe ➔ Tập viết ➔ Ghép câu ➔ Luyện phát âm`,
       icon: 'Sparkles',
       banner_color: isZh ? '#58CC02' : '#1CB0F6',
@@ -9613,7 +9615,7 @@ export const getAuthenticUnitsForLevel = (levelId) => {
         unit_id: `unit_auth_${levelId}`,
         lesson_number: idx + 1,
         title: l.title,
-        description: l.grammarFocus || 'Kho từ vựng & ngữ pháp chuẩn quốc tế',
+        description: l.grammarFocus || 'Kho từ vựng & thuật ngữ chuyên ngành',
         xp_reward: 25,
         type: 'standard',
         completed: false,
@@ -9668,6 +9670,38 @@ export const getCurriculumLesson = (lessonId) => {
     return {
       ...authLesson,
       xp_reward: 25,
+      exercises
+    };
+  }
+
+  // Check ESP dataset
+  const getEspLesson = (id) => {
+    const isZh = id.startsWith('zh');
+    const dataset = isZh ? ESP_ZH_DATA : ESP_EN_DATA;
+    for (const key of Object.keys(dataset)) {
+      const stage = dataset[key];
+      if (stage && stage.lessons) {
+        const found = stage.lessons.find(l => l.id === id);
+        if (found) {
+          return {
+            ...found,
+            language: isZh ? 'zh' : 'en',
+            levelId: stage.levelId,
+            code: stage.code,
+            title: stage.title
+          };
+        }
+      }
+    }
+    return null;
+  };
+
+  const espLesson = getEspLesson(lessonId);
+  if (espLesson) {
+    const exercises = buildScaffoldedLessonFlow(espLesson, [], { lang: espLesson.language });
+    return {
+      ...espLesson,
+      xp_reward: 30,
       exercises
     };
   }

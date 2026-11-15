@@ -30,6 +30,12 @@ try {
 } catch (e) {
   console.warn('seedFullCurriculum skipped or failed:', e.message);
 }
+try {
+  const { seedEspCurriculum } = require('./db/seedEspCurriculum');
+  seedEspCurriculum();
+} catch (e) {
+  console.warn('seedEspCurriculum skipped or failed:', e.message);
+}
 
 // Route handlers
 app.use('/api', require('./routes/lessons'));

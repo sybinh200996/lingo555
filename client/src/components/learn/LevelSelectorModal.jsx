@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { sounds } from '../../services/soundEffects';
 import { getCurriculumLevels } from '../../data/curriculumData';
-import { Check, Compass, Sparkles, X, ChevronRight, Unlock, Lock } from 'lucide-react';
+import { Check, Compass, Sparkles, X, ChevronRight, Unlock, Lock, GraduationCap, Briefcase } from 'lucide-react';
 
 export const LevelSelectorModal = ({ isOpen, onClose }) => {
   const { 
@@ -16,6 +16,10 @@ export const LevelSelectorModal = ({ isOpen, onClose }) => {
     openPlacement
   } = useApp();
 
+  const [trackCategory, setTrackCategory] = useState(() => {
+    return (currentLevel?.category === 'esp' || currentLevel?.id?.includes('_it') || currentLevel?.id?.includes('_acc') || currentLevel?.id?.includes('_off') || currentLevel?.id?.includes('_hr') || currentLevel?.id?.includes('_log') || currentLevel?.id?.includes('_med') || currentLevel?.id?.includes('_tour')) ? 'esp' : 'academic';
+  });
+
   if (!isOpen) return null;
 
   const localLevels = getCurriculumLevels(currentLang);
@@ -27,9 +31,13 @@ export const LevelSelectorModal = ({ isOpen, onClose }) => {
       : localLevels
   ).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
 
+  const academicLevels = currentLangLevels.filter(l => l.category !== 'esp' && !l.id.includes('_it') && !l.id.includes('_acc') && !l.id.includes('_off') && !l.id.includes('_hr') && !l.id.includes('_log') && !l.id.includes('_med') && !l.id.includes('_tour'));
+  const espLevels = currentLangLevels.filter(l => l.category === 'esp' || l.id.includes('_it') || l.id.includes('_acc') || l.id.includes('_off') || l.id.includes('_hr') || l.id.includes('_log') || l.id.includes('_med') || l.id.includes('_tour'));
+  const displayedLevels = trackCategory === 'esp' ? espLevels : academicLevels;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-      <div className="bg-white dark:bg-[#1B2B32] rounded-3xl p-6 max-w-lg w-full border-2 border-b-6 border-[#E5E5E5] dark:border-[#37464F] shadow-2xl space-y-5 max-h-[90vh] flex flex-col">
+      <div className="bg-white dark:bg-[#1B2B32] rounded-3xl p-6 max-w-lg w-full border-2 border-b-6 border-[#E5E5E5] dark:border-[#37464F] shadow-2xl space-y-4 max-h-[92vh] flex flex-col">
         {/* Top Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#E5E5E5] dark:border-[#37464F] shrink-0">
           <div className="flex items-center gap-3">
@@ -41,7 +49,9 @@ export const LevelSelectorModal = ({ isOpen, onClose }) => {
                 Chọn Lộ Trình Học Tập
               </span>
               <h3 className="text-lg font-black text-slate-800 dark:text-white">
-                {currentLang === 'zh' ? 'Lộ Trình HSK Chuẩn Quốc Tế' : 'Lộ Trình CEFR Quốc Tế'}
+                {trackCategory === 'esp' 
+                  ? `Tiếng ${currentLang === 'zh' ? 'Trung' : 'Anh'} Chuyên Ngành Thực Chiến` 
+                  : (currentLang === 'zh' ? 'Lộ Trình HSK Chuẩn Quốc Tế' : 'Lộ Trình CEFR Quốc Tế')}
               </h3>
             </div>
           </div>
@@ -53,7 +63,7 @@ export const LevelSelectorModal = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Language Tabs */}
+        {/* 1. Ngôn Ngữ: Tiếng Trung vs Tiếng Anh */}
         <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-100 dark:bg-[#131F24] rounded-2xl shrink-0">
           <button
             onClick={() => {
@@ -67,7 +77,7 @@ export const LevelSelectorModal = ({ isOpen, onClose }) => {
             }`}
           >
             <span className="text-base">🇨🇳</span>
-            <span>Tiếng Trung (HSK)</span>
+            <span>Tiếng Trung</span>
           </button>
           <button
             onClick={() => {
@@ -81,38 +91,85 @@ export const LevelSelectorModal = ({ isOpen, onClose }) => {
             }`}
           >
             <span className="text-base">🇬🇧</span>
-            <span>Tiếng Anh (CEFR)</span>
+            <span>Tiếng Anh</span>
           </button>
         </div>
 
-        {/* Quick Placement Test & Free Mode Banner */}
-        <div className="flex items-center justify-between gap-2 p-3 bg-indigo-50 dark:bg-indigo-950/40 rounded-2xl border border-indigo-200 dark:border-indigo-800/60 shrink-0">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-xl">⚡</span>
-            <div className="min-w-0">
-              <p className="text-xs font-black text-indigo-900 dark:text-indigo-200 truncate">
-                Đã có nền tảng từ trước?
-              </p>
-              <p className="text-[11px] text-indigo-700 dark:text-indigo-300 font-semibold truncate">
-                Làm bài test 8 câu để xếp lớp tự động
-              </p>
-            </div>
-          </div>
+        {/* 2. Phân Hệ: Chuẩn Quốc Tế vs Chuyên Ngành Thực Chiến */}
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0">
           <button
             onClick={() => {
               sounds.playTap?.();
-              onClose();
-              openPlacement();
+              setTrackCategory('academic');
             }}
-            className="btn-3d-green text-[11px] py-1.5 px-3 rounded-xl uppercase font-black tracking-wider whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
+            className={`flex-1 py-2 px-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+              trackCategory === 'academic'
+                ? 'bg-white dark:bg-slate-700 text-[#58CC02] shadow-xs'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
+            }`}
           >
-            Test Ngay
+            <GraduationCap className="w-4 h-4" />
+            <span>Chuẩn Quốc Tế ({currentLang === 'zh' ? 'HSK 1-6' : 'A1-C2'})</span>
+          </button>
+
+          <button
+            onClick={() => {
+              sounds.playTap?.();
+              setTrackCategory('esp');
+            }}
+            className={`flex-1 py-2 px-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+              trackCategory === 'esp'
+                ? 'bg-white dark:bg-slate-700 text-[#1CB0F6] shadow-xs'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
+            }`}
+          >
+            <Briefcase className="w-4 h-4" />
+            <span>Chuyên Ngành (IT, Kế Toán, HR...)</span>
           </button>
         </div>
 
+        {/* Banner giới thiệu phân hệ */}
+        {trackCategory === 'esp' ? (
+          <div className="p-3 bg-gradient-to-r from-sky-50 to-indigo-50 dark:from-sky-950/40 dark:to-indigo-950/40 rounded-2xl border border-sky-200 dark:border-sky-800/60 flex items-center gap-2.5 shrink-0">
+            <span className="text-2xl shrink-0">💼</span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-black text-sky-900 dark:text-sky-200">
+                7 Khối Ngành Thực Chiến &bull; Căn Bản đến Nâng Cao
+              </p>
+              <p className="text-[11px] text-sky-700 dark:text-sky-300 font-medium truncate">
+                Thuật ngữ chuyên sâu &bull; Soạn thảo văn bản &bull; Đàm phán công sở
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-2 p-3 bg-indigo-50 dark:bg-indigo-950/40 rounded-2xl border border-indigo-200 dark:border-indigo-800/60 shrink-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-xl">⚡</span>
+              <div className="min-w-0">
+                <p className="text-xs font-black text-indigo-900 dark:text-indigo-200 truncate">
+                  Đã có nền tảng từ trước?
+                </p>
+                <p className="text-[11px] text-indigo-700 dark:text-indigo-300 font-semibold truncate">
+                  Làm bài test 8 câu để xếp lớp tự động
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                sounds.playTap?.();
+                onClose();
+                openPlacement();
+              }}
+              className="btn-3d-green text-[11px] py-1.5 px-3 rounded-xl uppercase font-black tracking-wider whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
+            >
+              Test Ngay
+            </button>
+          </div>
+        )}
+
         {/* Levels List */}
         <div className="space-y-2.5 overflow-y-auto flex-1 pr-1">
-          {currentLangLevels.map((lvl) => {
+          {displayedLevels.map((lvl) => {
             const isSelected = currentLevel?.id === lvl.id;
             return (
               <div
@@ -130,10 +187,10 @@ export const LevelSelectorModal = ({ isOpen, onClose }) => {
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs text-white shadow-xs shrink-0"
+                    className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm text-white shadow-xs shrink-0"
                     style={{ backgroundColor: lvl.color || '#58CC02' }}
                   >
-                    {lvl.code}
+                    {lvl.icon || lvl.code}
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
