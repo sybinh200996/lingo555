@@ -44,6 +44,18 @@ class GeminiKeyPool {
     console.warn(`[GeminiKeyPool] Key ...${key.slice(-6)} tạm nghỉ trong ${durationSeconds}s do giới hạn hạn mức.`);
   }
 
+  markDead(key, reason = '') {
+    this.keys = this.keys.filter(k => k !== key);
+    this.cooldowns.delete(key);
+    console.warn(`[GeminiKeyPool] Key ...${key.slice(-6)} ĐÃ BỊ LOẠI BỎ VĨNH VIỄN (${reason}). Còn lại: ${this.keys.length} keys.`);
+  }
+
+  isDeadError(err) {
+    const msg = String(err?.message || '').toLowerCase();
+    const status = err?.status || err?.code;
+    return status === 403 || msg.includes('leaked') || msg.includes('permission_denied') || msg.includes('api_key_invalid') || msg.includes('key not valid') || msg.includes('access_denied');
+  }
+
   getNextClient(apiKey = null) {
     if (apiKey) {
       return { client: new GoogleGenAI({ apiKey: apiKey.trim() }), key: apiKey.trim(), isCustom: true };
@@ -59,7 +71,7 @@ class GeminiKeyPool {
       }
     }
 
-    const fallbackKey = this.keys[this.currentIndex];
+    const fallbackKey = this.keys[this.currentIndex % this.keys.length];
     this.currentIndex = (this.currentIndex + 1) % this.keys.length;
     return { client: new GoogleGenAI({ apiKey: fallbackKey }), key: fallbackKey, isCustom: false };
   }
@@ -87,6 +99,10 @@ class AIService {
   getClient(apiKey) {
     const info = this.keyPool.getNextClient(apiKey);
     return info ? info.client : null;
+  }
+
+  getClientInfo(apiKey) {
+    return this.keyPool.getNextClient(apiKey);
   }
 
   getStatus() {
@@ -138,41 +154,75 @@ class AIService {
     }
   }
 
-  async generateContentWithFallback(client, { model, contents, systemInstruction, responseMimeType, fallbackData }) {
-    const modelsToTry = [];
-    if (model && !modelsToTry.includes(model)) modelsToTry.push(model);
-    for (const cm of this.candidateModels) {
-      if (!modelsToTry.includes(cm)) modelsToTry.push(cm);
-    }
-
+  async generateContentWithFallback(clientOrInfo, { model, contents, systemInstruction, responseMimeType, fallbackData }) {
+    const isCustom = clientOrInfo && clientOrInfo.isCustom;
+    const maxTries = isCustom ? 1 : Math.max(1, this.keyPool.keys.length);
     let lastError = null;
-    for (const m of modelsToTry) {
-      try {
-        const config = {};
-        if (systemInstruction) config.systemInstruction = systemInstruction;
-        if (responseMimeType) config.responseMimeType = responseMimeType;
 
-        const response = await client.models.generateContent({
-          model: m,
-          contents,
-          config
-        });
+    for (let attempt = 0; attempt < maxTries; attempt++) {
+      let currentInfo;
+      if (isCustom) {
+        currentInfo = clientOrInfo;
+      } else if (attempt === 0 && clientOrInfo && clientOrInfo.client) {
+        currentInfo = clientOrInfo;
+      } else {
+        currentInfo = this.keyPool.getNextClient();
+      }
 
-        const rawText = response.text;
-        if (responseMimeType === 'application/json') {
-          const parsed = this.safeParseAIJson(rawText, fallbackData);
-          if (parsed !== undefined) return parsed;
+      if (!currentInfo || !currentInfo.client) break;
+      const client = currentInfo.client || currentInfo;
+      const key = currentInfo.key || 'custom';
+
+      const modelsToTry = [];
+      if (model && !modelsToTry.includes(model)) modelsToTry.push(model);
+      for (const cm of this.candidateModels) {
+        if (!modelsToTry.includes(cm)) modelsToTry.push(cm);
+      }
+
+      let keyFailed = false;
+      for (const m of modelsToTry) {
+        try {
+          const config = {};
+          if (systemInstruction) config.systemInstruction = systemInstruction;
+          if (responseMimeType) config.responseMimeType = responseMimeType;
+
+          const response = await client.models.generateContent({
+            model: m,
+            contents,
+            config
+          });
+
+          const rawText = response.text;
+          if (responseMimeType === 'application/json') {
+            const parsed = this.safeParseAIJson(rawText, fallbackData);
+            if (parsed !== undefined) return parsed;
+          }
+          return rawText;
+        } catch (err) {
+          lastError = err;
+          if (this.keyPool.isDeadError(err)) {
+            this.keyPool.markDead(key, err.message);
+            keyFailed = true;
+            break;
+          } else if (err?.status === 429 || String(err?.message || '').includes('429')) {
+            this.keyPool.markCooldown(key, 60);
+            keyFailed = true;
+            break;
+          } else {
+            console.warn(`Model ${m} failed:`, err.message);
+          }
         }
-        return rawText;
-      } catch (err) {
-        lastError = err;
-        console.warn(`Model ${m} failed, trying next candidate:`, err.message);
+      }
+
+      if (!keyFailed) {
+        break;
       }
     }
+
     if (fallbackData !== undefined) {
       return fallbackData;
     }
-    throw lastError || new Error('All model candidates failed');
+    throw lastError || new Error('All model candidates and keys failed');
   }
 
   /**
@@ -667,7 +717,7 @@ Hello! Regarding your question **"${query}"**:
    * 7. REAL-TIME AI STREAMING (SSE) FOR FLOATING AI TUTOR
    */
   async streamTutorResponse({ query, currentContext, language = 'zh', history = [], apiKey, model = this.defaultModel, onChunk }) {
-    const client = this.getClient(apiKey);
+    const clientInfo = this.getClientInfo(apiKey);
     const langName = language === 'zh' ? 'Tiếng Trung' : 'Tiếng Anh';
 
     const systemPrompt = `Bạn là "LingoBot" - Gia sư AI chuyên dạy ${langName} theo phương pháp Duolingo: thân thiện, giải thích ngắn gọn, súc tích, dễ nhớ, luôn có ví dụ thực tế.
@@ -687,27 +737,49 @@ Khi trả lời tiếng Trung, luôn kèm Pinyin và dịch nghĩa. Khi trả l�
       }
     ];
 
-    if (client) {
-      const modelsToTry = [model, ...this.candidateModels].filter(Boolean);
-      for (const m of modelsToTry) {
-        try {
-          const stream = await client.models.generateContentStream({
-            model: m,
-            contents,
-            config: {
-              systemInstruction: systemPrompt
-            }
-          });
+    if (clientInfo) {
+      const isCustom = clientInfo.isCustom;
+      const maxTries = isCustom ? 1 : Math.max(1, this.keyPool.keys.length);
 
-          for await (const chunk of stream) {
-            if (chunk.text) {
-              onChunk(chunk.text);
+      for (let attempt = 0; attempt < maxTries; attempt++) {
+        const info = attempt === 0 ? clientInfo : this.keyPool.getNextClient();
+        if (!info || !info.client) break;
+
+        const modelsToTry = [model, ...this.candidateModels].filter(Boolean);
+        let keyFailed = false;
+
+        for (const m of modelsToTry) {
+          try {
+            const stream = await info.client.models.generateContentStream({
+              model: m,
+              contents,
+              config: {
+                systemInstruction: systemPrompt
+              }
+            });
+
+            for await (const chunk of stream) {
+              if (chunk.text) {
+                onChunk(chunk.text);
+              }
+            }
+            return;
+          } catch (err) {
+            if (this.keyPool.isDeadError(err)) {
+              this.keyPool.markDead(info.key, err.message);
+              keyFailed = true;
+              break;
+            } else if (err?.status === 429 || String(err?.message || '').includes('429')) {
+              this.keyPool.markCooldown(info.key, 60);
+              keyFailed = true;
+              break;
+            } else {
+              console.warn(`Streaming with model ${m} failed:`, err.message);
             }
           }
-          return;
-        } catch (err) {
-          console.warn(`Streaming with model ${m} failed:`, err.message);
         }
+
+        if (!keyFailed) break;
       }
     }
 
@@ -725,7 +797,7 @@ Khi trả lời tiếng Trung, luôn kèm Pinyin và dịch nghĩa. Khi trả l�
    * Generates a fresh set of realistic practice exercises for the current lesson context
    */
   async generateLessonVariation({ words = [], level = 'HSK 1', language = 'zh', currentExercises = [], apiKey, model = this.defaultModel }) {
-    const client = this.getClient(apiKey);
+    const clientInfo = this.getClientInfo(apiKey);
     const langName = language === 'zh' ? 'Tiếng Trung (HSK)' : 'Tiếng Anh (CEFR)';
     const wordListStr = Array.isArray(words) && words.length > 0
       ? words.map(w => typeof w === 'string' ? w : `${w.word} (${w.meaningVi || ''})`).join(', ')
@@ -794,24 +866,18 @@ Hãy tạo một bộ bài tập biến thể thực chiến mới (5 câu) cho 
   }
 ]`;
 
-    if (client) {
-      const modelsToTry = [model, ...this.candidateModels].filter(Boolean);
-      for (const m of modelsToTry) {
-        try {
-          const res = await client.models.generateContent({
-            model: m,
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            config: {
-              responseMimeType: 'application/json'
-            }
-          });
-          const parsed = this.safeParseAIJson(res.text);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed;
-          }
-        } catch (err) {
-          console.warn(`Generate lesson variation with model ${m} failed:`, err.message);
+    if (clientInfo) {
+      try {
+        const parsed = await this.generateContentWithFallback(clientInfo, {
+          model,
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          responseMimeType: 'application/json'
+        });
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
         }
+      } catch (err) {
+        console.warn('generateLessonVariation Gemini call failed:', err.message);
       }
     }
 
