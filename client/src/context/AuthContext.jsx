@@ -211,12 +211,20 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('lingo555_auth_user', JSON.stringify(updated));
   };
 
+  const isAdmin = Boolean(
+    user?.role === 'admin' ||
+    user?.is_admin === true ||
+    user?.email === 'kisslove1712@gmail.com' ||
+    (user?.email && user.email.toLowerCase().startsWith('admin@'))
+  );
+
   return (
     <AuthContext.Provider
       value={{
         user,
         token,
         isAuthenticated: !!user && !!token,
+        isAdmin,
         isLoading,
         isSyncing,
         lastSyncedAt,

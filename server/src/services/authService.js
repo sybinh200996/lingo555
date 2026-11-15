@@ -43,6 +43,21 @@ db.exec(`
   );
 `);
 
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'kisslove1712@gmail.com,admin@lingo.dangnam.online')
+  .toLowerCase()
+  .split(',')
+  .map(e => e.trim());
+
+const enrichUser = (user) => {
+  if (!user) return null;
+  const is_admin = (user.email && ADMIN_EMAILS.includes(user.email.toLowerCase())) || user.role === 'admin';
+  return {
+    ...user,
+    is_admin: Boolean(is_admin),
+    role: is_admin ? 'admin' : (user.role || 'user')
+  };
+};
+
 /**
  * Hash password using PBKDF2 with 16-byte random salt
  */
@@ -222,7 +237,7 @@ const registerUser = ({ fullName, email, password, avatar = '🐼', guestProgres
   const user = db.prepare('SELECT id, email, full_name, avatar_url, auth_provider, created_at FROM users WHERE id = ?').get(userId);
   const token = signToken({ userId: user.id, email: user.email });
 
-  return { user, progress: initialProg, token };
+  return { user: enrichUser(user), progress: initialProg, token };
 };
 
 /**
@@ -288,7 +303,7 @@ const loginUser = ({ email, password, guestProgress = null }) => {
   const token = signToken({ userId: user.id, email: user.email });
   const { password_hash, ...safeUser } = user;
 
-  return { user: safeUser, progress, token };
+  return { user: enrichUser(safeUser), progress, token };
 };
 
 /**
@@ -340,7 +355,7 @@ const loginOrRegisterOAuth = ({ provider, providerId, email, fullName, avatarUrl
 
     user = db.prepare('SELECT id, email, full_name, avatar_url, auth_provider, created_at FROM users WHERE id = ?').get(userId);
     const token = signToken({ userId: user.id, email: user.email });
-    return { user, progress: initialProg, token };
+    return { user: enrichUser(user), progress: initialProg, token };
   } else {
     // Existing user: update avatar/name if changed and merge progress
     db.prepare(`
@@ -384,7 +399,7 @@ const loginOrRegisterOAuth = ({ provider, providerId, email, fullName, avatarUrl
 
     const token = signToken({ userId: user.id, email: user.email });
     const { password_hash, ...safeUser } = user;
-    return { user: safeUser, progress, token };
+    return { user: enrichUser(safeUser), progress, token };
   }
 };
 
@@ -395,7 +410,7 @@ const getCurrentUser = (userId) => {
   const user = db.prepare('SELECT id, email, full_name, avatar_url, auth_provider, created_at, last_login_at FROM users WHERE id = ?').get(userId);
   if (!user) return null;
   const progress = db.prepare('SELECT * FROM user_progress WHERE user_id = ?').get(userId);
-  return { user, progress };
+  return { user: enrichUser(user), progress };
 };
 
 /**
