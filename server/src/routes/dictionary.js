@@ -25,8 +25,8 @@ const setCache = (cacheKey, data) => {
   searchCache.set(cacheKey, { timestamp: Date.now(), data });
 };
 
-// GET /api/dictionary/search
-router.get('/search', (req, res) => {
+// Handler for search
+const searchHandler = (req, res) => {
   try {
     const {
       q = '',
@@ -169,7 +169,10 @@ router.get('/search', (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
+};
+
+router.get('/search', searchHandler);
+router.get('/', searchHandler);
 
 // GET /api/dictionary/linguistic/:id - Unified Linguistic Schema (Chiết tự Lục Thư, Gốc từ & Chùm 80/20)
 router.get('/linguistic/:id', (req, res) => {
