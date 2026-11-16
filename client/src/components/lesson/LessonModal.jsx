@@ -569,17 +569,7 @@ export const LessonModal = () => {
             />
           </div>
 
-          {/* AI Infinite Practice Button */}
-          <button
-            onClick={handleGenerateAiVariation}
-            disabled={isGeneratingAi}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 font-extrabold text-[11px] sm:text-xs border border-purple-200 dark:border-purple-800 transition-all cursor-pointer shrink-0 shadow-xs"
-            title="Tạo bộ câu hỏi biến thể thực chiến mới bằng AI"
-          >
-            <Sparkles className={`w-3.5 h-3.5 text-purple-500 ${isGeneratingAi ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">{isGeneratingAi ? 'Đang tạo...' : '✨ Luyện AI'}</span>
-            <span className="sm:hidden">{isGeneratingAi ? '...' : '✨ AI'}</span>
-          </button>
+
 
           {/* Hearts Indicator */}
           <div className="flex items-center gap-1.5 text-rose-500 font-extrabold text-xs sm:text-sm shrink-0">

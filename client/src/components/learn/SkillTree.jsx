@@ -118,21 +118,32 @@ export const SkillTree = () => {
   const loadUnits = async (levelId) => {
     setLoading(true);
     try {
-      // Load from server first
+      // 1. Load from server first (official SQLite source of truth)
       const serverData = await api.getUnits(levelId, userProfile.id);
-      // Merge with local extra curriculum (provides richer content offline & supplements thin server data)
-      const localData = await getCurriculumUnitsWithExtra(levelId).catch(() => []);
-
-      let merged = serverData || [];
-      if (localData.length > 0) {
-        const serverIds = new Set(merged.map(u => u.id));
-        const extraLocal = localData.filter(u => !serverIds.has(u.id));
-        merged = [...merged, ...extraLocal].sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
+      let merged = [];
+      if (serverData && serverData.length > 0) {
+        merged = serverData;
+      } else {
+        // Fallback to local curriculum if offline or server returns empty
+        const localData = await getCurriculumUnitsWithExtra(levelId).catch(() => []);
+        merged = localData || [];
       }
 
-      setUnits(merged);
-      if (merged.length > 0) {
-        setSelectedUnitId(merged[0].id);
+      // Sort strictly by unit_number and ensure unique unit IDs to prevent any duplicate chapters
+      const seenUnitNums = new Set();
+      const deduplicated = [];
+      for (const u of merged) {
+        const num = u.unit_number || 1;
+        if (!seenUnitNums.has(num)) {
+          seenUnitNums.add(num);
+          deduplicated.push(u);
+        }
+      }
+      deduplicated.sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
+
+      setUnits(deduplicated);
+      if (deduplicated.length > 0) {
+        setSelectedUnitId(deduplicated[0].id);
       } else {
         setSelectedUnitId(null);
       }

@@ -1,3 +1,4 @@
+import { ESP_FULL_UNITS, ESP_FULL_LEVELS } from './espCurriculumFull.js';
 /**
  * curriculumData.js
  * Comprehensive client-side offline dataset for all Chinese & English curricula.
@@ -9629,6 +9630,10 @@ export const getAuthenticUnitsForLevel = (levelId) => {
 
 export const getCurriculumUnits = (levelId) => {
   try {
+    if (levelId && (levelId.includes('_it') || levelId.includes('_accounting') || levelId.includes('_office') || levelId.includes('_hr') || levelId.includes('_logistics') || levelId.includes('_medical') || levelId.includes('_tourism'))) {
+      const espUnits = ESP_FULL_UNITS.filter(u => u.level_id === levelId);
+      if (espUnits.length > 0) return espUnits;
+    }
     const advUnits = getAdvancedUnitsForLevel(levelId);
     if (advUnits && advUnits.length > 0) {
       return advUnits;
@@ -9639,19 +9644,26 @@ export const getCurriculumUnits = (levelId) => {
       const extras = getCurriculumUnitsForLevel(levelId) || [];
       const baseIds = new Set(base.map(u => u.id));
       const uniqueExtras = extras.filter(u => !baseIds.has(u.id));
-      return [...authUnits, ...base, ...uniqueExtras].sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
+      return [...authUnits, ...base, ...uniqueExtras].filter(u => u.lessons && u.lessons.length > 0).sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
     }
     const base = CURRICULUM_UNITS_BY_LEVEL[levelId] || [];
     const extras = getCurriculumUnitsForLevel(levelId) || [];
     const baseIds = new Set(base.map(u => u.id));
     const uniqueExtras = extras.filter(u => !baseIds.has(u.id));
-    return [...base, ...uniqueExtras].sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
+    return [...base, ...uniqueExtras].filter(u => u.lessons && u.lessons.length > 0).sort((a, b) => (a.unit_number || 0) - (b.unit_number || 0));
   } catch (_) {
     return CURRICULUM_UNITS_BY_LEVEL[levelId] || [];
   }
 };
 
 export const getCurriculumLesson = (lessonId) => {
+  // Check full ESP dataset (1,540 lessons)
+  if (lessonId && (lessonId.includes('_u') && lessonId.includes('_l'))) {
+    for (const unit of ESP_FULL_UNITS) {
+      const found = unit.lessons?.find(l => l.id === lessonId);
+      if (found) return found;
+    }
+  }
   // Check advanced dataset first (with 5-phase scaffolded flow)
   const advLesson = getAdvancedLesson(lessonId);
   if (advLesson) {

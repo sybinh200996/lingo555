@@ -1,17 +1,45 @@
 /**
  * seedEspCurriculum.js
- * Seeds all 14 ESP (English for Specific Purposes & Tiếng Trung Chuyên Ngành)
- * Career Tracks into SQLite database (levels, units, lessons, exercises).
+ * Seeds all 14 ESP Career Tracks (140 Units, 1,540 Lessons, 6,160 Exercises)
+ * into SQLite database.
  */
 
 const db = require('./database');
 const path = require('path');
-
-// Import ESP definitions
-const { ESP_LEVELS, ESP_ZH_DATA, ESP_EN_DATA } = require('../../../client/src/data/espCurriculumData.js');
+const fs = require('fs');
 
 function seedEspCurriculum() {
-  console.log('💼 [ESP Curriculum] Seeding 14 Specialized Career Tracks into SQLite...');
+  console.log('💼 [ESP Curriculum] Seeding 14 Specialized Career Tracks (110 Lessons each) into SQLite...');
+
+  const espFilePath = path.join(__dirname, '../../../client/src/data/espCurriculumFull.js');
+  if (!fs.existsSync(espFilePath)) {
+    console.warn('espCurriculumFull.js not found, skipping full seed.');
+    return;
+  }
+
+  // Dynamic import / read
+  let content = fs.readFileSync(espFilePath, 'utf8');
+  let ESP_FULL_LEVELS = [];
+  let ESP_FULL_UNITS = [];
+
+  try {
+    const levelsMatch = content.match(/export const ESP_FULL_LEVELS = (\[[\s\S]*?\]);\s*export const/);
+    if (levelsMatch) {
+      ESP_FULL_LEVELS = JSON.parse(levelsMatch[1]);
+    }
+    const unitsMatch = content.match(/export const ESP_FULL_UNITS = (\[[\s\S]*?\]);\s*export default/);
+    if (unitsMatch) {
+      ESP_FULL_UNITS = JSON.parse(unitsMatch[1]);
+    }
+  } catch (err) {
+    console.error('Error parsing espCurriculumFull.js:', err);
+    return;
+  }
+
+  if (ESP_FULL_LEVELS.length === 0 || ESP_FULL_UNITS.length === 0) {
+    console.warn('No ESP data parsed.');
+    return;
+  }
 
   const insertLevel = db.prepare(`
     INSERT OR REPLACE INTO levels (id, language_id, code, title, subtitle, color, order_index)
@@ -35,14 +63,29 @@ function seedEspCurriculum() {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
+  // Clean old ESP seed to avoid duplicates
+  const deleteOldEspUnits = db.prepare(`
+    DELETE FROM units WHERE id LIKE 'unit_esp_%' OR id LIKE 'unit_zh_%' OR id LIKE 'unit_en_%'
+  `);
+  const deleteOldEspLessons = db.prepare(`
+    DELETE FROM lessons WHERE id LIKE 'zh_%_u%' OR id LIKE 'en_%_u%'
+  `);
+  const deleteOldEspExercises = db.prepare(`
+    DELETE FROM exercises WHERE id LIKE 'zh_%_u%' OR id LIKE 'en_%_u%'
+  `);
+
   let seededLevels = 0;
   let seededUnits = 0;
   let seededLessons = 0;
   let seededExercises = 0;
 
   const runSeed = db.transaction(() => {
+    deleteOldEspUnits.run();
+    deleteOldEspLessons.run();
+    deleteOldEspExercises.run();
+
     // 1. Seed Levels
-    for (const lvl of ESP_LEVELS) {
+    for (const lvl of ESP_FULL_LEVELS) {
       insertLevel.run(
         lvl.id,
         lvl.language_id,
@@ -53,106 +96,52 @@ function seedEspCurriculum() {
         lvl.order_index
       );
       seededLevels++;
+    }
 
-      const isZh = lvl.language_id === 'zh';
-      const dataset = isZh ? ESP_ZH_DATA[lvl.id] : ESP_EN_DATA[lvl.id];
-      if (!dataset || !dataset.lessons) continue;
-
-      // 2. Seed Unit
-      const unitId = `unit_esp_${lvl.id}`;
+    // 2. Seed Units, Lessons, Exercises
+    for (const unit of ESP_FULL_UNITS) {
       insertUnit.run(
-        unitId,
-        lvl.id,
-        1,
-        `Chuyên Sâu Thực Chiến: ${dataset.title}`,
-        `Thuật ngữ chuyên ngành, soạn thảo văn bản và đàm phán công sở`,
-        'Briefcase',
-        lvl.color
+        unit.id,
+        unit.level_id,
+        unit.unit_number,
+        unit.title,
+        unit.description,
+        unit.icon,
+        unit.banner_color
       );
       seededUnits++;
 
-      // 3. Seed Lessons & Exercises
-      dataset.lessons.forEach((l, lIdx) => {
+      for (const lesson of (unit.lessons || [])) {
         insertLesson.run(
-          l.id,
-          unitId,
-          lIdx + 1,
-          l.title,
-          l.grammarFocus || 'Thuật ngữ & kỹ năng làm việc thực chiến',
-          30,
-          'standard'
+          lesson.id,
+          unit.id,
+          lesson.lesson_number,
+          lesson.title,
+          lesson.description,
+          lesson.xp_reward || 30,
+          lesson.type || 'standard'
         );
         seededLessons++;
 
-        if (l.vocabularies && Array.isArray(l.vocabularies)) {
-          let exOrder = 1;
-
-          // Exercise 1: Flashcard / Từ vựng
-          l.vocabularies.forEach((v) => {
-            insertExercise.run(
-              `${l.id}_v_${v.id}`,
-              l.id,
-              'word_select',
-              `Làm quen thuật ngữ chuyên ngành: ${v.word}`,
-              v.word,
-              v.word,
-              v.pronunciation,
-              v.meaningVi,
-              JSON.stringify([v.meaningVi, 'Nhiệm vụ chung', 'Kế hoạch sơ bộ', 'Báo cáo tuần']),
-              v.meaningVi,
-              v.grammarNote || v.meaningVi,
-              null,
-              exOrder++
-            );
-            seededExercises++;
-          });
-
-          // Exercise 2: Nghe phản xạ thuật ngữ
-          l.vocabularies.forEach((v) => {
-            insertExercise.run(
-              `${l.id}_lis_${v.id}`,
-              l.id,
-              'listening',
-              `Nghe và chọn đúng thuật ngữ chuyên ngành:`,
-              v.word,
-              v.word,
-              v.pronunciation,
-              v.meaningVi,
-              JSON.stringify([v.word, '公司', '业务', '工作']),
-              v.word,
-              `Nghĩa tiếng Việt: ${v.meaningVi}`,
-              null,
-              exOrder++
-            );
-            seededExercises++;
-          });
-
-          // Exercise 3: Câu tình huống giao tiếp thực tế
-          l.vocabularies.forEach((v) => {
-            if (v.exampleSentence) {
-              const target = v.exampleSentence.target;
-              // Split into word tokens for sentence assembly
-              const tokens = isZh ? target.split('') : target.split(' ');
-              insertExercise.run(
-                `${l.id}_sen_${v.id}`,
-                l.id,
-                'translation',
-                `Dịch và sắp xếp câu tình huống công việc: "${v.exampleSentence.meaningVi}"`,
-                target,
-                target,
-                v.exampleSentence.pronunciation,
-                v.exampleSentence.meaningVi,
-                JSON.stringify(tokens.slice(0, 8)),
-                target,
-                v.exampleSentence.meaningVi,
-                null,
-                exOrder++
-              );
-              seededExercises++;
-            }
-          });
+        for (const ex of (lesson.exercises || [])) {
+          insertExercise.run(
+            ex.id,
+            lesson.id,
+            ex.type,
+            ex.prompt,
+            ex.target_text,
+            ex.target_audio_text,
+            ex.phonetic,
+            ex.vietnamese_meaning,
+            JSON.stringify(ex.options),
+            ex.correct_answer,
+            ex.hint,
+            ex.stroke_char || null,
+            ex.order_index
+          );
+          seededExercises++;
         }
-      });
+      }
     }
   });
 
@@ -160,13 +149,13 @@ function seedEspCurriculum() {
 
   console.log(`✅ [ESP Curriculum] Seed completed successfully:`);
   console.log(`   - Levels: ${seededLevels}`);
-  console.log(`   - Units: ${seededUnits}`);
-  console.log(`   - Lessons: ${seededLessons}`);
+  console.log(`   - Units: ${seededUnits} (10 Units per track)`);
+  console.log(`   - Lessons: ${seededLessons} (110 Lessons per track!)`);
   console.log(`   - Exercises: ${seededExercises}`);
 }
+
+module.exports = { seedEspCurriculum };
 
 if (require.main === module) {
   seedEspCurriculum();
 }
-
-module.exports = { seedEspCurriculum };
