@@ -133,8 +133,17 @@ export const CURRICULUM_LEVELS = [
     "id": "zh_practical",
     "language_id": "zh",
     "code": "THỰC CHIẾN",
-    "title": "Tiếng Trung Thực Chiến",
-    "subtitle": "Xưởng may, nhà máy, xuất nhập khẩu, logistics và đời sống",
+    "title": "Tiếng Trung Thực Chiến Đời Sống",
+    "subtitle": "Xã giao, ẩm thực, du lịch, công sở, IT và y tế",
+    "color": "#059669",
+    "order_index": 8
+  },
+  {
+    "id": "en_practical",
+    "language_id": "en",
+    "code": "THỰC CHIẾN",
+    "title": "Tiếng Anh Thực Chiến Đời Sống",
+    "subtitle": "Small talk, dining, travel, workplace, IT & emergencies",
     "color": "#059669",
     "order_index": 8
   },

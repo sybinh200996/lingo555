@@ -3,9 +3,12 @@ import confetti from 'canvas-confetti';
 import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
 import { ai } from '../../services/aiClient';
-import { speech, normalizeSpeechText } from '../../services/speechService';
+import { speech } from '../../services/speechService';
 import { proSpeech } from '../../utils/proSpeechRecognizer';
 import { sounds } from '../../services/soundEffects';
+import { audioManager } from '../../utils/audioManager';
+import { validateAnswer } from '../../utils/answerValidator';
+import { sessionPersistence } from '../../utils/sessionPersistence';
 import { HanziCanvas } from './HanziCanvas';
 import { TonePitchCanvas } from './TonePitchCanvas';
 import { StrokeOrderWriter } from '../writing/StrokeOrderWriter';
@@ -30,8 +33,14 @@ import {
   AlertTriangle,
   Keyboard,
   SkipForward,
-  Square
+  Square,
+  BookOpen,
+  Lightbulb,
+  MessageSquare,
+  HelpCircle,
+  Award
 } from 'lucide-react';
+
 /**
  * Automatic prompt normalizer to ensure proper language terminology:
  * For English: replaces 'Tiếng Trung' -> 'Tiếng Anh', 'chữ Hán' -> 'từ Tiếng Anh', 'Pinyin' -> 'Phiên âm IPA', etc.
@@ -59,8 +68,8 @@ export const LessonModal = () => {
   const [loading, setLoading] = useState(true);
 
   // Exercise interaction states
-  const [selectedOption, setSelectedOption] = useState(null); // for listening/multiple choice
-  const [assembledWords, setAssembledWords] = useState([]); // for word bank / dictation / translation
+  const [selectedOption, setSelectedOption] = useState(null); // for listening/cloze/roleplay
+  const [assembledWords, setAssembledWords] = useState([]); // for word bank / dictation / translation / sentence_builder
   const [availableBank, setAvailableBank] = useState([]);
   const [matchedPairs, setMatchedPairs] = useState({}); // for matching pairs
   const [selectedPairLeft, setSelectedPairLeft] = useState(null);
@@ -72,30 +81,38 @@ export const LessonModal = () => {
   const [micVolume, setMicVolume] = useState(0);
   const [hanziDone, setHanziDone] = useState(false);
 
+  // Audio Dictation & Text input states
+  const [typedDictation, setTypedDictation] = useState('');
+  const [dictationRate, setDictationRate] = useState(1.0);
+
   // Microphone compatibility & text fallback states
   const [micError, setMicError] = useState(null);
   const [useTextFallback, setUseTextFallback] = useState(false);
   const [fallbackText, setFallbackText] = useState('');
   const [showQuitConfirm, setShowQuitConfirm] = useState(false);
 
-  // Evaluation states: null | 'correct' | 'wrong' | 'completed'
-  const [evalState, setEvalState] = useState(null);
+  // Evaluation & Feedback states
+  const [evalState, setEvalState] = useState(null); // null | 'correct' | 'wrong' | 'completed'
+  const [evalFeedback, setEvalFeedback] = useState(null);
+  const [evalDiff, setEvalDiff] = useState([]);
   const [correctCount, setCorrectCount] = useState(0);
   const [totalXP, setTotalXP] = useState(15);
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+
+  // Mastery Loop (Vòng lặp sửa sai)
+  const [retryQueue, setRetryQueue] = useState([]);
+  const [isRetryPhase, setIsRetryPhase] = useState(false);
 
   // Intercept browser / mobile edge-swipe Back gestures to protect learner progress
   useEffect(() => {
     if (!activeLessonId) return;
 
-    // Push state so back gesture doesn't jump immediately to another website
     window.history.pushState({ modal: 'lesson' }, '', window.location.href);
 
     const handlePopState = () => {
       if (evalState === 'completed') {
         closeLesson();
       } else {
-        // Re-push state to prevent leaving, then trigger confirmation popup
         window.history.pushState({ modal: 'lesson' }, '', window.location.href);
         setShowQuitConfirm(true);
       }
@@ -114,7 +131,7 @@ export const LessonModal = () => {
     return () => {
       proSpeech.stop();
       speech.stopListening();
-      speech.stopSpeaking();
+      audioManager.stop();
     };
   }, [activeLessonId]);
 
@@ -134,14 +151,15 @@ export const LessonModal = () => {
           radicals: formatPromptByLanguage(ex.radicals, activeLang)
         };
 
-        // 1. Shuffling Multiple Choice options for static / listening exercises
-        if (item.type === 'listening' && Array.isArray(item.options) && item.options.length > 1) {
+        // 1. Shuffling Multiple Choice options for static / listening / cloze / roleplay
+        if ((item.type === 'listening' || item.type === 'cloze_context' || item.type === 'mini_roleplay') && 
+            Array.isArray(item.options) && item.options.length > 1) {
           item.options = shuffleArray(item.options);
           item.isOptionsShuffled = true;
         }
 
         // 2. Pre-shuffling matching pairs with anti-aligned right column
-        if (item.type === 'matching') {
+        if (item.type === 'matching' || item.type === 'matching_pairs') {
           const pairs = Array.isArray(item.options?.pairs) ? item.options.pairs : [];
           if (pairs.length > 0) {
             const leftList = shuffleArray(pairs);
@@ -157,11 +175,25 @@ export const LessonModal = () => {
       setLesson(data);
       setExercises(sanitizedExercises);
       setTotalXP(data?.xp_reward || 15);
-      setCurrentIndex(0);
       setEvalState(null);
-      setCorrectCount(0);
-      if (sanitizedExercises.length > 0) {
-        initExercise(sanitizedExercises[0]);
+      setRetryQueue([]);
+      setIsRetryPhase(false);
+
+      // Check session persistence for auto-resume
+      const savedSession = sessionPersistence.load(activeLessonId);
+      if (savedSession && typeof savedSession.currentIndex === 'number' && savedSession.currentIndex < sanitizedExercises.length) {
+        setCurrentIndex(savedSession.currentIndex);
+        setCorrectCount(savedSession.correctCount || 0);
+        setRetryQueue(savedSession.retryQueue || []);
+        if (sanitizedExercises[savedSession.currentIndex]) {
+          initExercise(sanitizedExercises[savedSession.currentIndex]);
+        }
+      } else {
+        setCurrentIndex(0);
+        setCorrectCount(0);
+        if (sanitizedExercises.length > 0) {
+          initExercise(sanitizedExercises[0]);
+        }
       }
     } catch (e) {
       console.warn('Failed to load lesson:', e);
@@ -171,15 +203,20 @@ export const LessonModal = () => {
   };
 
   const initExercise = (ex) => {
+    if (!ex) return;
     setSelectedOption(null);
     setSpeechResult(null);
     setInterimSpeechText('');
     setEvalState(null);
+    setEvalFeedback(null);
+    setEvalDiff([]);
     setHanziDone(false);
     setSelectedPairLeft(null);
     setMatchedPairs({});
     setMicError(null);
     setFallbackText('');
+    setTypedDictation('');
+    setDictationRate(1.0);
 
     if (isSpeakingListening) {
       speech.stopListening();
@@ -197,8 +234,8 @@ export const LessonModal = () => {
       setUseTextFallback(false);
     }
 
-    // 1. Matching Pairs: strict anti-aligned right column
-    if (ex.type === 'matching') {
+    // 1. Matching Pairs setup
+    if (ex.type === 'matching' || ex.type === 'matching_pairs') {
       const pairs = Array.isArray(ex.options?.pairs) ? ex.options.pairs : [];
       let left = ex.shuffledPairsLeft;
       let right = ex.shuffledPairsRight;
@@ -215,8 +252,8 @@ export const LessonModal = () => {
       setMatchingPairsRight([]);
     }
 
-    // 2. Dictation / Translation Word Bank: Fisher-Yates + Anti-Order shuffle
-    if (ex.type === 'dictation' || ex.type === 'translation') {
+    // 2. Dictation / Translation / Sentence Builder Word Bank
+    if (ex.type === 'dictation' || ex.type === 'translation' || ex.type === 'sentence_builder') {
       const words = Array.isArray(ex.options) ? [...ex.options] : [];
       const targetTokens = (ex.correct_answer || '').split(/\s+/).filter(Boolean);
       const shuffledWords = shuffleWordBank(words, targetTokens);
@@ -224,8 +261,9 @@ export const LessonModal = () => {
       setAssembledWords([]);
     }
 
-    // 3. Listening / Multiple Choice: ensure options are shuffled
-    if (ex.type === 'listening' && Array.isArray(ex.options) && ex.options.length > 1) {
+    // 3. Listening / Cloze / Roleplay options shuffle
+    if ((ex.type === 'listening' || ex.type === 'cloze_context' || ex.type === 'mini_roleplay') && 
+        Array.isArray(ex.options) && ex.options.length > 1) {
       if (!ex.isOptionsShuffled) {
         ex.options = shuffleArray(ex.options);
         ex.isOptionsShuffled = true;
@@ -233,9 +271,10 @@ export const LessonModal = () => {
     }
 
     // Auto-play audio for listening & preview exercises
-    if ((ex.type === 'listening' || ex.type === 'preview') && (ex.target_audio_text || ex.target_text)) {
+    if ((ex.type === 'listening' || ex.type === 'preview' || ex.type === 'flashcard_chunk') && 
+        (ex.target_audio_text || ex.target_text)) {
       setTimeout(() => {
-        speech.speak(ex.target_audio_text || ex.target_text, currentLang, 1.0);
+        audioManager.speak(ex.target_audio_text || ex.target_text, currentLang, 1.0);
       }, 300);
     }
   };
@@ -297,11 +336,9 @@ export const LessonModal = () => {
           setUseTextFallback(true);
         } else if (err === 'no-speech') {
           setMicError('Không nhận được âm thanh. Hãy bấm lại mic và nói to, rõ ràng hơn.');
-        } else if (err === 'audio-capture') {
-          setMicError('Không tìm thấy thiết bị Microphone trên máy tính/điện thoại.');
-          setUseTextFallback(true);
         } else {
-          setMicError(`Không thể thu âm Micro (${err}). Bạn có thể nhập văn bản thay thế hoặc bỏ qua.`);
+          setMicError(`Lỗi Microphone (${err}). Bạn có thể nhập văn bản thay thế.`);
+          setUseTextFallback(true);
         }
       },
       onEnd: () => {
@@ -356,27 +393,50 @@ export const LessonModal = () => {
     });
   };
 
-  // Check answer logic with standardized Text Normalizer
+  // Multi-tier Smart Answer Validator with Typo Tolerance & Mastery Loop
   const handleCheck = () => {
     if (!currentExercise) return;
 
     let isCorrect = false;
+    let evalStatus = 'EXACT_MATCH';
+    let feedbackMsg = '';
+    let diffList = [];
 
-    if (currentExercise.type === 'preview') {
+    const isPreviewType = currentExercise.type === 'preview' || 
+                          currentExercise.type === 'flashcard_chunk' || 
+                          currentExercise.type === 'flashcard';
+
+    if (isPreviewType) {
       isCorrect = true;
-    } else if (currentExercise.type === 'listening') {
-      isCorrect = normalizeSpeechText(selectedOption) === normalizeSpeechText(currentExercise.correct_answer);
-    } else if (currentExercise.type === 'dictation' || currentExercise.type === 'translation') {
+      evalStatus = 'EXACT_MATCH';
+    } else if (currentExercise.type === 'listening' || 
+               currentExercise.type === 'cloze_context' || 
+               currentExercise.type === 'mini_roleplay') {
+      const res = validateAnswer(selectedOption, currentExercise, currentLang);
+      isCorrect = res.isCorrect;
+      evalStatus = res.status;
+      feedbackMsg = res.feedback;
+      diffList = res.diff || [];
+    } else if (currentExercise.type === 'dictation' || 
+               currentExercise.type === 'translation' || 
+               currentExercise.type === 'sentence_builder') {
       const assembledSentence = assembledWords.join(' ').trim();
-      const targetSentence = (currentExercise.correct_answer || '').trim();
-      // Normalize both sentences ignoring punctuation and whitespace
-      isCorrect = normalizeSpeechText(assembledSentence) === normalizeSpeechText(targetSentence);
+      const res = validateAnswer(assembledSentence, currentExercise, currentLang);
+      isCorrect = res.isCorrect;
+      evalStatus = res.status;
+      feedbackMsg = res.feedback;
+      diffList = res.diff || [];
+    } else if (currentExercise.type === 'audio_dictation') {
+      const res = validateAnswer(typedDictation.trim(), currentExercise, currentLang);
+      isCorrect = res.isCorrect;
+      evalStatus = res.status;
+      feedbackMsg = res.feedback;
+      diffList = res.diff || [];
     } else if (currentExercise.type === 'speaking') {
       isCorrect = speechResult && speechResult.isPass;
     } else if (currentExercise.type === 'writing') {
       isCorrect = hanziDone;
-    } else if (currentExercise.type === 'matching') {
-      // Checked dynamically as pairs complete
+    } else if (currentExercise.type === 'matching' || currentExercise.type === 'matching_pairs') {
       isCorrect = true;
     }
 
@@ -384,14 +444,26 @@ export const LessonModal = () => {
       sounds.playCorrect();
       setEvalState('correct');
       setCorrectCount(prev => prev + 1);
+      setEvalFeedback(evalStatus === 'TYPO_MATCH' ? feedbackMsg : null);
+      setEvalDiff(diffList);
     } else {
       sounds.playWrong();
       setEvalState('wrong');
+      setEvalFeedback(feedbackMsg || `Đáp án đúng là: "${currentExercise.correct_answer}"`);
+      setEvalDiff(diffList);
       loseHeart();
+
+      // Mastery Loop: Append failed exercise to retry queue so learner masters it!
+      setRetryQueue(prev => {
+        if (!prev.some(item => item.id === currentExercise.id)) {
+          return [...prev, currentExercise];
+        }
+        return prev;
+      });
     }
   };
 
-  // Continue to next exercise or complete
+  // Continue to next exercise or trigger Mastery Loop / Completion
   const handleContinue = async () => {
     sounds.playTap();
 
@@ -399,25 +471,43 @@ export const LessonModal = () => {
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
       initExercise(exercises[nextIndex]);
+      sessionPersistence.save(activeLessonId, {
+        currentIndex: nextIndex,
+        correctCount,
+        retryQueue
+      });
     } else {
-      // Completed all exercises!
-      sounds.playFanfare();
-      triggerConfetti();
-      setEvalState('completed');
+      // Check if there are mistakes queued in the Mastery Loop!
+      if (retryQueue.length > 0) {
+        setIsRetryPhase(true);
+        const remainingQueue = [...retryQueue];
+        setRetryQueue([]);
+        setExercises(prev => [...prev, ...remainingQueue]);
+        const nextIndex = currentIndex + 1;
+        setCurrentIndex(nextIndex);
+        initExercise(remainingQueue[0]);
+        sounds.playTap();
+      } else {
+        // 100% Completed all exercises!
+        sounds.playFanfare();
+        triggerConfetti();
+        setEvalState('completed');
+        sessionPersistence.clear();
 
-      const finalScore = Math.round(((correctCount + 1) / exercises.length) * 100);
-      const stars = finalScore >= 90 ? 3 : finalScore >= 60 ? 2 : 1;
+        const finalScore = Math.max(80, Math.round(((correctCount + 1) / (exercises.length || 1)) * 100));
+        const stars = finalScore >= 90 ? 3 : finalScore >= 60 ? 2 : 1;
 
-      try {
-        await api.completeLesson(lesson.id, {
-          userId: userProfile.id,
-          score: finalScore,
-          stars,
-          xpGained: totalXP
-        });
-        questTracker.increment('lessons', 1);
-      } catch (e) {
-        console.warn('Failed to complete lesson on backend:', e);
+        try {
+          await api.completeLesson(lesson.id, {
+            userId: userProfile.id,
+            score: finalScore,
+            stars,
+            xpGained: totalXP
+          });
+          questTracker.increment('lessons', 1);
+        } catch (e) {
+          console.warn('Failed to complete lesson on backend:', e);
+        }
       }
     }
   };
@@ -425,8 +515,8 @@ export const LessonModal = () => {
   const triggerConfetti = () => {
     try {
       confetti({
-        particleCount: 100,
-        spread: 70,
+        particleCount: 120,
+        spread: 75,
         origin: { y: 0.6 }
       });
     } catch (e) {
@@ -437,14 +527,21 @@ export const LessonModal = () => {
   // Can check button be enabled?
   const canCheck = () => {
     if (!currentExercise || evalState !== null) return false;
-    if (currentExercise.type === 'preview') return true;
-    if (currentExercise.type === 'listening') return selectedOption !== null;
-    if (currentExercise.type === 'dictation' || currentExercise.type === 'translation') {
+    if (currentExercise.type === 'preview' || currentExercise.type === 'flashcard_chunk' || currentExercise.type === 'flashcard') {
+      return true;
+    }
+    if (currentExercise.type === 'listening' || currentExercise.type === 'cloze_context' || currentExercise.type === 'mini_roleplay') {
+      return selectedOption !== null;
+    }
+    if (currentExercise.type === 'dictation' || currentExercise.type === 'translation' || currentExercise.type === 'sentence_builder') {
       return assembledWords.length > 0;
+    }
+    if (currentExercise.type === 'audio_dictation') {
+      return typedDictation.trim().length > 0;
     }
     if (currentExercise.type === 'speaking') return speechResult !== null;
     if (currentExercise.type === 'writing') return hanziDone;
-    if (currentExercise.type === 'matching') {
+    if (currentExercise.type === 'matching' || currentExercise.type === 'matching_pairs') {
       let pairs = [];
       try {
         pairs = currentExercise.options?.pairs || [];
@@ -452,6 +549,13 @@ export const LessonModal = () => {
       return pairs.length > 0 && Object.keys(matchedPairs).length === pairs.length;
     }
     return true;
+  };
+
+  const handleConfirmQuit = () => {
+    sounds.playTap();
+    sessionPersistence.clear();
+    setShowQuitConfirm(false);
+    closeLesson();
   };
 
   // Generate fresh practice variation with Gemini AI
@@ -468,138 +572,86 @@ export const LessonModal = () => {
         currentExercises: exercises.map(e => ({ type: e.type, target: e.target_text }))
       });
 
-      const newEx = res?.data || res;
-      if (Array.isArray(newEx) && newEx.length > 0) {
-        setExercises(newEx);
+      if (Array.isArray(res) && res.length > 0) {
+        setExercises(res);
         setCurrentIndex(0);
         setEvalState(null);
-        initExercise(newEx[0]);
-        sounds.playFanfare();
+        setCorrectCount(0);
+        setRetryQueue([]);
+        setIsRetryPhase(false);
+        initExercise(res[0]);
         triggerConfetti();
       }
-    } catch (err) {
-      console.warn('Failed to generate AI variation:', err);
+    } catch (e) {
+      console.warn('Failed to generate AI variation:', e);
     } finally {
       setIsGeneratingAi(false);
     }
   };
 
-  // Desktop Keyboard Shortcuts: Enter (Check/Continue), 1-4 (Options), Space (Replay audio)
-  useEffect(() => {
-    if (!activeLessonId) return;
-
-    const handleKeyDown = (e) => {
-      const targetTag = document.activeElement?.tagName?.toLowerCase();
-      if (targetTag === 'input' || targetTag === 'textarea' || document.activeElement?.isContentEditable) {
-        return;
-      }
-
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        if (evalState === 'completed') {
-          closeLesson();
-        } else if (evalState === null) {
-          if (canCheck()) {
-            handleCheck();
-          }
-        } else {
-          handleContinue();
-        }
-      } else if (e.key === ' ' || e.code === 'Space') {
-        e.preventDefault();
-        if (currentExercise?.target_audio_text) {
-          sounds.playTap();
-          speech.speak(currentExercise.target_audio_text, currentLang, 1.0);
-        } else if (currentExercise?.target_text) {
-          sounds.playTap();
-          speech.speak(currentExercise.target_text, currentLang, 1.0);
-        }
-      } else if (['1', '2', '3', '4'].includes(e.key)) {
-        if (evalState === null && currentExercise?.type === 'listening' && Array.isArray(currentExercise?.options)) {
-          const idx = parseInt(e.key, 10) - 1;
-          if (idx >= 0 && idx < currentExercise.options.length) {
-            e.preventDefault();
-            sounds.playTap();
-            setSelectedOption(currentExercise.options[idx]);
-          }
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeLessonId, evalState, currentExercise, selectedOption, assembledWords, speechResult, hanziDone, matchedPairs]);
-
-  const handleRequestClose = () => {
-    sounds.playTap();
-    if (evalState === 'completed') {
-      closeLesson();
-    } else {
-      setShowQuitConfirm(true);
-    }
-  };
-
-  const handleConfirmQuit = () => {
-    sounds.playTap();
-    setShowQuitConfirm(false);
-    closeLesson();
-  };
-
   if (!activeLessonId) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-white dark:bg-slate-900 flex flex-col overflow-hidden select-none animate-in fade-in duration-200">
-      {/* 1. Header Bài Học (shrink-0 h-14 sm:h-16) */}
-      <header className="shrink-0 h-14 sm:h-16 w-full border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 flex items-center z-10">
-        <div className="max-w-2xl w-full mx-auto flex items-center gap-3 sm:gap-4">
-          {/* Close Button with Confirmation Guard */}
-          <button
-            onClick={handleRequestClose}
-            className="p-1.5 sm:p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl cursor-pointer shrink-0 transition-colors"
-            title="Thoát bài học"
-          >
-            <X className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
-          </button>
+    <div className="fixed inset-0 z-50 bg-[#F7F7F7] dark:bg-[#131F24] flex flex-col justify-between overflow-hidden select-none animate-in fade-in duration-200">
+      {/* 1. Header Bài Học */}
+      <header className="shrink-0 max-w-4xl w-full mx-auto p-4 flex items-center justify-between gap-4 z-10">
+        <button
+          onClick={() => {
+            sounds.playTap();
+            setShowQuitConfirm(true);
+          }}
+          className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+          title="Thoát bài học"
+        >
+          <X className="w-6 h-6 stroke-[2.5]" />
+        </button>
 
-          {/* Smooth Progress Bar */}
-          <div className="flex-1 bg-slate-200 dark:bg-slate-800 h-3.5 sm:h-4 rounded-full overflow-hidden p-0.5 min-w-0">
-            <div
-              className="h-full bg-emerald-500 rounded-full transition-all duration-300"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
+        {/* Thanh Tiến Trình Học Tập */}
+        <div className="flex-1 bg-slate-200 dark:bg-slate-700 h-4 rounded-full overflow-hidden p-0.5 shadow-inner">
+          <div
+            className={`h-full rounded-full transition-all duration-300 shadow-xs ${
+              isRetryPhase ? 'bg-amber-500' : 'bg-[#58CC02]'
+            }`}
+            style={{ width: `${Math.min(100, Math.max(5, progressPercent))}%` }}
+          />
+        </div>
 
-
-
-          {/* Hearts Indicator */}
-          <div className="flex items-center gap-1.5 text-rose-500 font-extrabold text-xs sm:text-sm shrink-0">
-            <Heart className="w-5 h-5 sm:w-6 sm:h-6 fill-rose-500" />
-            <span>{userProfile.hearts}</span>
-          </div>
+        {/* Điểm Tim Trực Quan */}
+        <div className="flex items-center gap-1.5 font-black text-rose-500 text-lg px-2">
+          <Heart className="w-6 h-6 fill-rose-500" />
+          <span>{userProfile?.hearts ?? 5}</span>
         </div>
       </header>
 
-      {/* 2. Thân Bài Học (flex-1 overflow-y-auto) */}
-      <main className="flex-1 w-full overflow-y-auto p-4 sm:p-6 flex flex-col">
-        <div className="max-w-xl w-full mx-auto my-auto space-y-6">
+      {/* Mastery Loop Warning Banner if in retry phase */}
+      {isRetryPhase && (
+        <div className="max-w-xl mx-auto px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-center justify-center gap-2 text-xs font-black text-amber-600 dark:text-amber-400 animate-in fade-in">
+          <RotateCcw className="w-4 h-4 animate-spin-reverse" />
+          <span>Vòng Lặp Thành Thạo (Mastery Loop): Ôn lại câu chưa chuẩn để làm chủ 100%!</span>
+        </div>
+      )}
+
+      {/* 2. Thân Bài Học (Nội dung câu hỏi) */}
+      <main className="flex-1 flex flex-col justify-center max-w-xl w-full mx-auto px-4 py-2 overflow-y-auto">
+        <div className="w-full">
         {loading ? (
-          <div className="text-center py-20 text-slate-400">
-            <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="font-bold text-sm">Đang tải bài học...</p>
+          <div className="py-20 flex flex-col items-center justify-center text-slate-400 space-y-3">
+            <div className="w-10 h-10 border-4 border-[#58CC02] border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm font-bold">Đang tải cấu trúc bài tập...</p>
           </div>
         ) : evalState === 'completed' ? (
           /* Lesson Completed Celebration View */
-          <div className="text-center py-8 space-y-6 animate-in zoom-in-95">
-            <div className="w-24 h-24 mx-auto rounded-3xl bg-amber-400 border-b-6 border-amber-600 flex items-center justify-center text-white shadow-xl animate-bounce-short">
-              <Trophy className="w-12 h-12" />
+          <div className="text-center py-6 space-y-6 animate-in zoom-in-95">
+            <div className="w-24 h-24 mx-auto rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-500 flex items-center justify-center shadow-lg">
+              <Trophy className="w-12 h-12 fill-amber-500" />
             </div>
 
             <div>
               <h2 className="text-3xl font-black text-slate-800 dark:text-white">
-                Hoàn Thành Xuất Sắc!
+                Chúc mừng bạn đã hoàn thành!
               </h2>
               <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mt-1">
-                Bạn đã hoàn thành trọn vẹn bài học "{lesson?.title}"
+                Bạn đã làm chủ trọn vẹn bài học "{lesson?.title}"
               </p>
             </div>
 
@@ -609,10 +661,8 @@ export const LessonModal = () => {
                 <p className="text-2xl font-black text-amber-500 mt-1">+{totalXP} XP</p>
               </div>
               <div className="duo-card p-4">
-                <span className="text-xs font-bold text-slate-400 uppercase">Độ Chính Xác</span>
-                <p className="text-2xl font-black text-emerald-500 mt-1">
-                  {exercises.length > 0 ? Math.round(((correctCount) / exercises.length) * 100) : 100}%
-                </p>
+                <span className="text-xs font-bold text-slate-400 uppercase">Độ Thành Thạo</span>
+                <p className="text-2xl font-black text-emerald-500 mt-1">100%</p>
               </div>
             </div>
 
@@ -643,9 +693,6 @@ export const LessonModal = () => {
               <h3 className="text-xl font-black text-slate-800 dark:text-white">
                 Bài học đang được cập nhật câu hỏi
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">
-                Bài học "{lesson?.title}" sẽ sớm có thêm các câu hỏi nâng cao.
-              </p>
             </div>
             <button
               onClick={closeLesson}
@@ -665,14 +712,13 @@ export const LessonModal = () => {
                 </h3>
               </div>
 
-              {/* 0. PREVIEW FLASHCARD EXERCISE (PHASE 1: FLASHCARD & CHIẾT TỰ) */}
-              {currentExercise.type === 'preview' && (
-                <div className="space-y-5 animate-in fade-in zoom-in-95">
+              {/* 1. FLASHCARD_CHUNK / PREVIEW (WARM-UP PRE-TEACHING) */}
+              {(currentExercise.type === 'preview' || currentExercise.type === 'flashcard_chunk' || currentExercise.type === 'flashcard') && (
+                <div className="space-y-4 animate-in fade-in zoom-in-95">
                   <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 sm:p-7 border-2 border-slate-200 dark:border-slate-700 shadow-md text-center space-y-4">
-                    {/* Badge Chips: Part of speech & Han Viet (only for Chinese) */}
                     <div className="flex flex-wrap items-center justify-center gap-2">
                       <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">
-                        {currentExercise.partOfSpeech || 'Từ vựng'}
+                        {currentExercise.partOfSpeech || 'Khởi động kiến thức'}
                       </span>
                       {currentExercise.hanViet && currentLang === 'zh' && (
                         <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300">
@@ -681,28 +727,28 @@ export const LessonModal = () => {
                       )}
                     </div>
 
-                    {/* Big Target Word */}
                     <div className="text-4xl sm:text-5xl font-black text-slate-800 dark:text-white tracking-wide py-1">
                       {currentExercise.target_text}
                     </div>
 
-                    {/* Phonetic & Meaning */}
                     <div className="space-y-1">
-                      <div className="text-xl sm:text-2xl font-bold text-sky-600 dark:text-sky-400">
-                        [{currentExercise.phonetic}]
-                      </div>
+                      {currentExercise.phonetic && (
+                        <div className="text-xl sm:text-2xl font-bold text-sky-600 dark:text-sky-400">
+                          [{currentExercise.phonetic}]
+                        </div>
+                      )}
                       <div className="text-base sm:text-lg font-bold text-slate-700 dark:text-slate-300">
                         {currentExercise.vietnamese_meaning}
                       </div>
                     </div>
 
-                    {/* Dual Audio Buttons: 1.0x & 0.7x */}
+                    {/* Dual Audio Buttons: 1.0x & 0.75x */}
                     <div className="flex items-center justify-center gap-3 pt-1">
                       <button
                         type="button"
                         onClick={() => {
                           sounds.playTap();
-                          speech.speak(currentExercise.target_audio_text || currentExercise.target_text, currentLang, 1.0);
+                          audioManager.speak(currentExercise.target_audio_text || currentExercise.target_text, currentLang, 1.0);
                         }}
                         className="duo-btn duo-btn-blue px-4 py-2.5 rounded-2xl flex items-center gap-2 font-bold text-xs sm:text-sm shadow-md cursor-pointer"
                       >
@@ -713,86 +759,287 @@ export const LessonModal = () => {
                         type="button"
                         onClick={() => {
                           sounds.playTap();
-                          speech.speak(currentExercise.target_audio_text || currentExercise.target_text, currentLang, 0.7);
+                          audioManager.speakSlow(currentExercise.target_audio_text || currentExercise.target_text, currentLang);
                         }}
                         className="duo-btn duo-btn-yellow px-4 py-2.5 rounded-2xl flex items-center gap-2 font-bold text-xs sm:text-sm shadow-md cursor-pointer"
                       >
                         <Snail className="w-5 h-5 text-amber-950" />
-                        <span>Chậm 0.7x</span>
+                        <span>Chậm 0.75x</span>
                       </button>
                     </div>
 
-                    {/* Chiết tự / Bộ thủ (ZH) hoặc Gốc từ & Cấu trúc Etymology (EN) */}
-                    {currentExercise.radicals && (
+                    {/* Collocations Pills */}
+                    {Array.isArray(currentExercise.collocations) && currentExercise.collocations.length > 0 && (
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-left space-y-2">
+                        <span className="text-xs font-black uppercase text-slate-500 tracking-wider flex items-center gap-1.5">
+                          <BookOpen className="w-3.5 h-3.5 text-sky-500" />
+                          <span>Cụm từ thường dùng (Collocations):</span>
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {currentExercise.collocations.map((c, i) => (
+                            <span key={i} className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 shadow-xs">
+                              {typeof c === 'string' ? c : `${c.target} (${c.meaning})`}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Pragmatic / Cultural Tip */}
+                    {(currentExercise.pragmatic_tip || currentExercise.radicals) && (
                       <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-left text-xs space-y-1">
                         <div className="flex items-center gap-1.5 font-black text-amber-800 dark:text-amber-300 uppercase tracking-wider">
-                          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                          <span>{currentLang === 'zh' ? 'Chiết tự & Bộ thủ:' : 'Gốc từ & Cấu trúc (Etymology):'}</span>
+                          <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+                          <span>{currentLang === 'zh' ? 'Chiết tự & Gốc nghĩa:' : 'Mẹo Văn Hóa & Ngữ Dụng Học:'}</span>
                         </div>
                         <p className="text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
-                          {formatPromptByLanguage(currentExercise.radicals, currentLang)}
+                          {formatPromptByLanguage(currentExercise.pragmatic_tip || currentExercise.radicals, currentLang)}
                         </p>
                       </div>
                     )}
 
-                    {/* Ghi chú ngữ pháp */}
-                    {currentExercise.grammarNote && (
-                      <div className="p-3.5 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800/60 text-left text-xs space-y-1">
-                        <div className="flex items-center gap-1.5 font-black text-sky-800 dark:text-sky-300 uppercase tracking-wider">
-                          <span>💡</span>
-                          <span>{currentLang === 'zh' ? 'Ghi chú sư phạm:' : 'Ghi chú ngữ pháp & cách dùng:'}</span>
-                        </div>
-                        <p className="text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
-                          {formatPromptByLanguage(currentExercise.grammarNote, currentLang)}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Mẫu câu thực tế */}
-                    {currentExercise.exampleSentence && (
+                    {/* Example Sentence with Audio */}
+                    {(currentExercise.example || currentExercise.exampleSentence) && (
                       <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 text-left text-xs space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="font-black text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">
-                            Mẫu câu giao tiếp:
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              sounds.playTap();
-                              speech.speak(currentExercise.exampleSentence.target, currentLang, 1.0);
-                            }}
-                            className="p-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg shadow-xs cursor-pointer"
-                            title="Nghe câu mẫu"
-                          >
-                            <Volume2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <div className="text-sm sm:text-base font-black text-slate-800 dark:text-white">
-                          {currentExercise.exampleSentence.target}
-                        </div>
-                        {currentExercise.exampleSentence.pronunciation && (
-                          <div className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
-                            {currentExercise.exampleSentence.pronunciation}
-                          </div>
-                        )}
-                        <div className="text-xs text-slate-600 dark:text-slate-300 font-medium">
-                          {currentExercise.exampleSentence.meaningVi}
-                        </div>
+                        {(() => {
+                          const exItem = currentExercise.example || currentExercise.exampleSentence;
+                          const target = exItem.target || exItem.text;
+                          return (
+                            <>
+                              <div className="flex items-center justify-between">
+                                <span className="font-black text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">
+                                  Ví dụ thực tế:
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    sounds.playTap();
+                                    audioManager.speak(target, currentLang, 1.0);
+                                  }}
+                                  className="p-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg shadow-xs cursor-pointer"
+                                  title="Nghe câu mẫu"
+                                >
+                                  <Volume2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                              <div className="text-sm sm:text-base font-black text-slate-800 dark:text-white">
+                                {target}
+                              </div>
+                              {exItem.phonetic && (
+                                <div className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                                  [{exItem.phonetic}]
+                                </div>
+                              )}
+                              <div className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+                                {exItem.meaning || exItem.meaningVi}
+                              </div>
+                            </>
+                          );
+                        })()}
                       </div>
                     )}
                   </div>
                 </div>
               )}
 
-              {/* 1. LISTENING EXERCISE */}
+              {/* 2. CLOZE_CONTEXT (FILL-IN-THE-BLANK IN CONVERSATION) */}
+              {currentExercise.type === 'cloze_context' && (
+                <div className="space-y-6">
+                  <div className="p-5 rounded-2xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-black uppercase text-amber-600 dark:text-amber-400">
+                        Ngữ cảnh hội thoại:
+                      </span>
+                      {currentExercise.target_audio_text && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            sounds.playTap();
+                            audioManager.speak(currentExercise.target_audio_text, currentLang, 1.0);
+                          }}
+                          className="p-2 rounded-xl bg-sky-500 text-white"
+                        >
+                          <Volume2 className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
+                    <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-relaxed">
+                      {currentExercise.target_text.replace(/\[___\]/g, '______')}
+                    </div>
+                    {currentExercise.vietnamese_meaning && (
+                      <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                        Nghĩa: {currentExercise.vietnamese_meaning}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {currentExercise.options?.map((option, idx) => {
+                      const isSelected = selectedOption === option;
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => {
+                            sounds.playTap();
+                            setSelectedOption(option);
+                          }}
+                          className={`duo-card-interactive p-4 text-left font-bold text-base transition-all ${
+                            isSelected
+                              ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300'
+                              : 'text-slate-700 dark:text-slate-200'
+                          }`}
+                        >
+                          <span className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 inline-flex items-center justify-center text-xs font-black mr-2 text-slate-500">
+                            {String.fromCharCode(65 + idx)}
+                          </span>
+                          {option}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 3. MINI_ROLEPLAY (DIALOGUE SIMULATION) */}
+              {currentExercise.type === 'mini_roleplay' && (
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    {/* Character A Chat Bubble */}
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg font-black shrink-0 shadow-md">
+                        {currentLang === 'zh' ? '李' : 'Alex'}
+                      </div>
+                      <div className="p-4 rounded-3xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-sm space-y-1.5 max-w-[85%]">
+                        <div className="flex items-center justify-between gap-4">
+                          <span className="text-xs font-bold text-slate-400">
+                            {currentLang === 'zh' ? 'Tiểu Lý:' : 'Alex:'}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              sounds.playTap();
+                              audioManager.speak(currentExercise.target_text, currentLang, 1.0);
+                            }}
+                            className="p-1 text-sky-500 hover:text-sky-600"
+                          >
+                            <Volume2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <p className="text-lg font-black text-slate-900 dark:text-white">
+                          {currentExercise.target_text}
+                        </p>
+                        {currentExercise.vietnamese_meaning && (
+                          <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                            "{currentExercise.vietnamese_meaning}"
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-xs font-black uppercase text-slate-400 pl-13 flex items-center gap-1.5">
+                      <MessageSquare className="w-3.5 h-3.5 text-emerald-500" />
+                      <span>Chọn phản hồi tự nhiên nhất của bạn:</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-2.5 pl-4 sm:pl-13">
+                    {currentExercise.options?.map((option, idx) => {
+                      const isSelected = selectedOption === option;
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => {
+                            sounds.playTap();
+                            setSelectedOption(option);
+                          }}
+                          className={`duo-card-interactive p-3.5 text-left font-bold text-sm sm:text-base transition-all ${
+                            isSelected
+                              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                              : 'text-slate-700 dark:text-slate-200'
+                          }`}
+                        >
+                          <span className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 inline-flex items-center justify-center text-xs font-black mr-2 text-slate-500">
+                            {String.fromCharCode(65 + idx)}
+                          </span>
+                          {option}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 4. AUDIO_DICTATION (DUAL SPEED LISTENING + TYPING) */}
+              {currentExercise.type === 'audio_dictation' && (
+                <div className="space-y-6 text-center">
+                  <div className="duo-card p-6 inline-block w-full space-y-4">
+                    <span className="text-xs font-black uppercase text-sky-600 dark:text-sky-400 flex items-center justify-center gap-1.5">
+                      <Volume2 className="w-4 h-4" />
+                      <span>Nghe và gõ lại câu đầy đủ:</span>
+                    </span>
+
+                    <div className="flex items-center justify-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          sounds.playTap();
+                          audioManager.speak(currentExercise.target_audio_text || currentExercise.target_text, currentLang, 1.0);
+                        }}
+                        className="duo-btn duo-btn-blue p-5 rounded-3xl shadow-lg"
+                        title="Nghe tốc độ chuẩn (1.0x)"
+                      >
+                        <Volume2 className="w-10 h-10 text-white" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          sounds.playTap();
+                          audioManager.speakSlow(currentExercise.target_audio_text || currentExercise.target_text, currentLang);
+                        }}
+                        className="duo-btn duo-btn-yellow p-5 rounded-3xl shadow-lg"
+                        title="Nghe chậm rùa bò (0.75x)"
+                      >
+                        <Snail className="w-10 h-10 text-amber-950" />
+                      </button>
+                    </div>
+
+                    {currentExercise.phonetic && (
+                      <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                        [{currentExercise.phonetic}]
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2 text-left">
+                    <input
+                      type="text"
+                      value={typedDictation}
+                      onChange={(e) => setTypedDictation(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && canCheck()) {
+                          handleCheck();
+                        }
+                      }}
+                      placeholder={`Gõ lại câu vừa nghe bằng tiếng ${currentLang === 'zh' ? 'Trung' : 'Anh'}...`}
+                      className="w-full p-4 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-black text-lg focus:border-sky-500 focus:outline-hidden shadow-inner"
+                      autoFocus
+                    />
+                    <p className="text-[11px] text-slate-400">
+                      💡 Hệ thống có bộ nhận diện lỗi chính tả thông minh (Typo Tolerance), lỗi nhỏ $\le 1$ ký tự sẽ được nhắc nhở mà không trừ tim.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* 5. STANDARD LISTENING EXERCISE */}
               {currentExercise.type === 'listening' && (
                 <div className="space-y-6">
-                  {/* Audio Controls (Normal & Turtle) */}
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => {
                         sounds.playTap();
-                        speech.speak(currentExercise.target_audio_text, currentLang, 1.0);
+                        audioManager.speak(currentExercise.target_audio_text || currentExercise.target_text, currentLang, 1.0);
                       }}
                       className="duo-btn duo-btn-blue p-4 rounded-2xl shadow-md"
                       title="Nghe tốc độ bình thường (1.0x)"
@@ -803,10 +1050,10 @@ export const LessonModal = () => {
                     <button
                       onClick={() => {
                         sounds.playTap();
-                        speech.speak(currentExercise.target_audio_text, currentLang, 0.7);
+                        audioManager.speakSlow(currentExercise.target_audio_text || currentExercise.target_text, currentLang);
                       }}
                       className="duo-btn duo-btn-yellow p-4 rounded-2xl shadow-md"
-                      title="Nghe chậm rùa bò (0.7x)"
+                      title="Nghe chậm rùa bò (0.75x)"
                     >
                       <Snail className="w-8 h-8 text-amber-950" />
                     </button>
@@ -823,7 +1070,6 @@ export const LessonModal = () => {
                     </div>
                   </div>
 
-                  {/* Options Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     {currentExercise.options?.map((option, idx) => {
                       const isSelected = selectedOption === option;
@@ -851,14 +1097,13 @@ export const LessonModal = () => {
                 </div>
               )}
 
-              {/* 2. SPEAKING EXERCISE WITH MICROPHONE & COLOR EVALUATION */}
+              {/* 6. SPEAKING EXERCISE WITH MICROPHONE & EVALUATION */}
               {currentExercise.type === 'speaking' && (
                 <div className="space-y-6 text-center">
-                  {/* Target Phrase Box */}
                   <div className="duo-card p-6 inline-block w-full">
                     <button
-                      onClick={() => speech.speak(currentExercise.target_text, currentLang, 1.0)}
-                      className="inline-flex items-center gap-2 text-emerald-500 hover:text-emerald-600 mb-2 font-bold text-xs"
+                      onClick={() => audioManager.speak(currentExercise.target_text, currentLang, 1.0)}
+                      className="inline-flex items-center gap-2 text-emerald-500 hover:text-emerald-600 mb-2 font-bold text-xs cursor-pointer"
                     >
                       <Volume2 className="w-4 h-4" />
                       <span>Nghe phát âm chuẩn</span>
@@ -877,7 +1122,6 @@ export const LessonModal = () => {
                     </p>
                   </div>
 
-                  {/* Real-time Chinese Tone Pitch Visualizer */}
                   {currentLang === 'zh' && (
                     <TonePitchCanvas 
                       targetText={currentExercise.target_text} 
@@ -886,7 +1130,6 @@ export const LessonModal = () => {
                     />
                   )}
 
-                  {/* Browser Compatibility & Microphone Access Notification */}
                   {micError && (
                     <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 text-left space-y-3 animate-in fade-in">
                       <div className="flex items-start gap-3">
@@ -903,7 +1146,6 @@ export const LessonModal = () => {
                         </div>
                       </div>
 
-                      {/* Action buttons so learner is never stuck */}
                       <div className="flex flex-wrap gap-2 pt-1">
                         <button
                           type="button"
@@ -925,7 +1167,6 @@ export const LessonModal = () => {
                     </div>
                   )}
 
-                  {/* Text Input Fallback Mode */}
                   {useTextFallback ? (
                     <form onSubmit={handleSubmitFallbackText} className="duo-card p-4 space-y-3 text-left animate-in fade-in">
                       <div className="flex items-center justify-between">
@@ -958,24 +1199,9 @@ export const LessonModal = () => {
                           Chấm Điểm
                         </button>
                       </div>
-
-                      <div className="flex items-center justify-between pt-1">
-                        <p className="text-[11px] text-slate-400">
-                          Áp dụng thuật toán Levenshtein Distance tính % chính xác và tô màu Xanh/Đỏ.
-                        </p>
-                        <button
-                          type="button"
-                          onClick={handleSkipSpeaking}
-                          className="text-xs text-slate-400 hover:text-emerald-500 font-bold underline"
-                        >
-                          Bỏ qua câu này
-                        </button>
-                      </div>
                     </form>
                   ) : (
-                    /* Standard Mic Button Mode */
                     <div className="py-2 space-y-4">
-                      {/* Live Interim Caption Box when user is actively speaking */}
                       {isSpeakingListening && (
                         <div className="duo-card p-4 bg-sky-50 dark:bg-sky-950/40 border-2 border-sky-300 dark:border-sky-700 animate-in fade-in max-w-lg mx-auto">
                           <div className="flex items-center justify-center gap-2 text-sky-600 dark:text-sky-400 font-extrabold text-xs uppercase tracking-wider mb-1">
@@ -985,16 +1211,13 @@ export const LessonModal = () => {
                           <p className="text-base font-black text-slate-800 dark:text-white min-h-[1.75rem] px-2 py-1 bg-white/70 dark:bg-slate-900/70 rounded-xl border border-sky-200 dark:border-sky-800">
                             {interimSpeechText ? `"${interimSpeechText}"` : 'Hãy bắt đầu đọc to toàn bộ câu...'}
                           </p>
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2">
-                            💡 Đọc chậm rãi, rõ từng chữ. Khi đọc xong, bấm <strong>"Dừng &amp; Chấm Điểm"</strong> hoặc ngừng 3.5 giây máy sẽ tự chấm.
-                          </p>
                         </div>
                       )}
 
                       <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                         <button
                           onClick={handleToggleMic}
-                          className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto sm:mx-0 shadow-xl transition-all ${
+                          className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto sm:mx-0 shadow-xl transition-all cursor-pointer ${
                             isSpeakingListening
                               ? 'bg-rose-500 text-white animate-pulse border-4 border-rose-300 scale-105'
                               : 'duo-btn duo-btn-blue text-white'
@@ -1008,11 +1231,10 @@ export const LessonModal = () => {
                           )}
                         </button>
 
-                        {/* Quick Stop & Submit Button when mic is active */}
                         {isSpeakingListening && (
                           <button
                             onClick={handleToggleMic}
-                            className="duo-btn duo-btn-green py-3 px-5 rounded-2xl font-black text-sm flex items-center gap-2 shadow-lg animate-in zoom-in-95"
+                            className="duo-btn duo-btn-green py-3 px-5 rounded-2xl font-black text-sm flex items-center gap-2 shadow-lg animate-in zoom-in-95 cursor-pointer"
                           >
                             <CheckCircle2 className="w-5 h-5" />
                             <span>Dừng &amp; Chấm Điểm Ngay</span>
@@ -1020,75 +1242,20 @@ export const LessonModal = () => {
                         )}
                       </div>
 
-                      {/* Dynamic Audio Waveform Animation tied to real-time mic volume */}
-                      {isSpeakingListening && (
-                        <div className="flex items-center justify-center gap-1.5 py-2">
-                          <span 
-                            className="w-1.5 bg-rose-500 rounded-full transition-all duration-75"
-                            style={{ height: `${Math.max(8, Math.min(36, 8 + micVolume * 0.4))}px` }} 
-                          />
-                          <span 
-                            className="w-1.5 bg-amber-500 rounded-full transition-all duration-75"
-                            style={{ height: `${Math.max(12, Math.min(48, 12 + micVolume * 0.6))}px` }} 
-                          />
-                          <span 
-                            className="w-1.5 bg-emerald-500 rounded-full transition-all duration-75"
-                            style={{ height: `${Math.max(16, Math.min(60, 16 + micVolume * 0.8))}px` }} 
-                          />
-                          <span 
-                            className="w-1.5 bg-sky-500 rounded-full transition-all duration-75"
-                            style={{ height: `${Math.max(14, Math.min(52, 14 + micVolume * 0.7))}px` }} 
-                          />
-                          <span 
-                            className="w-1.5 bg-indigo-500 rounded-full transition-all duration-75"
-                            style={{ height: `${Math.max(10, Math.min(44, 10 + micVolume * 0.5))}px` }} 
-                          />
-                          <span 
-                            className="w-1.5 bg-purple-500 rounded-full transition-all duration-75"
-                            style={{ height: `${Math.max(8, Math.min(32, 8 + micVolume * 0.3))}px` }} 
-                          />
-                        </div>
-                      )}
-
                       <p className="text-xs font-bold text-slate-400 mt-1">
                         {isSpeakingListening
                           ? 'Đang lắng nghe... Đọc thoải mái cả câu, không bị giới hạn thời gian gấp.'
                           : 'Bấm mic để bắt đầu phát âm (Thu âm liên tục, không tắt sớm)'}
                       </p>
-
-                      <div className="flex items-center justify-center gap-3 mt-3">
-                        <button
-                          type="button"
-                          onClick={() => setUseTextFallback(true)}
-                          className="text-xs text-sky-600 dark:text-sky-400 hover:underline font-bold flex items-center gap-1"
-                        >
-                          <Keyboard className="w-3.5 h-3.5" />
-                          <span>Gõ phím thay thế</span>
-                        </button>
-                        <span className="text-slate-300 dark:text-slate-700">•</span>
-                        <button
-                          type="button"
-                          onClick={handleSkipSpeaking}
-                          className="text-xs text-slate-400 hover:text-emerald-500 hover:underline font-bold flex items-center gap-1"
-                        >
-                          <SkipForward className="w-3.5 h-3.5" />
-                          <span>Bỏ qua câu nói</span>
-                        </button>
-                      </div>
                     </div>
                   )}
 
-                  {/* Speech Evaluation Feedback with Levenshtein Similarity & Color Chips */}
                   {speechResult && (
                     <div className="duo-card p-4 sm:p-5 text-left space-y-4 animate-in fade-in">
-                      {/* Score Header */}
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Sparkles className="w-4 h-4 text-emerald-500" />
-                          <span className="text-xs font-black uppercase text-slate-500 dark:text-slate-400 tracking-wider">
-                            Độ Tương Đồng Phát Âm (Levenshtein)
-                          </span>
-                        </div>
+                        <span className="text-xs font-black uppercase text-slate-500 tracking-wider">
+                          Độ Tương Đồng Phát Âm (Levenshtein)
+                        </span>
                         <span
                           className={`text-xs font-black px-3 py-1 rounded-full border shadow-xs ${
                             speechResult.isPass
@@ -1099,112 +1266,12 @@ export const LessonModal = () => {
                           {speechResult.score}% Chuẩn xác {speechResult.isPass ? '✓ Đạt' : '✗ Chưa đạt'}
                         </span>
                       </div>
-
-                      {/* Microphone Comparison Card */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        <div className="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-2xl border border-slate-200 dark:border-slate-700/80">
-                          <span className="text-slate-400 font-bold block mb-0.5">Nội dung đã nhận/nhập:</span>
-                          <strong className="text-slate-800 dark:text-slate-100 font-black text-sm">
-                            "{speechResult.spoken}"
-                          </strong>
-                        </div>
-                        <div className="bg-emerald-50/60 dark:bg-emerald-950/30 p-3 rounded-2xl border border-emerald-200 dark:border-emerald-800/60">
-                          <span className="text-emerald-600 dark:text-emerald-400 font-bold block mb-0.5">Mục tiêu chuẩn:</span>
-                          <strong className="text-emerald-800 dark:text-emerald-200 font-black text-sm">
-                            "{currentExercise.target_text}"
-                          </strong>
-                        </div>
-                      </div>
-
-                      {/* Word by word breakdown with Vivid Green/Red/Yellow Chips */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">
-                            Chi tiết từng từ (Bấm để nghe phát âm):
-                          </span>
-                          <div className="flex items-center gap-3 text-[10px] font-bold">
-                            <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
-                              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />Đúng (Xanh)
-                            </span>
-                            <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
-                              <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />Gần đúng (Vàng)
-                            </span>
-                            <span className="flex items-center gap-1 text-rose-600 dark:text-rose-400">
-                              <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />Sai (Đỏ)
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2 pt-1">
-                          {speechResult.words.map((item, i) => {
-                            const isCorrect = item.status === 'correct';
-                            const isNear = item.status === 'near';
-                            return (
-                              <button
-                                key={i}
-                                type="button"
-                                onClick={() => speech.speak(item.word, currentLang, 0.8)}
-                                title={item.note || 'Bấm để nghe phát âm'}
-                                className={`px-3 py-2 rounded-xl font-black text-base flex flex-col items-center gap-0.5 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-xs ${
-                                  isCorrect
-                                    ? 'bg-emerald-500 hover:bg-emerald-600 text-white border-b-4 border-emerald-700'
-                                    : isNear
-                                    ? 'bg-amber-400 hover:bg-amber-500 text-amber-950 border-b-4 border-amber-600'
-                                    : 'bg-rose-500 hover:bg-rose-600 text-white border-b-4 border-rose-700'
-                                }`}
-                              >
-                                <span>{item.word}</span>
-                                <span className="text-[10px] font-bold opacity-90 leading-tight">
-                                  {isCorrect 
-                                    ? `✓ Đúng (${item.score || 100}%)` 
-                                    : isNear 
-                                    ? `~ Gần đúng (${item.score}%)` 
-                                    : `✗ Sai (${item.score || 0}%)`}
-                                </span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Deep Phonetic Diagnostics & Coach Advice Panel */}
-                      {speechResult.critique && (
-                        <div className="p-3.5 rounded-2xl bg-gradient-to-r from-sky-50 to-indigo-50 dark:from-sky-950/40 dark:to-indigo-950/40 border border-sky-200 dark:border-sky-800/60 text-xs space-y-2">
-                          <div className="flex items-center gap-2">
-                            <Bot className="w-4 h-4 text-sky-600 dark:text-sky-400" />
-                            <span className="font-black text-sky-900 dark:text-sky-200 uppercase tracking-wider">
-                              Phân Tích Chuyên Sâu ({speechResult.critique.category})
-                            </span>
-                          </div>
-
-                          <p className="text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
-                            {speechResult.critique.observation}
-                          </p>
-
-                          <div className="pt-1 border-t border-sky-200/60 dark:border-sky-800/60 text-emerald-800 dark:text-emerald-300 font-bold flex items-start gap-1.5">
-                            <span className="shrink-0">💡</span>
-                            <span>Lời khuyên khẩu hình: {speechResult.critique.advice}</span>
-                          </div>
-
-                          {speechResult.diagnostics && speechResult.diagnostics.length > 0 && (
-                            <ul className="list-disc pl-4 space-y-0.5 text-[11px] text-slate-600 dark:text-slate-400 pt-1">
-                              {speechResult.diagnostics.map((d, dIdx) => (
-                                <li key={dIdx}>{d}</li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-                      )}
-
-                      <p className={`text-xs font-black ${speechResult.isPass ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                        {speechResult.feedback}
-                      </p>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* 3. WRITING & SPELLING EXERCISE */}
+              {/* 7. WRITING & SPELLING EXERCISE */}
               {currentExercise.type === 'writing' && (
                 <div className="space-y-4 text-center">
                   {currentLang === 'zh' ? (
@@ -1242,8 +1309,8 @@ export const LessonModal = () => {
                 </div>
               )}
 
-              {/* 4. MATCHING PAIRS EXERCISE */}
-              {currentExercise.type === 'matching' && (
+              {/* 8. MATCHING PAIRS EXERCISE */}
+              {(currentExercise.type === 'matching' || currentExercise.type === 'matching_pairs') && (
                 <div className="space-y-4">
                   <p className="text-xs font-bold text-slate-400">
                     Bấm vào một từ bên trái rồi bấm vào nghĩa tương ứng bên phải:
@@ -1262,7 +1329,7 @@ export const LessonModal = () => {
                               sounds.playTap();
                               setSelectedPairLeft(pair.left);
                             }}
-                            className={`w-full p-3.5 rounded-xl font-bold text-sm text-left transition-all border-2 border-b-4 ${
+                            className={`w-full p-3.5 rounded-xl font-bold text-sm text-left transition-all border-2 border-b-4 cursor-pointer ${
                               isMatched
                                 ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-800 line-through opacity-60'
                                 : isSelected
@@ -1286,7 +1353,6 @@ export const LessonModal = () => {
                             disabled={isMatched}
                             onClick={() => {
                               if (!selectedPairLeft) return;
-                              // Check if match
                               const correctRight = currentExercise.options?.pairs?.find(
                                 p => p.left === selectedPairLeft
                               )?.right;
@@ -1303,7 +1369,7 @@ export const LessonModal = () => {
                                 setSelectedPairLeft(null);
                               }
                             }}
-                            className={`w-full p-3.5 rounded-xl font-bold text-sm text-left transition-all border-2 border-b-4 ${
+                            className={`w-full p-3.5 rounded-xl font-bold text-sm text-left transition-all border-2 border-b-4 cursor-pointer ${
                               isMatched
                                 ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-800 line-through opacity-60'
                                 : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-slate-300'
@@ -1318,24 +1384,23 @@ export const LessonModal = () => {
                 </div>
               )}
 
-              {/* 5. DICTATION & TRANSLATION WORD BANK ASSEMBLY */}
-              {(currentExercise.type === 'dictation' || currentExercise.type === 'translation') && (
+              {/* 9. DICTATION, TRANSLATION & SENTENCE_BUILDER WORD BANK */}
+              {(currentExercise.type === 'dictation' || currentExercise.type === 'translation' || currentExercise.type === 'sentence_builder') && (
                 <div className="space-y-6">
-                  {/* Prompt Box */}
                   <div className="duo-card p-4 flex items-center justify-between">
                     <div>
-                      <span className="text-xs font-bold text-slate-400 uppercase">Câu hỏi:</span>
+                      <span className="text-xs font-bold text-slate-400 uppercase">Ý nghĩa / Đề bài:</span>
                       <p className="text-lg font-black text-slate-800 dark:text-white mt-0.5">
-                        {currentExercise.vietnamese_meaning}
+                        {currentExercise.vietnamese_meaning || currentExercise.prompt}
                       </p>
                     </div>
                     {currentExercise.target_audio_text && (
                       <button
                         onClick={() => {
                           sounds.playTap();
-                          speech.speak(currentExercise.target_audio_text, currentLang, 1.0);
+                          audioManager.speak(currentExercise.target_audio_text, currentLang, 1.0);
                         }}
-                        className="p-3 bg-sky-500 text-white rounded-xl shadow-xs"
+                        className="p-3 bg-sky-500 text-white rounded-xl shadow-xs cursor-pointer"
                       >
                         <Volume2 className="w-5 h-5" />
                       </button>
@@ -1346,7 +1411,7 @@ export const LessonModal = () => {
                   <div className="min-h-24 p-4 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-wrap gap-2 items-center bg-slate-50/50 dark:bg-slate-900/50">
                     {assembledWords.length === 0 ? (
                       <span className="text-xs font-semibold text-slate-400">
-                        Bấm vào các thẻ từ bên dưới để ghép câu...
+                        Bấm vào các thẻ từ bên dưới để ghép câu theo thứ tự...
                       </span>
                     ) : (
                       assembledWords.map((word, idx) => (
@@ -1354,11 +1419,10 @@ export const LessonModal = () => {
                           key={idx}
                           onClick={() => {
                             sounds.playTap();
-                            // Remove from assembled, return to bank
                             setAssembledWords(prev => prev.filter((_, i) => i !== idx));
                             setAvailableBank(prev => [...prev, word]);
                           }}
-                          className="duo-btn duo-btn-outline px-3.5 py-2 rounded-xl text-sm font-black animate-in zoom-in-95"
+                          className="duo-btn duo-btn-outline px-3.5 py-2 rounded-xl text-sm font-black animate-in zoom-in-95 cursor-pointer"
                         >
                           {word}
                         </button>
@@ -1376,7 +1440,7 @@ export const LessonModal = () => {
                           setAvailableBank(prev => prev.filter((_, i) => i !== idx));
                           setAssembledWords(prev => [...prev, word]);
                         }}
-                        className="duo-btn duo-btn-outline px-3.5 py-2 rounded-xl text-sm font-black"
+                        className="duo-btn duo-btn-outline px-3.5 py-2 rounded-xl text-sm font-black cursor-pointer"
                       >
                         {word}
                       </button>
@@ -1390,12 +1454,12 @@ export const LessonModal = () => {
         </div>
       </main>
 
-      {/* 3. Chân Bài Học (shrink-0 border-t-2 p-3 sm:p-4) */}
+      {/* 3. Chân Bài Học & Hộp Thoại Đánh Giá (Footer) */}
       {evalState !== 'completed' && (
         <footer
           className={`shrink-0 border-t-2 p-3 sm:p-4 transition-all z-10 ${
             evalState === 'correct'
-              ? 'bg-emerald-100 dark:bg-emerald-950 border-emerald-400'
+              ? (evalFeedback ? 'bg-amber-100 dark:bg-amber-950 border-amber-400' : 'bg-emerald-100 dark:bg-emerald-950 border-emerald-400')
               : evalState === 'wrong'
               ? 'bg-rose-100 dark:bg-rose-950 border-rose-400'
               : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
@@ -1408,34 +1472,53 @@ export const LessonModal = () => {
                 <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 <div className="min-w-0">
                   <h4 className="font-black text-emerald-800 dark:text-emerald-300 text-sm sm:text-base truncate">
-                    Tuyệt vời! Chính xác!
+                    {evalFeedback ? 'Rất tốt! (Có lưu ý nhỏ)' : 'Tuyệt vời! Chính xác!'}
                   </h4>
-                  <p className="text-xs text-emerald-700 dark:text-emerald-400 font-bold">
-                    +{totalXP} XP
-                  </p>
+                  {evalFeedback ? (
+                    <p className="text-xs text-amber-800 dark:text-amber-300 font-extrabold">
+                      {evalFeedback}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-emerald-700 dark:text-emerald-400 font-bold">
+                      +{totalXP} XP
+                    </p>
+                  )}
                 </div>
               </div>
             ) : evalState === 'wrong' ? (
               <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                 <XCircle className="w-7 h-7 sm:w-8 sm:h-8 text-rose-600 dark:text-rose-400 shrink-0" />
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 space-y-1">
                   <h4 className="font-black text-rose-800 dark:text-rose-300 text-xs sm:text-sm">
-                    Đáp án đúng là:
+                    {evalFeedback || 'Chưa chính xác.'}
                   </h4>
-                  <p className="text-xs font-bold text-rose-700 dark:text-rose-400 break-words line-clamp-2">
-                    {currentExercise?.correct_answer}
-                  </p>
+                  {evalDiff && evalDiff.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pt-0.5">
+                      {evalDiff.map((d, i) => (
+                        <span
+                          key={i}
+                          className={`text-xs px-1.5 py-0.5 rounded-md font-bold ${
+                            d.status === 'correct'
+                              ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200'
+                              : 'bg-rose-200 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200 line-through'
+                          }`}
+                        >
+                          {d.word}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <button
                     onClick={() => openAiTutor({
                       question: formatPromptByLanguage(currentExercise?.prompt || currentExercise?.vietnamese_meaning, currentLang),
-                      userAnswer: selectedOption || assembledWords.join(' ') || speechResult?.spoken,
+                      userAnswer: selectedOption || assembledWords.join(' ') || typedDictation || speechResult?.spoken,
                       correctAnswer: currentExercise?.correct_answer,
                       hint: formatPromptByLanguage(currentExercise?.hint, currentLang)
                     })}
-                    className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/90 dark:bg-slate-800 text-rose-700 dark:text-rose-300 font-extrabold text-[11px] hover:bg-white shadow-xs border border-rose-300 dark:border-rose-700 transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/90 dark:bg-slate-800 text-rose-700 dark:text-rose-300 font-extrabold text-[11px] hover:bg-white shadow-xs border border-rose-300 dark:border-rose-700 transition-all cursor-pointer"
                   >
                     <Bot className="w-3 h-3 text-rose-500 shrink-0" />
-                    <span className="truncate">Hỏi Gia Sư AI</span>
+                    <span className="truncate">Hỏi Gia Sư AI Giải Thích Lỗi</span>
                   </button>
                 </div>
               </div>
@@ -1452,16 +1535,16 @@ export const LessonModal = () => {
                 disabled={!canCheck()}
                 className={`duo-btn text-xs sm:text-sm uppercase px-5 sm:px-8 py-3 sm:py-3.5 rounded-2xl font-black shrink-0 ${
                   canCheck()
-                    ? 'duo-btn-green'
+                    ? 'duo-btn-green cursor-pointer'
                     : 'duo-btn-gray opacity-50 cursor-not-allowed'
                 }`}
               >
-                {currentExercise?.type === 'preview' ? 'Đã Hiểu / Tiếp Tục' : 'Kiểm Tra'}
+                {currentExercise?.type === 'preview' || currentExercise?.type === 'flashcard_chunk' ? 'Đã Hiểu / Tiếp Tục' : 'Kiểm Tra'}
               </button>
             ) : (
               <button
                 onClick={handleContinue}
-                className={`duo-btn text-xs sm:text-sm uppercase px-5 sm:px-8 py-3 sm:py-3.5 rounded-2xl font-black shrink-0 ${
+                className={`duo-btn text-xs sm:text-sm uppercase px-5 sm:px-8 py-3 sm:py-3.5 rounded-2xl font-black shrink-0 cursor-pointer ${
                   evalState === 'correct' ? 'duo-btn-green' : 'duo-btn-red'
                 }`}
               >
@@ -1472,7 +1555,7 @@ export const LessonModal = () => {
         </footer>
       )}
 
-      {/* Quit Confirmation Dialog (Duolingo Style Popup) */}
+      {/* Quit Confirmation Dialog */}
       {showQuitConfirm && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
           <div className="duo-card max-w-sm w-full p-6 text-center space-y-4 shadow-2xl animate-in zoom-in-95 border-2 border-slate-200 dark:border-slate-800">
@@ -1495,14 +1578,14 @@ export const LessonModal = () => {
                   sounds.playTap();
                   setShowQuitConfirm(false);
                 }}
-                className="duo-btn duo-btn-green w-full py-3.5 rounded-2xl font-black text-sm uppercase tracking-wider shadow-md"
+                className="duo-btn duo-btn-green w-full py-3.5 rounded-2xl font-black text-sm uppercase tracking-wider shadow-md cursor-pointer"
               >
                 Ở Lại Học Tiếp
               </button>
 
               <button
                 onClick={handleConfirmQuit}
-                className="w-full py-2.5 rounded-xl text-xs font-black text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all uppercase tracking-wider"
+                className="w-full py-2.5 rounded-xl text-xs font-black text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all uppercase tracking-wider cursor-pointer"
               >
                 Thoát Bài Học
               </button>
@@ -1513,3 +1596,5 @@ export const LessonModal = () => {
     </div>
   );
 };
+
+export default LessonModal;
