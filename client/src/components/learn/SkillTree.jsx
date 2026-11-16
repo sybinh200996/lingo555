@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
 import { sounds } from '../../services/soundEffects';
-import { getCurriculumUnitsWithExtra } from '../../data/curriculumData';
+import { getCurriculumUnitsWithExtra, getCurriculumLevels } from '../../data/curriculumData';
 import { 
   Check, 
   Lock, 

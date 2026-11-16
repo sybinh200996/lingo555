@@ -261,8 +261,8 @@ export const LessonModal = () => {
       setAssembledWords([]);
     }
 
-    // 3. Listening / Cloze / Roleplay options shuffle
-    if ((ex.type === 'listening' || ex.type === 'cloze_context' || ex.type === 'mini_roleplay') && 
+    // 3. Listening / Cloze / Roleplay / Word Select / Reading options shuffle
+    if ((ex.type === 'listening' || ex.type === 'cloze_context' || ex.type === 'mini_roleplay' || ex.type === 'word_select' || ex.type === 'reading' || ex.type === 'multiple_choice') && 
         Array.isArray(ex.options) && ex.options.length > 1) {
       if (!ex.isOptionsShuffled) {
         ex.options = shuffleArray(ex.options);
@@ -270,8 +270,8 @@ export const LessonModal = () => {
       }
     }
 
-    // Auto-play audio for listening & preview exercises
-    if ((ex.type === 'listening' || ex.type === 'preview' || ex.type === 'flashcard_chunk') && 
+    // Auto-play audio for listening, preview & word_select exercises
+    if ((ex.type === 'listening' || ex.type === 'preview' || ex.type === 'flashcard_chunk' || ex.type === 'word_select') && 
         (ex.target_audio_text || ex.target_text)) {
       setTimeout(() => {
         audioManager.speak(ex.target_audio_text || ex.target_text, currentLang, 1.0);
@@ -411,7 +411,10 @@ export const LessonModal = () => {
       evalStatus = 'EXACT_MATCH';
     } else if (currentExercise.type === 'listening' || 
                currentExercise.type === 'cloze_context' || 
-               currentExercise.type === 'mini_roleplay') {
+               currentExercise.type === 'mini_roleplay' ||
+               currentExercise.type === 'word_select' ||
+               currentExercise.type === 'reading' ||
+               currentExercise.type === 'multiple_choice') {
       const res = validateAnswer(selectedOption, currentExercise, currentLang);
       isCorrect = res.isCorrect;
       evalStatus = res.status;
@@ -530,7 +533,7 @@ export const LessonModal = () => {
     if (currentExercise.type === 'preview' || currentExercise.type === 'flashcard_chunk' || currentExercise.type === 'flashcard') {
       return true;
     }
-    if (currentExercise.type === 'listening' || currentExercise.type === 'cloze_context' || currentExercise.type === 'mini_roleplay') {
+    if (currentExercise.type === 'listening' || currentExercise.type === 'cloze_context' || currentExercise.type === 'mini_roleplay' || currentExercise.type === 'word_select' || currentExercise.type === 'reading' || currentExercise.type === 'multiple_choice') {
       return selectedOption !== null;
     }
     if (currentExercise.type === 'dictation' || currentExercise.type === 'translation' || currentExercise.type === 'sentence_builder') {
@@ -893,6 +896,94 @@ export const LessonModal = () => {
                             {String.fromCharCode(65 + idx)}
                           </span>
                           {option}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* SPECIALIZED ESP: WORD_SELECT & READING & MULTIPLE_CHOICE */}
+              {(currentExercise.type === 'word_select' || currentExercise.type === 'reading' || currentExercise.type === 'multiple_choice') && (
+                <div className="space-y-6 animate-in fade-in">
+                  {/* Central Term / Reading Card */}
+                  <div className="duo-card p-5 sm:p-7 text-center space-y-4 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-md">
+                    {currentExercise.type === 'reading' ? (
+                      <div className="space-y-2 text-left">
+                        <span className="text-xs font-black uppercase text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                          <BookOpen className="w-4 h-4" />
+                          <span>Đoạn văn đọc hiểu:</span>
+                        </span>
+                        <div className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 leading-relaxed p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+                          {currentExercise.target_audio_text || currentExercise.target_text}
+                        </div>
+                        {currentExercise.vietnamese_meaning && (
+                          <p className="text-xs text-slate-500 dark:text-slate-400 italic">
+                            Dịch nghĩa: {currentExercise.vietnamese_meaning}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        <div className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-wide">
+                          {currentExercise.target_text}
+                        </div>
+
+                        {currentExercise.phonetic && (
+                          <div className="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400">
+                            [{currentExercise.phonetic}]
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-center gap-3 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              sounds.playTap();
+                              audioManager.speak(currentExercise.target_audio_text || currentExercise.target_text, currentLang, 1.0);
+                            }}
+                            className="duo-btn duo-btn-blue px-4 py-2 rounded-xl flex items-center gap-2 font-bold text-xs shadow-sm cursor-pointer"
+                          >
+                            <Volume2 className="w-4 h-4 text-white" />
+                            <span>Nghe 1.0x</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              sounds.playTap();
+                              audioManager.speakSlow(currentExercise.target_audio_text || currentExercise.target_text, currentLang);
+                            }}
+                            className="duo-btn duo-btn-yellow px-4 py-2 rounded-xl flex items-center gap-2 font-bold text-xs shadow-sm cursor-pointer"
+                          >
+                            <Snail className="w-4 h-4 text-amber-950" />
+                            <span>Chậm 0.75x</span>
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Options Grid (A, B, C, D) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {currentExercise.options?.map((option, idx) => {
+                      const isSelected = selectedOption === option;
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => {
+                            sounds.playTap();
+                            setSelectedOption(option);
+                          }}
+                          className={`duo-card-interactive p-4 text-left font-bold text-sm sm:text-base transition-all cursor-pointer ${
+                            isSelected
+                              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 ring-2 ring-emerald-400'
+                              : 'text-slate-700 dark:text-slate-200 hover:border-slate-300'
+                          }`}
+                        >
+                          <span className="w-7 h-7 rounded-xl bg-slate-100 dark:bg-slate-800 inline-flex items-center justify-center text-xs font-black mr-3 text-slate-600 dark:text-slate-300 shadow-xs">
+                            {String.fromCharCode(65 + idx)}
+                          </span>
+                          <span>{option}</span>
                         </button>
                       );
                     })}
