@@ -202,39 +202,47 @@ router.post('/batch-unlock', (req, res) => {
       return res.status(404).json({ error: 'Không tìm thấy cấp độ mục tiêu' });
     }
 
-    // Find all earlier levels in the same language with order_index <= targetLevel.order_index
+    // Find earlier academic levels in the same language (order_index < targetLevel.order_index and order_index < 20)
     const earlierLevels = db.prepare(`
       SELECT id FROM levels 
-      WHERE language_id = ? AND order_index <= ?
+      WHERE language_id = ? AND order_index < ? AND order_index < 20
+      ORDER BY order_index ASC
     `).all(targetLevel.language_id, targetLevel.order_index);
 
     const levelIds = earlierLevels.map(l => l.id);
 
-    // Get all lessons in these levels
-    const lessonsToUnlock = db.prepare(`
-      SELECT l.id FROM lessons l
-      JOIN units u ON l.unit_id = u.id
-      WHERE u.level_id IN (${levelIds.map(() => '?').join(',')})
-    `).all(...levelIds);
+    let lessonsToUnlock = [];
+    if (levelIds.length > 0) {
+      // Get all lessons in these earlier levels to mark as passed
+      lessonsToUnlock = db.prepare(`
+        SELECT l.id FROM lessons l
+        JOIN units u ON l.unit_id = u.id
+        WHERE u.level_id IN (${levelIds.map(() => '?').join(',')})
+      `).all(...levelIds);
+    }
 
     const unlockTx = db.transaction(() => {
-      const insertLesson = db.prepare(`
-        INSERT INTO user_completed_lessons (user_id, lesson_id, stars, score)
-        VALUES (?, ?, 3, 100)
-        ON CONFLICT(user_id, lesson_id) DO NOTHING
-      `);
+      if (lessonsToUnlock.length > 0) {
+        const insertLesson = db.prepare(`
+          INSERT INTO user_completed_lessons (user_id, lesson_id, stars, score)
+          VALUES (?, ?, 3, 100)
+          ON CONFLICT(user_id, lesson_id) DO NOTHING
+        `);
 
-      for (const lesson of lessonsToUnlock) {
-        insertLesson.run(userId, lesson.id);
+        for (const lesson of lessonsToUnlock) {
+          insertLesson.run(userId, lesson.id);
+        }
       }
 
+      // Ensure user profile exists and award placement bonuses + level
       db.prepare(`
-        UPDATE user_profiles
-        SET xp = xp + ?,
-            gems = gems + ?,
-            placement_level = ?
-        WHERE id = ?
-      `).run(xpReward, gemsReward, targetLevel.code, userId);
+        INSERT INTO user_profiles (id, username, avatar, current_language, xp, gems, placement_level)
+        VALUES (?, 'Học viên Polyglot', '🐼', ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+          xp = xp + excluded.xp,
+          gems = gems + excluded.gems,
+          placement_level = excluded.placement_level
+      `).run(userId, targetLevel.language_id, xpReward, gemsReward, targetLevel.code);
 
       return db.prepare('SELECT * FROM user_profiles WHERE id = ?').get(userId);
     });

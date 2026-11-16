@@ -113,6 +113,19 @@ export const SkillTree = () => {
     if (currentLevel) {
       loadUnits(currentLevel.id);
     }
+
+    const handlePlacement = (e) => {
+      const target = e.detail?.targetLevel;
+      if (target?.id) {
+        loadUnits(target.id);
+      } else if (currentLevel?.id) {
+        loadUnits(currentLevel.id);
+      }
+    };
+    window.addEventListener('lingo555:placement-completed', handlePlacement);
+    return () => {
+      window.removeEventListener('lingo555:placement-completed', handlePlacement);
+    };
   }, [currentLevel]);
 
   const loadUnits = async (levelId) => {

@@ -40,6 +40,7 @@ function MainContent() {
     writingWord,
     closeWritingModal,
     currentLang,
+    refreshProfile,
   } = useApp();
 
   return (
@@ -78,6 +79,7 @@ function MainContent() {
           onPlacementComplete={(targetLevel) => {
             if (targetLevel) {
               setCurrentLevel(targetLevel);
+              refreshProfile?.();
             }
           }}
         />
