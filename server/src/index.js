@@ -11,6 +11,9 @@ const enrichCurriculum = require('./db/enrichAllLessons');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust reverse proxy (Nginx) so req.ip resolves to the real client IP
+app.set('trust proxy', 1);
+
 // Security HTTP headers
 app.use(helmet({
   contentSecurityPolicy: false,
