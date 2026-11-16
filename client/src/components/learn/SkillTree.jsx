@@ -17,7 +17,9 @@ import {
   Compass,
   CheckCircle2,
   Zap,
-  Bot
+  Bot,
+  GraduationCap,
+  Briefcase
 } from 'lucide-react';
 
 // Multi-color Unit Themes (Chương 1-5 & lặp lại)
